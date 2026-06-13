@@ -32,6 +32,7 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
 
   const [counts, setCounts] = useState<Record<string, string>>({});
   const [transparent, setTransparent] = useState(false);
+  const [allowAnyway, setAllowAnyway] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const loadInput = useRef<HTMLInputElement>(null);
   // counts staged by a cross-template load, applied once the new fields are in
@@ -76,6 +77,9 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
     const labels = Object.fromEntries(fields.map((f) => [f.count_field, f.label]));
     return flowchartConsistency(templateId, counts, labels);
   }, [templateId, counts, fields]);
+  // block final exports while the counts are inconsistent, unless the user opts
+  // into a draft export; save/load stays available regardless
+  const blockExport = issues.length > 0 && !allowAnyway;
 
   const runExport = (fn: () => void | Promise<void>) => async () => {
     setError(null);
@@ -147,12 +151,23 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
           Transparent background
         </label>
 
+        {issues.length > 0 && (
+          <label className="flex items-center gap-2 text-sm text-amber-800">
+            <input
+              type="checkbox"
+              checked={allowAnyway}
+              onChange={(e) => setAllowAnyway(e.target.checked)}
+            />
+            Export despite consistency warnings
+          </label>
+        )}
+
         <div className="grid grid-cols-2 gap-2 pt-2">
-          <button className="rounded bg-ink text-white px-3 py-2 text-sm font-medium hover:bg-ink/90 disabled:opacity-50" disabled={!svg || busy} onClick={runExport(() => downloadPng(svg, `${templateId}.png`, 2, transparent))}>PNG</button>
-          <button className="rounded bg-teal text-white px-3 py-2 text-sm font-medium hover:bg-teal/90 disabled:opacity-50" disabled={!svg || busy} onClick={runExport(() => downloadSvg(svg, `${templateId}.svg`))}>SVG</button>
-          <button className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-50" disabled={!svg || busy} onClick={runExport(async () => { const png = await svgToPng(svg, 2, transparent); await flowchartDocx(templateName, png, `${templateId}.docx`); })}>Word</button>
-          <button className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-50" disabled={busy} onClick={runExport(() => flowchartXlsx(countsRows(), `${templateId}.xlsx`))}>Excel</button>
-          <button className="col-span-2 rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100" onClick={runExport(() => saveText(toCsv(countsRows()), `${templateId}.csv`, "text/csv;charset=utf-8"))}>CSV (counts)</button>
+          <button className="rounded bg-ink text-white px-3 py-2 text-sm font-medium hover:bg-ink/90 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(() => downloadPng(svg, `${templateId}.png`, 2, transparent))}>PNG</button>
+          <button className="rounded bg-teal text-white px-3 py-2 text-sm font-medium hover:bg-teal/90 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(() => downloadSvg(svg, `${templateId}.svg`))}>SVG</button>
+          <button className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(async () => { const png = await svgToPng(svg, 2, transparent); await flowchartDocx(templateName, png, `${templateId}.docx`); })}>Word</button>
+          <button className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-50" disabled={busy || blockExport} onClick={runExport(() => flowchartXlsx(countsRows(), `${templateId}.xlsx`))}>Excel</button>
+          <button className="col-span-2 rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-50" disabled={blockExport} onClick={runExport(() => saveText(toCsv(countsRows()), `${templateId}.csv`, "text/csv;charset=utf-8"))}>CSV (counts)</button>
         </div>
 
         <div className="flex gap-2 pt-1 text-sm">
@@ -176,6 +191,10 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
                 <li key={i}>{m}</li>
               ))}
             </ul>
+            <p className="mt-1">
+              Exports are blocked until these are resolved. Tick "Export despite
+              consistency warnings" to download a draft anyway.
+            </p>
           </div>
         )}
         {svg ? (

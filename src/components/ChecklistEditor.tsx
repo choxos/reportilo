@@ -59,7 +59,7 @@ export default function ChecklistEditor({ data }: { data: Dataset }) {
     setError(null);
     try {
       const obj = await readJsonFile<unknown>(file);
-      const parsed = validateChecklistFile(obj, data.guidelines);
+      const parsed = validateChecklistFile(obj, data.guidelines, data.checklistItems);
       if (parsed.guideline !== guidelineId) setGuidelineId(parsed.guideline);
       setResponses(parsed.responses);
     } catch (e) {

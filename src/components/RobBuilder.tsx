@@ -80,7 +80,7 @@ export default function RobBuilder({ data }: { data: Dataset }) {
     setError(null);
     try {
       const obj = await readJsonFile<unknown>(file);
-      const parsed = validateRobFile(obj, tools);
+      const parsed = validateRobFile(obj, tools, data.rob.domains);
       if (parsed.tool !== toolId) setToolId(parsed.tool);
       setRowsByTool((m) => ({ ...m, [parsed.tool]: parsed.rows }));
     } catch (e) {

@@ -9,7 +9,15 @@ import {
   validateFlowchartFile,
   validateRobFile,
 } from "../loadValidate";
-import type { FlowNode, FlowEdge, Guideline, FlowCount, RobTool } from "../../types";
+import type {
+  FlowNode,
+  FlowEdge,
+  Guideline,
+  ChecklistItem,
+  FlowCount,
+  RobTool,
+  RobDomain,
+} from "../../types";
 
 describe("csv safety", () => {
   it("neutralizes formula triggers", () => {
@@ -95,11 +103,21 @@ describe("save/load validators", () => {
     { guideline_id: "prisma-2020", has_checklist: true },
     { guideline_id: "catalog-only", has_checklist: false },
   ] as unknown as Guideline[];
+  const items = [
+    { guideline_id: "prisma-2020", item_uid: "a" },
+    { guideline_id: "prisma-2020", item_uid: "b" },
+  ] as unknown as ChecklistItem[];
   const counts = [
     { template_id: "prisma_2020", count_field: "screened", is_reasons: false },
     { template_id: "prisma_2020", count_field: "reports_excluded", is_reasons: true },
   ] as unknown as FlowCount[];
-  const tools = [{ tool_id: "rob2" }] as unknown as RobTool[];
+  const tools = [
+    { tool_id: "rob2", levels: "Low; Some concerns; High" },
+  ] as unknown as RobTool[];
+  const domains = [
+    { tool_id: "rob2", domain_id: "D1" },
+    { tool_id: "rob2", domain_id: "D2" },
+  ] as unknown as RobDomain[];
 
   it("checklist: rejects unknown/ catalog-only guideline, accepts valid", () => {
     expect(() => validateChecklistFile({ guideline: "nope" }, guidelines)).toThrow();
@@ -107,6 +125,17 @@ describe("save/load validators", () => {
     expect(() => validateChecklistFile("not an object", guidelines)).toThrow();
     expect(validateChecklistFile({ guideline: "prisma-2020", responses: { a: "p1" } }, guidelines))
       .toEqual({ guideline: "prisma-2020", responses: { a: "p1" } });
+  });
+
+  it("checklist: drops stale item ids and coerces non-string responses", () => {
+    const out = validateChecklistFile(
+      { guideline: "prisma-2020", responses: { a: "p1", stale: "x", b: 5, c: { o: 1 } } },
+      guidelines,
+      items,
+    );
+    // "stale" is not a current item_uid -> dropped; b coerced to "5";
+    // c maps to an object -> dropped (would otherwise crash .trim())
+    expect(out.responses).toEqual({ a: "p1", b: "5" });
   });
 
   it("flowchart: drops unknown keys and negative counts, rejects unknown template", () => {
@@ -126,5 +155,21 @@ describe("save/load validators", () => {
     expect(() => validateRobFile({ tool: "rob2" }, tools)).toThrow();
     const out = validateRobFile({ tool: "rob2", rows: [{ study: "S1", values: { D1: "Low" } }] }, tools);
     expect(out.rows[0]).toEqual({ study: "S1", values: { D1: "Low" } });
+  });
+
+  it("rob: drops stale domains and blanks judgments invalid for the tool", () => {
+    const out = validateRobFile(
+      {
+        tool: "rob2",
+        rows: [
+          { study: "S1", values: { D1: "Low", D9: "High", Overall: "Bogus", D2: { o: 1 } } },
+        ],
+      },
+      tools,
+      domains,
+    );
+    // D9 is not a domain of rob2 -> dropped; "Bogus" is not a valid level -> blanked;
+    // D2 maps to an object -> blanked; D1 valid -> kept
+    expect(out.rows[0]).toEqual({ study: "S1", values: { D1: "Low", Overall: "", D2: "" } });
   });
 });
