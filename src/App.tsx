@@ -3,13 +3,15 @@ import { loadData, type Dataset } from "./lib/data";
 import Catalog from "./components/Catalog";
 import ChecklistEditor from "./components/ChecklistEditor";
 import FlowchartBuilder from "./components/FlowchartBuilder";
+import RobBuilder from "./components/RobBuilder";
 
-type Tab = "catalog" | "checklists" | "flow";
+type Tab = "catalog" | "checklists" | "flow" | "rob";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "catalog", label: "Catalog" },
   { id: "checklists", label: "Checklists" },
   { id: "flow", label: "Flow diagrams" },
+  { id: "rob", label: "Risk of bias" },
 ];
 
 export default function App() {
@@ -79,6 +81,7 @@ export default function App() {
         {data && tab === "catalog" && <Catalog data={data} />}
         {data && tab === "checklists" && <ChecklistEditor data={data} />}
         {data && tab === "flow" && <FlowchartBuilder data={data} />}
+        {data && tab === "rob" && <RobBuilder data={data} />}
       </main>
 
       <footer className="border-t border-slate-200 py-4 text-center text-xs text-slate-500">

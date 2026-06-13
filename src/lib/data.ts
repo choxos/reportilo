@@ -3,6 +3,7 @@ import type {
   ChecklistItem,
   Flowcharts,
   ParseStatus,
+  RobData,
 } from "../types";
 
 const base = import.meta.env.BASE_URL;
@@ -18,20 +19,22 @@ export interface Dataset {
   checklistItems: ChecklistItem[];
   flowcharts: Flowcharts;
   parseStatus: ParseStatus[];
+  rob: RobData;
 }
 
 let cache: Dataset | null = null;
 
 export async function loadData(): Promise<Dataset> {
   if (cache) return cache;
-  const [guidelines, checklistItems, flowcharts, parseStatus] =
+  const [guidelines, checklistItems, flowcharts, parseStatus, rob] =
     await Promise.all([
       loadJson<Guideline[]>("guidelines.json"),
       loadJson<ChecklistItem[]>("checklist_items.json"),
       loadJson<Flowcharts>("flowcharts.json"),
       loadJson<ParseStatus[]>("parse_status.json"),
+      loadJson<RobData>("rob.json"),
     ]);
-  cache = { guidelines, checklistItems, flowcharts, parseStatus };
+  cache = { guidelines, checklistItems, flowcharts, parseStatus, rob };
   return cache;
 }
 

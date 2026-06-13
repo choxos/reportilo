@@ -12,8 +12,9 @@ export async function svgToPng(
   scale = 2,
   transparent = false,
 ): Promise<Blob> {
-  // derive intrinsic size from the SVG canvas (Graphviz emits pt dimensions)
-  const m = svg.match(/width="([0-9.]+)pt"[^>]*height="([0-9.]+)pt"/);
+  // derive intrinsic size from the SVG canvas (Graphviz emits pt; our RoB SVGs
+  // use px) — match the first width/height regardless of unit
+  const m = svg.match(/width="([0-9.]+)(?:pt|px)?"[^>]*height="([0-9.]+)(?:pt|px)?"/);
   const wpt = m ? parseFloat(m[1]) : 800;
   const hpt = m ? parseFloat(m[2]) : 1000;
 

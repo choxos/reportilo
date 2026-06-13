@@ -86,3 +86,39 @@ export interface ParseStatus {
   verified: boolean;
   needs_review: boolean;
 }
+
+export interface RobTool {
+  tool_id: string;
+  name: string;
+  study_type: string;
+  n_domains: number;
+  levels: string;
+}
+
+export interface RobDomain {
+  tool_id: string;
+  domain_id: string;
+  label: string;
+  domain_order: number;
+}
+
+export interface RobLevel {
+  level: string;
+  color: string;
+  symbol: string;
+  level_order: number;
+}
+
+export interface RobExampleRow {
+  tool_id: string;
+  study: string;
+  domain_id: string;
+  judgment: string;
+}
+
+export interface RobData {
+  tools: RobTool[];
+  domains: RobDomain[];
+  levels: RobLevel[];
+  example: RobExampleRow[];
+}
