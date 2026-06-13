@@ -29,6 +29,7 @@ reference:
   contents:
   - reportilo_guidelines
   - reportilo_categories
+  - reportilo_coverage
   - search_guidelines
   - guideline_info
 - title: Fill in checklists

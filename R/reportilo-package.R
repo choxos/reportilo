@@ -24,8 +24,9 @@
 #' @section Data provenance:
 #' Guideline metadata is derived from the EQUATOR Network reporting guideline
 #' library. Checklist items are extracted from the guideline source documents;
-#' each item records its provenance and a parse-confidence score, and the
-#' coverage of each guideline is summarized in `parse_status`. Guidelines
+#' each item records its provenance and a parse-confidence score, the coverage of
+#' each guideline is summarized in `parse_status`, and `reportilo_coverage()`
+#' reports verified-versus-extracted coverage by category. Guidelines
 #' without a machine-readable checklist remain available as catalog entries that
 #' link to their original source.
 #'

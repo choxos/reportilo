@@ -44,6 +44,49 @@ reportilo_categories <- function() {
   tab
 }
 
+#' Checklist coverage report
+#'
+#' Summarize how much of the catalog has machine-readable checklists and how much
+#' is hand-verified, by EQUATOR study-type category. Use this to be explicit
+#' about coverage rather than implying the whole catalog is fillable.
+#'
+#' @return A data frame with one row per category plus a `Total` row, with
+#'   columns: `records`, `with_checklist`, `verified`, `needs_review`.
+#' @seealso [reportilo_guidelines()], [parse_status]
+#' @examples
+#' reportilo_coverage()
+#' @export
+reportilo_coverage <- function() {
+  g <- get_data("guidelines")
+  ps <- get_data("parse_status")
+  verified_ids <- ps$guideline_id[isTRUE_vec(ps$verified)]
+  review_ids <- ps$guideline_id[isTRUE_vec(ps$needs_review)]
+  cats <- levels(g$category)
+  rows <- lapply(cats, function(cat) {
+    sub <- g[!is.na(g$category) & g$category == cat, , drop = FALSE]
+    data.frame(
+      category = cat,
+      records = nrow(sub),
+      with_checklist = sum(sub$has_checklist),
+      verified = sum(sub$guideline_id %in% verified_ids),
+      needs_review = sum(sub$has_checklist & sub$guideline_id %in% review_ids),
+      stringsAsFactors = FALSE
+    )
+  })
+  out <- do.call(rbind, rows)
+  out <- out[out$records > 0, , drop = FALSE]
+  total <- data.frame(
+    category = "Total", records = sum(out$records),
+    with_checklist = sum(out$with_checklist), verified = sum(out$verified),
+    needs_review = sum(out$needs_review), stringsAsFactors = FALSE
+  )
+  rownames(out) <- NULL
+  rbind(out, total)
+}
+
+# small helper: TRUE for TRUE values, FALSE for FALSE/NA (vectorized)
+isTRUE_vec <- function(x) !is.na(x) & x
+
 #' Search the reporting guideline catalog
 #'
 #' Case-insensitive substring search across selected fields of the catalog.
