@@ -42,6 +42,26 @@ test_that("observational study templates are available and build", {
   }
 })
 
+test_that("set_counts rejects invalid count values", {
+  fc <- new_flowchart("prisma_2020")
+  expect_error(set_counts(fc, screened = -1), "non-negative")
+  expect_error(set_counts(fc, screened = "abc"), "non-negative")
+  expect_error(set_counts(fc, screened = 2.5), "whole number")
+  expect_error(set_counts(fc, screened = NA), "non-negative")
+  # reason fields accept free text
+  fc2 <- set_counts(fc, reports_excluded = "Reason A (n = 3)")
+  expect_match(fc2$counts$reports_excluded, "Reason A")
+})
+
+test_that("flowchart_consistency flags impossible counts", {
+  bad <- set_counts(new_flowchart("prisma_2020"), identified_db = 100, screened = 200)
+  expect_gte(length(flowchart_consistency(bad)), 1)
+  ok <- set_counts(new_flowchart("prisma_2020"),
+    identified_db = 200, screened = 100, sought = 50, assessed = 40, studies_included = 30
+  )
+  expect_length(flowchart_consistency(ok), 0)
+})
+
 test_that("background option sets the Graphviz bgcolor", {
   fc <- new_flowchart("cohort_study")
   expect_match(flowchart_dot(fc), 'bgcolor="white"', fixed = TRUE)

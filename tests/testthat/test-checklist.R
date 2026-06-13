@@ -19,6 +19,22 @@ test_that("catalog-only guidelines return NULL with a message", {
   expect_null(res)
 })
 
+test_that("checklist provenance comes from parse_status", {
+  chk <- get_checklist("prisma-2020")
+  expect_true(isTRUE(attr(chk, "verified")))
+  expect_identical(attr(chk, "status"), "parsed_ok")
+  expect_false(isTRUE(attr(chk, "needs_review")))
+  expect_true(!is.null(attr(chk, "parse_method")))
+})
+
+test_that("main families are verified, not silently partial", {
+  ps <- parse_status
+  for (id in c("prisma-2020", "consort", "strobe")) {
+    row <- ps[ps$guideline_id == id, ]
+    expect_true(nrow(row) == 1L && isTRUE(row$verified))
+  }
+})
+
 test_that("validate_checklist counts completed items", {
   chk <- get_checklist("strobe")
   chk$response[1:5] <- "p1"

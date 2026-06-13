@@ -43,6 +43,7 @@ reference:
   - new_flowchart
   - flowchart_fields
   - set_counts
+  - flowchart_consistency
   - render_flowchart
   - flowchart_dot
 - title: Risk of bias

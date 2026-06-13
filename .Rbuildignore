@@ -5,6 +5,7 @@
 ^pkgdown$
 ^data-raw$
 ^refs$
+^audit$
 ^inst/extdata/.*\.json$
 ^\.github$
 ^man/figures/generate_logo\.R$

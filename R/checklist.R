@@ -37,12 +37,20 @@ get_checklist <- function(id) {
     response = NA_character_,
     stringsAsFactors = FALSE
   )
+  # Provenance is a guideline-level property: source it from parse_status, not
+  # from item-level override flags.
+  ps <- get_data("parse_status")
+  psr <- ps[ps$guideline_id == id, , drop = FALSE]
   structure(out,
     class = c("reportilo_checklist", "data.frame"),
     guideline_id = id,
     title = if (length(title)) title else id,
     response_type = sub$response_type[1],
-    verified = isTRUE(unique(sub$is_override)[1])
+    verified = if (nrow(psr)) isTRUE(psr$verified[1]) else isTRUE(unique(sub$is_override)[1]),
+    status = if (nrow(psr)) psr$status[1] else NA_character_,
+    needs_review = if (nrow(psr)) isTRUE(psr$needs_review[1]) else FALSE,
+    parse_method = if (nrow(psr)) psr$parse_method[1] else NA_character_,
+    parse_confidence = if (nrow(psr)) psr$parse_confidence[1] else NA_real_
   )
 }
 
