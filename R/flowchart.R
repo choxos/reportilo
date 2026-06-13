@@ -117,8 +117,15 @@ set_counts <- function(x, ...) {
 # side (sum of `lhs` fields) must not exceed a right-hand side built from a
 # `base` field plus `plus` fields minus `minus` fields. This catches impossible
 # counts (more out than in) without flagging legitimately incomplete diagrams.
-.rule <- function(op, lhs, base = NULL, minus = NULL, plus = NULL) {
-  list(op = op, lhs = lhs, base = base, minus = minus, plus = plus)
+#
+# In complete mode (see flowchart_consistency(complete = TRUE)) a rule is also
+# checked for *exact* accounting (lhs must equal the right-hand side, not merely
+# fall within it) when it is a conservation identity: when it has a `minus` term
+# (its removals are fully specified) or is flagged `exact = TRUE` (a split-only
+# stage with no removals, e.g. the CONSORT randomized-to-arms split, where the
+# parts must sum to the whole).
+.rule <- function(op, lhs, base = NULL, minus = NULL, plus = NULL, exact = FALSE) {
+  list(op = op, lhs = lhs, base = base, minus = minus, plus = plus, exact = exact)
 }
 .flowchart_rules <- list(
   prisma_2020 = list(
@@ -129,7 +136,11 @@ set_counts <- function(x, ...) {
   ),
   consort_2010 = list(
     .rule("le", "randomized", base = "assessed", minus = "excluded_total"),
-    .rule("le", c("alloc_int", "alloc_ctrl"), base = "randomized"),
+    # everyone randomized is allocated to one of the two arms (exact split)
+    .rule("le", c("alloc_int", "alloc_ctrl"), base = "randomized", exact = TRUE),
+    # per arm, allocated = received the allocation + did not receive it (exact split)
+    .rule("le", c("alloc_int_received", "alloc_int_not"), base = "alloc_int", exact = TRUE),
+    .rule("le", c("alloc_ctrl_received", "alloc_ctrl_not"), base = "alloc_ctrl", exact = TRUE),
     .rule("le", "anal_int", base = "alloc_int"),
     .rule("le", "anal_ctrl", base = "alloc_ctrl")
   ),
@@ -140,8 +151,9 @@ set_counts <- function(x, ...) {
   ),
   cohort_study = list(
     .rule("le", c("exposed", "unexposed"), base = "assessed", minus = "excluded_total"),
-    .rule("le", "exp_analyzed", base = "exposed"),
-    .rule("le", "unexp_analyzed", base = "unexposed")
+    # of each cohort, analyzed = entered - lost to follow-up - excluded
+    .rule("le", "exp_analyzed", base = "exposed", minus = c("exp_lost", "exp_excluded")),
+    .rule("le", "unexp_analyzed", base = "unexposed", minus = c("unexp_lost", "unexp_excluded"))
   ),
   case_control = list(
     .rule("le", "cases_eligible", base = "cases_identified"),
@@ -167,16 +179,17 @@ set_counts <- function(x, ...) {
 #'
 #' By default only bounds are checked (not strict equality), so a partially
 #' filled draft is not flagged. Set `complete = TRUE` for a finished diagram to
-#' additionally require *exact* accounting at every stage whose removals or
-#' exclusions are fully specified: there the inflowing count must equal base
-#' minus removals, not merely fall within it. This catches records that are
-#' silently unaccounted for in an otherwise complete diagram.
+#' additionally require *exact* accounting at every conservation stage: a stage
+#' whose removals/exclusions are fully specified (the inflowing count must equal
+#' base minus removals) or a split-only stage (the parts must sum to the whole,
+#' e.g. CONSORT randomized = intervention arm + control arm). This catches
+#' records that are silently unaccounted for in an otherwise complete diagram.
 #'
 #' @param x A `reportilo_flowchart`.
-#' @param complete If `TRUE`, also flag stages where the count is *less* than the
-#'   base minus its fully specified removals (records unaccounted for), not only
-#'   stages where it exceeds the bound. Use this for a final, fully filled
-#'   diagram. Default `FALSE` (bounds only), which suits a draft.
+#' @param complete If `TRUE`, also flag conservation stages where the count is
+#'   *less* than it should be (records unaccounted for), not only stages where it
+#'   exceeds the bound. Use this for a final, fully filled diagram. Default
+#'   `FALSE` (bounds only), which suits a draft.
 #'
 #' @return A character vector of issue messages (empty if the counts are
 #'   consistent).
@@ -217,9 +230,10 @@ flowchart_consistency <- function(x, complete = FALSE) {
     if (lhs_val > rhs_val) {
       issues <- c(issues, sprintf("%s (%d) exceeds %s (%d).",
         lhs_lab, as.integer(lhs_val), rhs_lab, as.integer(rhs_val)))
-    } else if (isTRUE(complete) && !is.null(r$minus) && lhs_val < rhs_val) {
-      # exact accounting: with removals fully specified, the difference should be
-      # absorbed, so a shortfall means records are unaccounted for.
+    } else if (isTRUE(complete) && (isTRUE(r$exact) || !is.null(r$minus)) && lhs_val < rhs_val) {
+      # exact accounting: a conservation identity (removals fully specified, or a
+      # split-only stage) should balance, so a shortfall means records are
+      # unaccounted for.
       issues <- c(issues, sprintf(
         "%s (%d) is less than %s (%d); %d record(s) unaccounted.",
         lhs_lab, as.integer(lhs_val), rhs_lab, as.integer(rhs_val),

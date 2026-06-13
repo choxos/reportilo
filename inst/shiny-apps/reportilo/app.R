@@ -217,6 +217,7 @@ flowchartUI <- function(id) {
       selectInput(ns("template"), "Template", choices = template_choices),
       uiOutput(ns("fields")),
       checkboxInput(ns("transparent"), "Transparent background", FALSE),
+      checkboxInput(ns("complete"), "Final diagram (require exact accounting)", FALSE),
       checkboxInput(ns("allow_warn"), "Export despite consistency warnings", FALSE),
       downloadButton(ns("dl_png"), "PNG", class = "btn-primary btn-sm"),
       downloadButton(ns("dl_svg"), "SVG", class = "btn-secondary btn-sm"),
@@ -274,7 +275,7 @@ flowchartServer <- function(id) {
     bg <- reactive(if (isTRUE(input$transparent)) "transparent" else "white")
 
     output$consistency <- renderUI({
-      issues <- reportilo::flowchart_consistency(fc())
+      issues <- reportilo::flowchart_consistency(fc(), complete = isTRUE(input$complete))
       if (!length(issues)) {
         return(NULL)
       }
@@ -294,14 +295,16 @@ flowchartServer <- function(id) {
       DiagrammeR::grViz(reportilo::flowchart_dot(fc(), background = bg()))
     })
 
-    # strict export blocks impossible diagrams unless the user opts into a draft
+    # strict export blocks inconsistent diagrams unless the user opts into a
+    # draft; "Final diagram" widens the check to exact (complete) accounting
     dl <- function(ext) {
       downloadHandler(
         filename = function() paste0(input$template, ".", ext),
         content = function(file) {
           notify_export(
             reportilo::reportilo_export(fc(), file,
-              format = ext, background = bg(), strict = !isTRUE(input$allow_warn)
+              format = ext, background = bg(),
+              strict = !isTRUE(input$allow_warn), complete = isTRUE(input$complete)
             ),
             ext
           )

@@ -4,7 +4,7 @@
 \alias{reportilo_export}
 \title{Export a checklist or flow diagram to a file}
 \usage{
-reportilo_export(x, file, format = NULL, ..., strict = FALSE)
+reportilo_export(x, file, format = NULL, ..., strict = FALSE, complete = FALSE)
 }
 \arguments{
 \item{x}{A \code{reportilo_checklist}, \code{reportilo_flowchart} or \code{reportilo_rob}.}
@@ -20,8 +20,13 @@ plots accept \code{background} (\code{"white"} or \code{"transparent"}); flow di
 accept \code{width}, and risk-of-bias accepts \code{type}.}
 
 \item{strict}{For flow diagrams: if \code{TRUE}, refuse to export when
-\code{\link[=flowchart_consistency]{flowchart_consistency()}} reports impossible counts (otherwise a warning is
-issued and the file is still written). Default \code{FALSE}.}
+\code{\link[=flowchart_consistency]{flowchart_consistency()}} reports issues (otherwise a warning is issued and
+the file is still written). Default \code{FALSE}.}
+
+\item{complete}{For flow diagrams: passed to \code{\link[=flowchart_consistency]{flowchart_consistency()}}. If
+\code{TRUE}, also treat under-accounted conservation stages as issues (use for a
+final, fully filled diagram). Combine with \code{strict = TRUE} to block export
+of a final diagram that does not balance exactly. Default \code{FALSE}.}
 }
 \value{
 The output \code{file} path, invisibly.

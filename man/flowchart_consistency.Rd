@@ -9,10 +9,10 @@ flowchart_consistency(x, complete = FALSE)
 \arguments{
 \item{x}{A \code{reportilo_flowchart}.}
 
-\item{complete}{If \code{TRUE}, also flag stages where the count is \emph{less} than the
-base minus its fully specified removals (records unaccounted for), not only
-stages where it exceeds the bound. Use this for a final, fully filled
-diagram. Default \code{FALSE} (bounds only), which suits a draft.}
+\item{complete}{If \code{TRUE}, also flag conservation stages where the count is
+\emph{less} than it should be (records unaccounted for), not only stages where it
+exceeds the bound. Use this for a final, fully filled diagram. Default
+\code{FALSE} (bounds only), which suits a draft.}
 }
 \value{
 A character vector of issue messages (empty if the counts are
@@ -27,10 +27,11 @@ cannot exceed \emph{identified - duplicates - automation - other}, and CONSORT
 \details{
 By default only bounds are checked (not strict equality), so a partially
 filled draft is not flagged. Set \code{complete = TRUE} for a finished diagram to
-additionally require \emph{exact} accounting at every stage whose removals or
-exclusions are fully specified: there the inflowing count must equal base
-minus removals, not merely fall within it. This catches records that are
-silently unaccounted for in an otherwise complete diagram.
+additionally require \emph{exact} accounting at every conservation stage: a stage
+whose removals/exclusions are fully specified (the inflowing count must equal
+base minus removals) or a split-only stage (the parts must sum to the whole,
+e.g. CONSORT randomized = intervention arm + control arm). This catches
+records that are silently unaccounted for in an otherwise complete diagram.
 }
 \examples{
 fc <- set_counts(new_flowchart("prisma_2020"), identified_db = 100, screened = 200)

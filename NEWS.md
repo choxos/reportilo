@@ -6,9 +6,14 @@ First development release.
   (R-CMD-check) and a pkgdown website.
 * `launch_reportilo()` starts the bundled Shiny application.
 * `flowchart_consistency()` gains a `complete` argument: with `complete = TRUE`
-  it requires exact accounting (no silently unaccounted records) at every stage
-  whose removals or exclusions are fully specified, for checking a finished
-  diagram. The default remains bounds-only, suited to a draft.
+  it requires exact accounting (no silently unaccounted records) at every
+  conservation stage, both stages whose removals/exclusions are fully specified
+  and split-only stages (the parts must sum to the whole, e.g. CONSORT
+  randomized = intervention arm + control arm, and the per-arm received splits).
+  The default remains bounds-only, suited to a draft.
+* `reportilo_export()` gains a matching `complete` argument for flow diagrams;
+  combined with `strict = TRUE` it blocks export of a final diagram that does not
+  balance exactly. The Shiny app exposes this as a "Final diagram" toggle.
 
 Subsequent pull requests add the EQUATOR guideline catalog and checklist data,
 the checklist and flow diagram API, the Word / Excel / image export engine, the
