@@ -4,9 +4,11 @@
 #' package: browse the EQUATOR guideline catalog, fill in a reporting checklist
 #' or a flow diagram, and download the result as Word, Excel or an image.
 #'
-#' The application requires the suggested packages `shiny`, `bslib` and `DT`.
-#' Install them with `install.packages(c("shiny", "bslib", "DT"))` if they are
-#' not already available.
+#' The application requires the suggested packages `shiny`, `bslib`, `DT` and
+#' `DiagrammeR`. Install them with
+#' `install.packages(c("shiny", "bslib", "DT", "DiagrammeR"))` if they are not
+#' already available. Word, Excel and image downloads additionally use `officer`,
+#' `flextable`, `openxlsx`, `DiagrammeRsvg` and `rsvg`.
 #'
 #' @param ... Additional arguments passed to [shiny::runApp()].
 #'
@@ -24,7 +26,7 @@ launch_reportilo <- function(...) {
       call. = FALSE
     )
   }
-  for (pkg in c("shiny", "bslib", "DT")) {
+  for (pkg in c("shiny", "bslib", "DT", "DiagrammeR")) {
     if (!requireNamespace(pkg, quietly = TRUE)) {
       stop(
         "Package `", pkg, "` is required to run the app. Install it with ",
