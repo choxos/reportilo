@@ -1,38 +1,49 @@
-// Port of reportilo's flowchart_consistency(): template-specific sanity rules so
-// the browser app flags impossible flow diagrams (kept in step with R/flowchart.R).
+// Port of reportilo's flowchart_consistency(): accounting bounds so the browser
+// app flags impossible flow diagrams. Kept in step with R/flowchart.R.
+// Each rule asserts: sum(lhs) <= base - sum(minus). Bounds (not equality), so a
+// partially filled diagram is not flagged, but "more out than in" is.
 
 interface Rule {
-  whole: string;
-  parts: string[];
+  lhs: string[];
+  base: string;
+  minus?: string[];
 }
 
 const RULES: Record<string, Rule[]> = {
   prisma_2020: [
-    { whole: "identified_db", parts: ["screened"] },
-    { whole: "screened", parts: ["sought"] },
-    { whole: "sought", parts: ["assessed"] },
-    { whole: "assessed", parts: ["studies_included"] },
+    { lhs: ["screened"], base: "identified_db", minus: ["duplicates", "auto_removed", "other_removed"] },
+    { lhs: ["sought"], base: "screened", minus: ["excluded"] },
+    { lhs: ["assessed"], base: "sought", minus: ["not_retrieved"] },
+    { lhs: ["studies_included"], base: "assessed" },
   ],
   consort_2010: [
-    { whole: "assessed", parts: ["randomized"] },
-    { whole: "randomized", parts: ["alloc_int", "alloc_ctrl"] },
-    { whole: "alloc_int", parts: ["anal_int"] },
-    { whole: "alloc_ctrl", parts: ["anal_ctrl"] },
+    { lhs: ["randomized"], base: "assessed", minus: ["excluded_total"] },
+    { lhs: ["alloc_int", "alloc_ctrl"], base: "randomized" },
+    { lhs: ["anal_int"], base: "alloc_int" },
+    { lhs: ["anal_ctrl"], base: "alloc_ctrl" },
   ],
   stard_2015: [
-    { whole: "eligible", parts: ["index_test"] },
-    { whole: "index_test", parts: ["reference"] },
-    { whole: "reference", parts: ["analyzed"] },
+    { lhs: ["index_test"], base: "eligible", minus: ["no_index"] },
+    { lhs: ["reference"], base: "index_test", minus: ["no_reference"] },
+    { lhs: ["analyzed"], base: "reference" },
   ],
   cohort_study: [
-    { whole: "assessed", parts: ["exposed", "unexposed"] },
-    { whole: "exposed", parts: ["exp_analyzed"] },
-    { whole: "unexposed", parts: ["unexp_analyzed"] },
+    { lhs: ["exposed", "unexposed"], base: "assessed", minus: ["excluded_total"] },
+    { lhs: ["exp_analyzed"], base: "exposed" },
+    { lhs: ["unexp_analyzed"], base: "unexposed" },
+  ],
+  case_control: [
+    { lhs: ["cases_eligible"], base: "cases_identified" },
+    { lhs: ["cases_enrolled"], base: "cases_eligible", minus: ["cases_excluded"] },
+    { lhs: ["cases_analyzed"], base: "cases_enrolled" },
+    { lhs: ["controls_eligible"], base: "controls_identified" },
+    { lhs: ["controls_enrolled"], base: "controls_eligible", minus: ["controls_excluded"] },
+    { lhs: ["controls_analyzed"], base: "controls_enrolled" },
   ],
   cross_sectional: [
-    { whole: "target", parts: ["invited"] },
-    { whole: "invited", parts: ["participated"] },
-    { whole: "participated", parts: ["analyzed"] },
+    { lhs: ["invited"], base: "target", minus: ["not_eligible"] },
+    { lhs: ["participated"], base: "invited", minus: ["nonresponse"] },
+    { lhs: ["analyzed"], base: "participated" },
   ],
 };
 
@@ -47,17 +58,17 @@ export function flowchartConsistency(
     const v = parseFloat(counts[f]);
     return Number.isFinite(v) ? v : NaN;
   };
+  const lab = (k: string) => labels[k] ?? k;
   const issues: string[] = [];
   for (const r of rules) {
-    const whole = num(r.whole);
-    const parts = r.parts.map(num);
-    if ([whole, ...parts].some(Number.isNaN)) continue;
-    const sum = parts.reduce((a, b) => a + b, 0);
-    if (whole < sum) {
-      const lab = (k: string) => labels[k] ?? k;
-      issues.push(
-        `${lab(r.whole)} (${whole}) is less than ${r.parts.map(lab).join(" + ")} (${sum}).`,
-      );
+    const fields = [...r.lhs, r.base, ...(r.minus ?? [])];
+    if (fields.map(num).some(Number.isNaN)) continue;
+    const lhsVal = r.lhs.reduce((a, f) => a + num(f), 0);
+    const rhsVal = num(r.base) - (r.minus ?? []).reduce((a, f) => a + num(f), 0);
+    if (lhsVal > rhsVal) {
+      let rhsLab = lab(r.base);
+      if (r.minus?.length) rhsLab += ` - ${r.minus.map(lab).join(" - ")}`;
+      issues.push(`${r.lhs.map(lab).join(" + ")} (${lhsVal}) exceeds ${rhsLab} (${rhsVal}).`);
     }
   }
   return issues;

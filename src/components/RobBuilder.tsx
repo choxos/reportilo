@@ -5,6 +5,7 @@ import { downloadPng, downloadSvg, svgToPng } from "../lib/exportImage";
 import { flowchartDocx } from "../lib/exportDocx";
 import { robXlsx } from "../lib/exportXlsx";
 import { saveText, toCsv, saveJson, readJsonFile } from "../lib/download";
+import { validateRobFile } from "../lib/loadValidate";
 import { sanitizeSvg } from "../lib/sanitize";
 
 interface Row {
@@ -20,7 +21,8 @@ export default function RobBuilder({ data }: { data: Dataset }) {
   const [error, setError] = useState<string | null>(null);
   const loadInput = useRef<HTMLInputElement>(null);
 
-  const tool = tools.find((t) => t.tool_id === toolId)!;
+  // defensive: never crash if toolId is somehow unknown (e.g. a stale saved file)
+  const tool = tools.find((t) => t.tool_id === toolId) ?? tools[0];
   const toolLevels = useMemo(() => tool.levels.split("; "), [tool]);
 
   const domains = useMemo(() => {
@@ -77,9 +79,10 @@ export default function RobBuilder({ data }: { data: Dataset }) {
   const onLoad = async (file: File) => {
     setError(null);
     try {
-      const obj = await readJsonFile<{ tool?: string; rows?: Row[] }>(file);
-      if (obj.tool && obj.tool !== toolId) setToolId(obj.tool);
-      if (obj.rows) setRowsByTool((m) => ({ ...m, [obj.tool ?? toolId]: obj.rows! }));
+      const obj = await readJsonFile<unknown>(file);
+      const parsed = validateRobFile(obj, tools);
+      if (parsed.tool !== toolId) setToolId(parsed.tool);
+      setRowsByTool((m) => ({ ...m, [parsed.tool]: parsed.rows }));
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     }

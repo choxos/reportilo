@@ -8,6 +8,7 @@ import { flowchartXlsx } from "../lib/exportXlsx";
 import { saveText, toCsv, saveJson, readJsonFile } from "../lib/download";
 import { sanitizeSvg } from "../lib/sanitize";
 import { flowchartConsistency } from "../lib/consistency";
+import { validateFlowchartFile } from "../lib/loadValidate";
 
 export default function FlowchartBuilder({ data }: { data: Dataset }) {
   const templates = data.flowcharts.templates;
@@ -33,9 +34,15 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
   const [transparent, setTransparent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const loadInput = useRef<HTMLInputElement>(null);
+  // counts staged by a cross-template load, applied once the new fields are in
+  const pending = useRef<Record<string, string> | null>(null);
   useEffect(() => {
     const init: Record<string, string> = {};
     for (const f of fields) init[f.count_field] = f.value;
+    if (pending.current) {
+      Object.assign(init, pending.current);
+      pending.current = null;
+    }
     setCounts(init);
   }, [templateId]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -85,9 +92,14 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
   const onLoad = async (file: File) => {
     setError(null);
     try {
-      const obj = await readJsonFile<{ template?: string; counts?: Record<string, string> }>(file);
-      if (obj.template && obj.template !== templateId) setTemplateId(obj.template);
-      if (obj.counts) setCounts((c) => ({ ...c, ...obj.counts }));
+      const obj = await readJsonFile<unknown>(file);
+      const parsed = validateFlowchartFile(obj, data.flowcharts.counts, templateId);
+      if (parsed.template !== templateId) {
+        pending.current = parsed.counts; // applied after the template effect runs
+        setTemplateId(parsed.template);
+      } else {
+        setCounts((c) => ({ ...c, ...parsed.counts }));
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     }

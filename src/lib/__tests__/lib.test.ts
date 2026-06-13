@@ -3,7 +3,13 @@ import { toCsv, csvSafe } from "../download";
 import { flowchartDot } from "../dot";
 import { robTrafficLightSvg, robSummarySvg, type RobInput } from "../rob";
 import { sanitizeSvg } from "../sanitize";
-import type { FlowNode, FlowEdge } from "../../types";
+import { flowchartConsistency } from "../consistency";
+import {
+  validateChecklistFile,
+  validateFlowchartFile,
+  validateRobFile,
+} from "../loadValidate";
+import type { FlowNode, FlowEdge, Guideline, FlowCount, RobTool } from "../../types";
 
 describe("csv safety", () => {
   it("neutralizes formula triggers", () => {
@@ -66,5 +72,59 @@ describe("sanitizeSvg", () => {
     expect(clean).not.toContain("<script");
     expect(clean).not.toContain("onload");
     expect(clean).toContain("circle");
+  });
+});
+
+describe("flowchart consistency (webapp)", () => {
+  const labels = { cases_identified: "Cases identified", cases_eligible: "Cases eligible" };
+  it("flags case_control eligible > identified", () => {
+    const issues = flowchartConsistency(
+      "case_control",
+      { cases_identified: "10", cases_eligible: "20" },
+      labels,
+    );
+    expect(issues.length).toBeGreaterThan(0);
+  });
+  it("does not flag a partially filled diagram", () => {
+    expect(flowchartConsistency("prisma_2020", { identified_db: "100" }, {})).toEqual([]);
+  });
+});
+
+describe("save/load validators", () => {
+  const guidelines = [
+    { guideline_id: "prisma-2020", has_checklist: true },
+    { guideline_id: "catalog-only", has_checklist: false },
+  ] as unknown as Guideline[];
+  const counts = [
+    { template_id: "prisma_2020", count_field: "screened", is_reasons: false },
+    { template_id: "prisma_2020", count_field: "reports_excluded", is_reasons: true },
+  ] as unknown as FlowCount[];
+  const tools = [{ tool_id: "rob2" }] as unknown as RobTool[];
+
+  it("checklist: rejects unknown/ catalog-only guideline, accepts valid", () => {
+    expect(() => validateChecklistFile({ guideline: "nope" }, guidelines)).toThrow();
+    expect(() => validateChecklistFile({ guideline: "catalog-only" }, guidelines)).toThrow();
+    expect(() => validateChecklistFile("not an object", guidelines)).toThrow();
+    expect(validateChecklistFile({ guideline: "prisma-2020", responses: { a: "p1" } }, guidelines))
+      .toEqual({ guideline: "prisma-2020", responses: { a: "p1" } });
+  });
+
+  it("flowchart: drops unknown keys and negative counts, rejects unknown template", () => {
+    expect(() => validateFlowchartFile({ template: "nope" }, counts, "prisma_2020")).toThrow();
+    const out = validateFlowchartFile(
+      { template: "prisma_2020", counts: { screened: "5", bogus: "9", reports_excluded: "R1 (n=2)" } },
+      counts,
+      "prisma_2020",
+    );
+    expect(out.counts).toEqual({ screened: "5", reports_excluded: "R1 (n=2)" });
+    const neg = validateFlowchartFile({ counts: { screened: "-3" } }, counts, "prisma_2020");
+    expect(neg.counts.screened).toBeUndefined();
+  });
+
+  it("rob: rejects unknown tool and non-array rows, sanitizes rows", () => {
+    expect(() => validateRobFile({ tool: "nope", rows: [] }, tools)).toThrow();
+    expect(() => validateRobFile({ tool: "rob2" }, tools)).toThrow();
+    const out = validateRobFile({ tool: "rob2", rows: [{ study: "S1", values: { D1: "Low" } }] }, tools);
+    expect(out.rows[0]).toEqual({ study: "S1", values: { D1: "Low" } });
   });
 });

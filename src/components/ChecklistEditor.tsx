@@ -3,6 +3,7 @@ import { checklistFor, type Dataset } from "../lib/data";
 import { checklistDocx, type ChecklistRow } from "../lib/exportDocx";
 import { checklistXlsx } from "../lib/exportXlsx";
 import { saveText, toCsv, saveJson, readJsonFile } from "../lib/download";
+import { validateChecklistFile } from "../lib/loadValidate";
 
 export default function ChecklistEditor({ data }: { data: Dataset }) {
   const options = useMemo(
@@ -11,9 +12,11 @@ export default function ChecklistEditor({ data }: { data: Dataset }) {
         .filter((g) => g.has_checklist)
         .map((g) => ({
           id: g.guideline_id,
-          label: `${g.acronym ?? g.guideline_id} — ${(g.title ?? "").slice(0, 70)}`,
+          // dropdown shows only the name (acronym, or the title when there is no acronym)
+          name: g.acronym ?? g.title ?? g.guideline_id,
+          description: g.title ?? "",
         }))
-        .sort((a, b) => a.label.localeCompare(b.label)),
+        .sort((a, b) => a.name.localeCompare(b.name)),
     [data],
   );
 
@@ -39,7 +42,9 @@ export default function ChecklistEditor({ data }: { data: Dataset }) {
       response: responses[i.item_uid] ?? "",
     }));
 
-  const title = options.find((o) => o.id === guidelineId)?.label ?? guidelineId;
+  const selected = options.find((o) => o.id === guidelineId);
+  const title = selected?.name ?? guidelineId;
+  const description = selected?.description ?? "";
 
   const runExport = (fn: () => void | Promise<void>) => async () => {
     setError(null);
@@ -53,9 +58,10 @@ export default function ChecklistEditor({ data }: { data: Dataset }) {
   const onLoad = async (file: File) => {
     setError(null);
     try {
-      const obj = await readJsonFile<{ guideline?: string; responses?: Record<string, string> }>(file);
-      if (obj.guideline && obj.guideline !== guidelineId) setGuidelineId(obj.guideline);
-      if (obj.responses) setResponses(obj.responses);
+      const obj = await readJsonFile<unknown>(file);
+      const parsed = validateChecklistFile(obj, data.guidelines);
+      if (parsed.guideline !== guidelineId) setGuidelineId(parsed.guideline);
+      setResponses(parsed.responses);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     }
@@ -75,10 +81,13 @@ export default function ChecklistEditor({ data }: { data: Dataset }) {
         >
           {options.map((o) => (
             <option key={o.id} value={o.id}>
-              {o.label}
+              {o.name}
             </option>
           ))}
         </select>
+        {description && description !== title && (
+          <p className="text-xs text-slate-600 -mt-1">{description}</p>
+        )}
 
         <div className="space-y-1">
           <span

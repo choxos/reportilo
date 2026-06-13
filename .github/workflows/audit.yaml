@@ -1,0 +1,29 @@
+# Visibility for the development-dependency advisory chain (Vite/Vitest/esbuild).
+# The deploy workflow already gates on production deps (npm audit --omit=dev).
+# This runs the full audit on a schedule and on demand so the dev-chain status
+# stays visible without blocking deploys.
+name: audit.yaml
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - name: Production dependencies (must be clean)
+        run: npm audit --omit=dev --audit-level=high
+      - name: Full audit (informational, dev chain included)
+        run: npm audit || true

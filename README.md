@@ -13,17 +13,25 @@ The R package, its bundled Shiny app and this browser app all read the same data
 
 - React 18 + TypeScript, built with Vite
 - Tailwind CSS
-- Graphviz in the browser via `@hpcc-js/wasm` (flow diagram rendering)
-- `docx` (Word), SheetJS `xlsx` (Excel), and canvas (PNG) for client-side export
+- Graphviz in the browser via `@hpcc-js/wasm-graphviz` (flow diagram rendering)
+- `docx` (Word), `write-excel-file` (Excel), canvas (PNG/SVG) for client-side export
+- `dompurify` to sanitize generated SVG before injection
 
 ## Develop
 
 ```bash
 npm install
-npm run dev        # http://localhost:5173
+npm run dev                              # http://localhost:5173
 npm run typecheck
-npm run build      # outputs to dist/
+npm test                                 # Vitest unit tests
+npm audit --omit=dev --audit-level=high  # production dependency gate (must be clean)
+npm run build                            # outputs to dist/
 ```
+
+The full `npm audit` (including dev dependencies) currently reports advisories in
+the Vite/Vitest/esbuild dev toolchain. These do not affect the shipped static
+site (the production audit above is clean); track the Vite/Vitest upgrade path
+and re-test when fixed versions are available.
 
 ## Data
 
