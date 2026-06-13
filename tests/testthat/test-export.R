@@ -57,6 +57,17 @@ test_that("flow diagram exports filled counts to CSV", {
   expect_true("1200" %in% as.character(back$value))
 })
 
+test_that("CSV export neutralizes spreadsheet formula injection", {
+  chk <- get_checklist("strobe")
+  chk$response[1] <- "=HYPERLINK(\"http://evil\")"
+  chk$response[2] <- "+cmd"
+  f <- tempfile(fileext = ".csv")
+  reportilo_export(chk, f)
+  back <- utils::read.csv(f, stringsAsFactors = FALSE)
+  expect_true(startsWith(back$response[1], "'="))
+  expect_true(startsWith(back$response[2], "'+"))
+})
+
 test_that("format inference and errors behave", {
   chk <- get_checklist("strobe")
   expect_error(reportilo_export(chk, tempfile(fileext = ".png")), "Unsupported checklist")

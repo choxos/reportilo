@@ -9,6 +9,7 @@ docs/
 
 # reference material and reproducibility scratch (local only)
 refs/
+audit/
 
 # data pipeline: downloaded third-party files and caches are not redistributed
 data-raw/downloads/
