@@ -1,0 +1,161 @@
+# reportilo
+
+`reportilo` turns the [EQUATOR
+Network](https://www.equator-network.org/) library of health research
+reporting guidelines into a working toolkit. Find a guideline, fill in
+its reporting checklist or flow diagram, and export the result to Word,
+Excel or an image.
+
+It ships three coordinated front ends from a single source of truth:
+
+- the **R package** (data and functions documented here),
+- a bundled, modern **Shiny application**
+  ([`launch_reportilo()`](https://choxos.github.io/reportilo/reference/launch_reportilo.md)),
+  and
+- a companion **browser application** at
+  <https://choxos.github.io/reportilo/app/>.
+
+## What is inside
+
+- A searchable **catalog** of the EQUATOR reporting guidelines.
+- Machine-readable **checklists** for the major families (CONSORT,
+  STROBE, PRISMA, SPIRIT, STARD and more), with provenance and
+  parse-confidence for every item.
+- Data-driven **flow diagram** templates: PRISMA 2020, CONSORT and
+  STARD.
+- An **export engine** for Word (`.docx`), Excel (`.xlsx`) and image
+  (`.png` / `.svg` / `.pdf`) output.
+
+## Installation
+
+``` r
+
+# install.packages("pak")
+pak::pak("choxos/reportilo")
+```
+
+## Quick start
+
+``` r
+
+library(reportilo)
+
+# 1. Find a guideline
+search_guidelines("randomized trial")
+guideline_info("consort-2010")
+
+# 2. Fill in its checklist
+chk <- get_checklist("prisma-2020")
+chk$page[1:3] <- c("1", "2", "2")
+
+# 3. Export
+reportilo_export(chk, "prisma-checklist.docx")
+
+# Flow diagrams work the same way
+fc <- new_flowchart("prisma_2020")
+fc <- set_counts(fc, database_results = 1200, records_screened = 980)
+reportilo_export(fc, "prisma-flow.png")
+```
+
+Prefer to point and click?
+
+``` r
+
+launch_reportilo()
+```
+
+## Data provenance
+
+Guideline metadata is derived from the EQUATOR Network reporting
+guideline library. Checklist items are extracted from the guideline
+source documents; guidelines without a machine-readable checklist remain
+available as catalog entries that link to their original source. See
+`parse_status` for per-guideline coverage.
+
+## License
+
+GPL-3. The reporting guidelines themselves are the work of their
+respective authors and are subject to their own terms; `reportilo` links
+to each source.
+
+# Package index
+
+## Find guidelines
+
+Browse and search the EQUATOR reporting guideline catalog.
+
+- [`reportilo_guidelines()`](https://choxos.github.io/reportilo/reference/reportilo_guidelines.md)
+  : Browse the EQUATOR reporting guideline catalog
+- [`search_guidelines()`](https://choxos.github.io/reportilo/reference/search_guidelines.md)
+  : Search the reporting guideline catalog
+- [`guideline_info()`](https://choxos.github.io/reportilo/reference/guideline_info.md)
+  : Look up a single reporting guideline
+
+## Fill in checklists
+
+Retrieve and complete a reporting checklist.
+
+- [`get_checklist()`](https://choxos.github.io/reportilo/reference/get_checklist.md)
+  [`new_checklist()`](https://choxos.github.io/reportilo/reference/get_checklist.md)
+  : Get a fillable reporting checklist
+- [`validate_checklist()`](https://choxos.github.io/reportilo/reference/validate_checklist.md)
+  : Validate a filled checklist
+
+## Build flow diagrams
+
+Create and fill PRISMA, CONSORT and STARD flow diagrams.
+
+- [`new_flowchart()`](https://choxos.github.io/reportilo/reference/new_flowchart.md)
+  : Create a fillable flow diagram
+- [`flowchart_fields()`](https://choxos.github.io/reportilo/reference/flowchart_fields.md)
+  : List the fillable fields of a flow diagram template
+- [`set_counts()`](https://choxos.github.io/reportilo/reference/set_counts.md)
+  : Set counts on a flow diagram
+- [`render_flowchart()`](https://choxos.github.io/reportilo/reference/render_flowchart.md)
+  : Render a flow diagram for viewing
+- [`flowchart_dot()`](https://choxos.github.io/reportilo/reference/flowchart_dot.md)
+  : Build the Graphviz DOT for a flow diagram
+
+## Export
+
+Write a filled checklist or flow diagram to Word, Excel or an image.
+
+- [`reportilo_export()`](https://choxos.github.io/reportilo/reference/reportilo_export.md)
+  : Export a checklist or flow diagram to a file
+
+## Application
+
+- [`launch_reportilo()`](https://choxos.github.io/reportilo/reference/launch_reportilo.md)
+  : Launch the reportilo Shiny application
+
+## Data
+
+Bundled datasets.
+
+- [`guidelines`](https://choxos.github.io/reportilo/reference/guidelines.md)
+  : EQUATOR reporting guideline registry
+- [`checklist_items`](https://choxos.github.io/reportilo/reference/checklist_items.md)
+  : Reporting guideline checklist items
+- [`parse_status`](https://choxos.github.io/reportilo/reference/parse_status.md)
+  : Checklist extraction status
+- [`flowchart_nodes`](https://choxos.github.io/reportilo/reference/flowchart_nodes.md)
+  : Flow diagram template nodes
+- [`flowchart_edges`](https://choxos.github.io/reportilo/reference/flowchart_edges.md)
+  : Flow diagram template edges
+- [`flowchart_counts`](https://choxos.github.io/reportilo/reference/flowchart_counts.md)
+  : Flow diagram fillable counts
+- [`flowchart_templates`](https://choxos.github.io/reportilo/reference/flowchart_templates.md)
+  : Flow diagram templates
+
+# Articles
+
+### All vignettes
+
+- [Filling in reporting
+  checklists](https://choxos.github.io/reportilo/articles/checklists.md):
+- [Exporting to Word, Excel and
+  images](https://choxos.github.io/reportilo/articles/export.md):
+- [Building flow
+  diagrams](https://choxos.github.io/reportilo/articles/flowcharts.md):
+- [Getting started with
+  reportilo](https://choxos.github.io/reportilo/articles/reportilo.md):
