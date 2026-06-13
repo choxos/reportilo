@@ -14,9 +14,12 @@ A character vector of issue messages (empty if the counts are
 consistent).
 }
 \description{
-Apply template-specific sanity rules (for example, \emph{screened} cannot exceed
-\emph{identified}, \emph{randomized} cannot exceed \emph{assessed for eligibility}). Reason
-fields are ignored.
+Apply template-specific accounting bounds, including flow invariants where the
+template has explicit removal/exclusion counts: for example PRISMA \emph{screened}
+cannot exceed \emph{identified - duplicates - automation - other}, and CONSORT
+\emph{randomized} cannot exceed \emph{assessed - excluded}. Reason fields are ignored.
+Bounds are checked (not strict equality), so a partially filled diagram is not
+flagged.
 }
 \examples{
 fc <- set_counts(new_flowchart("prisma_2020"), identified_db = 100, screened = 200)
