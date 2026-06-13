@@ -67,15 +67,15 @@ search_guidelines("randomised trial")
 #> 349                                                                                  CONSORT 2010 statement: extension checklist for reporting within person randomised trials
 #> 674                                                                                                             Consort 2010 statement: extension to cluster randomised trials
 #> 684                                                                                                CONSORT for reporting randomised trials in journal and conference abstracts
-#>                              study_design has_checklist
-#> 278 Clinical trials, Experimental studies          TRUE
-#> 304 Clinical trials, Experimental studies          TRUE
-#> 307 Clinical trials, Experimental studies          TRUE
-#> 320 Clinical trials, Experimental studies         FALSE
-#> 348 Clinical trials, Experimental studies          TRUE
-#> 349 Clinical trials, Experimental studies         FALSE
-#> 674 Clinical trials, Experimental studies         FALSE
-#> 684 Clinical trials, Experimental studies         FALSE
+#>              category                          study_design has_checklist
+#> 278             Other Clinical trials, Experimental studies          TRUE
+#> 304             Other Clinical trials, Experimental studies          TRUE
+#> 307 Randomised trials Clinical trials, Experimental studies          TRUE
+#> 320 Randomised trials Clinical trials, Experimental studies         FALSE
+#> 348 Randomised trials Clinical trials, Experimental studies          TRUE
+#> 349             Other Clinical trials, Experimental studies         FALSE
+#> 674 Randomised trials Clinical trials, Experimental studies         FALSE
+#> 684 Randomised trials Clinical trials, Experimental studies         FALSE
 search_guidelines("qualitative")
 #>                                                                     guideline_id
 #> 10                                                                        mentor
@@ -263,6 +263,68 @@ search_guidelines("qualitative")
 #> 651                                                                                                              Guidelines for conducting and reporting mixed research in the field of counseling and beyond
 #> 656                                                                                                                         Enhancing transparency in reporting the synthesis of qualitative research: ENTREQ
 #> 699                                                                                    Consolidated criteria for reporting qualitative research (COREQ) : a 32-item checklist for interviews and focus groups
+#>                          category
+#> 10           Qualitative research
+#> 14           Qualitative research
+#> 55           Qualitative research
+#> 59           Qualitative research
+#> 63           Qualitative research
+#> 66           Qualitative research
+#> 68                Study protocols
+#> 78           Qualitative research
+#> 83           Qualitative research
+#> 84           Qualitative research
+#> 95           Qualitative research
+#> 109            Systematic reviews
+#> 125          Qualitative research
+#> 128          Qualitative research
+#> 130          Qualitative research
+#> 133          Qualitative research
+#> 139          Qualitative research
+#> 140          Qualitative research
+#> 153            Systematic reviews
+#> 155          Qualitative research
+#> 159          Qualitative research
+#> 161            Systematic reviews
+#> 162          Qualitative research
+#> 165          Qualitative research
+#> 169 Diagnostic/prognostic studies
+#> 186          Qualitative research
+#> 191          Qualitative research
+#> 195          Qualitative research
+#> 200                         Other
+#> 205          Qualitative research
+#> 241          Qualitative research
+#> 242          Qualitative research
+#> 246          Qualitative research
+#> 253            Systematic reviews
+#> 258          Qualitative research
+#> 282            Systematic reviews
+#> 284          Qualitative research
+#> 288          Qualitative research
+#> 294          Qualitative research
+#> 300          Qualitative research
+#> 313          Qualitative research
+#> 344            Systematic reviews
+#> 363          Qualitative research
+#> 371                         Other
+#> 380          Qualitative research
+#> 395          Qualitative research
+#> 426          Qualitative research
+#> 429          Qualitative research
+#> 436          Qualitative research
+#> 461          Economic evaluations
+#> 470          Qualitative research
+#> 482          Qualitative research
+#> 484          Qualitative research
+#> 611          Qualitative research
+#> 615          Qualitative research
+#> 618          Qualitative research
+#> 626          Qualitative research
+#> 629          Qualitative research
+#> 651          Qualitative research
+#> 656          Qualitative research
+#> 699          Qualitative research
 #>                                                                                                                                                                                                                    study_design
 #> 10                                                                                                                                                                                                         Qualitative research
 #> 14                                                                                                                                                                                                         Qualitative research

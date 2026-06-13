@@ -74,6 +74,19 @@ A data frame with one row per guideline and columns including:
 
   Factor: "checklist" or "catalog_only".
 
+- category:
+
+  Factor; EQUATOR main study type (e.g. "Randomised trials",
+  "Observational studies"), with "Other" as the catch-all.
+
+- category_order:
+
+  Integer ordering of `category` for display.
+
+- is_primary:
+
+  Logical; the flagship guideline of its family (shown first).
+
 ## Source
 
 EQUATOR Network reporting guideline library,

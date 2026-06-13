@@ -106,18 +106,19 @@ checklist or flow diagram, and <strong>export</strong> the result.</p>
 <span><span class="co">#&gt; 307                                                                      Reporting randomised trials of social and psychological interventions: the CONSORT-SPI 2018 Extension</span></span>
 <span><span class="co">#&gt; 320                                                                   CONSORT-Equity 2017 extension and elaboration for better reporting of health equity in randomised trials</span></span>
 <span><span class="co">#&gt; 348                                                                                                  CONSORT 2025 Statement: updated guideline for reporting randomised trials</span></span>
-<span><span class="co">#&gt;                              study_design has_checklist</span></span>
-<span><span class="co">#&gt; 278 Clinical trials, Experimental studies          TRUE</span></span>
-<span><span class="co">#&gt; 304 Clinical trials, Experimental studies          TRUE</span></span>
-<span><span class="co">#&gt; 307 Clinical trials, Experimental studies          TRUE</span></span>
-<span><span class="co">#&gt; 320 Clinical trials, Experimental studies         FALSE</span></span>
-<span><span class="co">#&gt; 348 Clinical trials, Experimental studies          TRUE</span></span></code></pre></div>
+<span><span class="co">#&gt;              category                          study_design has_checklist</span></span>
+<span><span class="co">#&gt; 278             Other Clinical trials, Experimental studies          TRUE</span></span>
+<span><span class="co">#&gt; 304             Other Clinical trials, Experimental studies          TRUE</span></span>
+<span><span class="co">#&gt; 307 Randomised trials Clinical trials, Experimental studies          TRUE</span></span>
+<span><span class="co">#&gt; 320 Randomised trials Clinical trials, Experimental studies         FALSE</span></span>
+<span><span class="co">#&gt; 348 Randomised trials Clinical trials, Experimental studies          TRUE</span></span></code></pre></div>
 <p>Look up one guideline (by <code>guideline_id</code> or an unambiguous
 acronym):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/guideline_info.html">guideline_info</a></span><span class="op">(</span><span class="st">"prisma-2020"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; PRISMA 2020 - The PRISMA 2020 statement: An updated guideline for reporting systematic reviews</span></span>
 <span><span class="co">#&gt; ------------------------------------------------------------</span></span>
+<span><span class="co">#&gt; Category     : Systematic reviews</span></span>
 <span><span class="co">#&gt; Study design : Systematic reviews/Meta-analyses/Reviews/HTA/Overviews</span></span>
 <span><span class="co">#&gt; Checklist    : yes (get_checklist())</span></span>
 <span><span class="co">#&gt; Flow diagram : prisma_2020 (new_flowchart())</span></span>

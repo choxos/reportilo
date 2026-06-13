@@ -6,6 +6,8 @@ Browse and search the EQUATOR reporting guideline catalog.
 
 - [`reportilo_guidelines()`](https://choxos.github.io/reportilo/reference/reportilo_guidelines.md)
   : Browse the EQUATOR reporting guideline catalog
+- [`reportilo_categories()`](https://choxos.github.io/reportilo/reference/reportilo_categories.md)
+  : EQUATOR study-type categories
 - [`search_guidelines()`](https://choxos.github.io/reportilo/reference/search_guidelines.md)
   : Search the reporting guideline catalog
 - [`guideline_info()`](https://choxos.github.io/reportilo/reference/guideline_info.md)

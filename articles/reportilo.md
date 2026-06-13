@@ -34,12 +34,12 @@ head(search_guidelines("randomised trial"), 5)
 #> 307                                                                      Reporting randomised trials of social and psychological interventions: the CONSORT-SPI 2018 Extension
 #> 320                                                                   CONSORT-Equity 2017 extension and elaboration for better reporting of health equity in randomised trials
 #> 348                                                                                                  CONSORT 2025 Statement: updated guideline for reporting randomised trials
-#>                              study_design has_checklist
-#> 278 Clinical trials, Experimental studies          TRUE
-#> 304 Clinical trials, Experimental studies          TRUE
-#> 307 Clinical trials, Experimental studies          TRUE
-#> 320 Clinical trials, Experimental studies         FALSE
-#> 348 Clinical trials, Experimental studies          TRUE
+#>              category                          study_design has_checklist
+#> 278             Other Clinical trials, Experimental studies          TRUE
+#> 304             Other Clinical trials, Experimental studies          TRUE
+#> 307 Randomised trials Clinical trials, Experimental studies          TRUE
+#> 320 Randomised trials Clinical trials, Experimental studies         FALSE
+#> 348 Randomised trials Clinical trials, Experimental studies          TRUE
 ```
 
 Look up one guideline (by `guideline_id` or an unambiguous acronym):
@@ -49,6 +49,7 @@ Look up one guideline (by `guideline_id` or an unambiguous acronym):
 guideline_info("prisma-2020")
 #> PRISMA 2020 - The PRISMA 2020 statement: An updated guideline for reporting systematic reviews
 #> ------------------------------------------------------------
+#> Category     : Systematic reviews
 #> Study design : Systematic reviews/Meta-analyses/Reviews/HTA/Overviews
 #> Checklist    : yes (get_checklist())
 #> Flow diagram : prisma_2020 (new_flowchart())

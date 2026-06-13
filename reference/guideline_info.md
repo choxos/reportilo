@@ -32,6 +32,7 @@ method.
 guideline_info("prisma-2020")
 #> PRISMA 2020 - The PRISMA 2020 statement: An updated guideline for reporting systematic reviews
 #> ------------------------------------------------------------
+#> Category     : Systematic reviews
 #> Study design : Systematic reviews/Meta-analyses/Reviews/HTA/Overviews
 #> Checklist    : yes (get_checklist())
 #> Flow diagram : prisma_2020 (new_flowchart())
