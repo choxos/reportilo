@@ -101,19 +101,19 @@
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/choxos/reportilo" class="external-link">reportilo</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 1. Find a guideline</span></span>
-<span><span class="fu"><a href="reference/search_guidelines.html">search_guidelines</a></span><span class="op">(</span><span class="st">"randomized trial"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="reference/guideline_info.html">guideline_info</a></span><span class="op">(</span><span class="st">"consort-2010"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/search_guidelines.html">search_guidelines</a></span><span class="op">(</span><span class="st">"randomised trial"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/guideline_info.html">guideline_info</a></span><span class="op">(</span><span class="st">"consort"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 2. Fill in its checklist</span></span>
 <span><span class="va">chk</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_checklist.html">get_checklist</a></span><span class="op">(</span><span class="st">"prisma-2020"</span><span class="op">)</span></span>
-<span><span class="va">chk</span><span class="op">$</span><span class="va">page</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"2"</span><span class="op">)</span></span>
+<span><span class="va">chk</span><span class="op">$</span><span class="va">response</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"1"</span>, <span class="st">"2"</span>, <span class="st">"2"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 3. Export</span></span>
 <span><span class="fu"><a href="reference/reportilo_export.html">reportilo_export</a></span><span class="op">(</span><span class="va">chk</span>, <span class="st">"prisma-checklist.docx"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Flow diagrams work the same way</span></span>
 <span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/new_flowchart.html">new_flowchart</a></span><span class="op">(</span><span class="st">"prisma_2020"</span><span class="op">)</span></span>
-<span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/set_counts.html">set_counts</a></span><span class="op">(</span><span class="va">fc</span>, database_results <span class="op">=</span> <span class="fl">1200</span>, records_screened <span class="op">=</span> <span class="fl">980</span><span class="op">)</span></span>
+<span><span class="va">fc</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/set_counts.html">set_counts</a></span><span class="op">(</span><span class="va">fc</span>, identified_db <span class="op">=</span> <span class="fl">1200</span>, screened <span class="op">=</span> <span class="fl">980</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/reportilo_export.html">reportilo_export</a></span><span class="op">(</span><span class="va">fc</span>, <span class="st">"prisma-flow.png"</span><span class="op">)</span></span></code></pre></div>
 <p>Prefer to point and click?</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
