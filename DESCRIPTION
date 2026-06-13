@@ -1,5 +1,5 @@
 Package: reportilo
-Title: Fill In and Export EQUATOR Reporting Guidelines and Flow Diagrams
+Title: Fill in and Export EQUATOR Reporting Guidelines and Flow Diagrams
 Version: 0.1.0
 Authors@R:
     person("Ahmad", "Sofi-Mahmudi", , "ahmad.pub@gmail.com",

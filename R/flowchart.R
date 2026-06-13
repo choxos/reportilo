@@ -93,8 +93,97 @@ set_counts <- function(x, ...) {
       call. = FALSE
     )
   }
-  for (nm in names(vals)) x$counts[[nm]] <- as.character(vals[[nm]])
+  is_reason <- stats::setNames(x$fields$is_reasons, x$fields$count_field)
+  for (nm in names(vals)) {
+    v <- vals[[nm]]
+    if (isTRUE(is_reason[[nm]])) {
+      x$counts[[nm]] <- as.character(v)
+      next
+    }
+    # numeric count fields: require a single non-negative integer
+    num <- suppressWarnings(as.numeric(v))
+    if (length(v) != 1L || is.na(num) || !is.finite(num) || num < 0 || num != round(num)) {
+      stop("Count `", nm, "` must be a single non-negative whole number; got ",
+        deparse(v), ".",
+        call. = FALSE
+      )
+    }
+    x$counts[[nm]] <- as.character(as.integer(num))
+  }
   x
+}
+
+# Template-specific consistency rules: each rule is "the count for `whole` should
+# be >= the sum of the counts for `parts`". Returns human-readable issues.
+.flowchart_rules <- list(
+  prisma_2020 = list(
+    list(whole = "identified_db", parts = "screened"),
+    list(whole = "screened", parts = "sought"),
+    list(whole = "sought", parts = "assessed"),
+    list(whole = "assessed", parts = "studies_included")
+  ),
+  consort_2010 = list(
+    list(whole = "assessed", parts = "randomized"),
+    list(whole = "randomized", parts = c("alloc_int", "alloc_ctrl")),
+    list(whole = "alloc_int", parts = "anal_int"),
+    list(whole = "alloc_ctrl", parts = "anal_ctrl")
+  ),
+  stard_2015 = list(
+    list(whole = "eligible", parts = "index_test"),
+    list(whole = "index_test", parts = "reference"),
+    list(whole = "reference", parts = "analyzed")
+  ),
+  cohort_study = list(
+    list(whole = "assessed", parts = c("exposed", "unexposed")),
+    list(whole = "exposed", parts = "exp_analyzed"),
+    list(whole = "unexposed", parts = "unexp_analyzed")
+  ),
+  cross_sectional = list(
+    list(whole = "target", parts = "invited"),
+    list(whole = "invited", parts = "participated"),
+    list(whole = "participated", parts = "analyzed")
+  )
+)
+
+#' Check a flow diagram for count inconsistencies
+#'
+#' Apply template-specific sanity rules (for example, *screened* cannot exceed
+#' *identified*, *randomized* cannot exceed *assessed for eligibility*). Reason
+#' fields are ignored.
+#'
+#' @param x A `reportilo_flowchart`.
+#'
+#' @return A character vector of issue messages (empty if the counts are
+#'   consistent).
+#' @examples
+#' fc <- set_counts(new_flowchart("prisma_2020"), identified_db = 100, screened = 200)
+#' flowchart_consistency(fc)
+#' @export
+flowchart_consistency <- function(x) {
+  if (!inherits(x, "reportilo_flowchart")) {
+    stop("`x` must be a reportilo_flowchart (see new_flowchart()).", call. = FALSE)
+  }
+  rules <- .flowchart_rules[[x$template_id]]
+  if (is.null(rules)) {
+    return(character(0))
+  }
+  num <- function(field) suppressWarnings(as.numeric(x$counts[[field]]))
+  issues <- character(0)
+  lab <- stats::setNames(x$fields$label, x$fields$count_field)
+  for (r in rules) {
+    whole <- num(r$whole)
+    parts <- vapply(r$parts, num, numeric(1))
+    if (anyNA(c(whole, parts))) next
+    if (whole < sum(parts)) {
+      issues <- c(issues, sprintf(
+        "%s (%d) is less than %s (%d).",
+        lab[[r$whole]] %||% r$whole, as.integer(whole),
+        paste(vapply(r$parts, function(p) lab[[p]] %||% p, character(1)), collapse = " + "),
+        as.integer(sum(parts))
+      ))
+    }
+  }
+  issues
 }
 
 #' @export

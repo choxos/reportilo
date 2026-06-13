@@ -15,8 +15,9 @@ given.}
 \item{format}{Optional explicit format (e.g. \code{"docx"}). Defaults to the file
 extension.}
 
-\item{...}{Passed to the underlying writer. For flow diagrams: \code{width} (image
-pixel width) and \code{background} (\code{"white"} or \code{"transparent"}).}
+\item{...}{Passed to the underlying writer. Flow diagrams and risk-of-bias
+plots accept \code{background} (\code{"white"} or \code{"transparent"}); flow diagrams also
+accept \code{width}, and risk-of-bias accepts \code{type}.}
 }
 \value{
 The output \code{file} path, invisibly.
@@ -33,7 +34,8 @@ Supported formats:
 \item{Flow diagram}{\code{png}, \code{svg}, \code{pdf}, \code{docx}, \code{xlsx} (the counts), \code{csv}
 (the counts).}
 \item{Risk of bias}{\code{png}, \code{svg}, \code{pdf}, \code{docx}, \code{xlsx} (the table), \code{csv}
-(the table). Pass \code{type = "traffic_light"} (default) or \code{type = "summary"}.}
+(the table). Pass \code{type = "traffic_light"} (default) or \code{type = "summary"},
+and \code{background = "transparent"} for no background.}
 }
 
 Word and Excel export need the suggested packages \code{officer} + \code{flextable} and

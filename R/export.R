@@ -10,7 +10,8 @@
 #'   \item{Flow diagram}{`png`, `svg`, `pdf`, `docx`, `xlsx` (the counts), `csv`
 #'     (the counts).}
 #'   \item{Risk of bias}{`png`, `svg`, `pdf`, `docx`, `xlsx` (the table), `csv`
-#'     (the table). Pass `type = "traffic_light"` (default) or `type = "summary"`.}
+#'     (the table). Pass `type = "traffic_light"` (default) or `type = "summary"`,
+#'     and `background = "transparent"` for no background.}
 #' }
 #'
 #' Word and Excel export need the suggested packages `officer` + `flextable` and
@@ -22,8 +23,9 @@
 #'   given.
 #' @param format Optional explicit format (e.g. `"docx"`). Defaults to the file
 #'   extension.
-#' @param ... Passed to the underlying writer. For flow diagrams: `width` (image
-#'   pixel width) and `background` (`"white"` or `"transparent"`).
+#' @param ... Passed to the underlying writer. Flow diagrams and risk-of-bias
+#'   plots accept `background` (`"white"` or `"transparent"`); flow diagrams also
+#'   accept `width`, and risk-of-bias accepts `type`.
 #'
 #' @return The output `file` path, invisibly.
 #' @seealso [get_checklist()], [new_flowchart()]
@@ -46,7 +48,7 @@ reportilo_export <- function(x, file, format = NULL, ...) {
     switch(fmt,
       docx = export_checklist_docx(x, file),
       xlsx = export_checklist_xlsx(x, file),
-      csv = utils::write.csv(as.data.frame(x), file, row.names = FALSE),
+      csv = utils::write.csv(csv_neutralize(as.data.frame(x)), file, row.names = FALSE),
       stop("Unsupported checklist format '", fmt, "'. Use docx, xlsx or csv.",
         call. = FALSE
       )
@@ -60,7 +62,7 @@ reportilo_export <- function(x, file, format = NULL, ...) {
       pdf = export_rob_image(x, file, format = fmt, ...),
       docx = export_rob_docx(x, file, ...),
       xlsx = export_rob_xlsx(x, file),
-      csv = utils::write.csv(rob_wide(x), file, row.names = FALSE),
+      csv = utils::write.csv(csv_neutralize(rob_wide(x)), file, row.names = FALSE),
       stop("Unsupported risk-of-bias format '", fmt,
         "'. Use png, svg, pdf, docx, xlsx or csv.",
         call. = FALSE
@@ -69,13 +71,20 @@ reportilo_export <- function(x, file, format = NULL, ...) {
     return(invisible(file))
   }
   if (inherits(x, "reportilo_flowchart")) {
+    issues <- flowchart_consistency(x)
+    if (length(issues)) {
+      warning("Flow diagram counts look inconsistent:\n  ",
+        paste(issues, collapse = "\n  "),
+        call. = FALSE
+      )
+    }
     switch(fmt,
       png = ,
       svg = ,
       pdf = export_flowchart_image(x, file, format = fmt, ...),
       docx = export_flowchart_docx(x, file, ...),
       xlsx = export_flowchart_xlsx(x, file),
-      csv = utils::write.csv(flowchart_counts_df(x), file, row.names = FALSE),
+      csv = utils::write.csv(csv_neutralize(flowchart_counts_df(x)), file, row.names = FALSE),
       stop("Unsupported flow diagram format '", fmt,
         "'. Use png, svg, pdf, docx, xlsx or csv.",
         call. = FALSE
