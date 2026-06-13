@@ -1,0 +1,41 @@
+Package: reportilo
+Title: Fill In and Export EQUATOR Reporting Guidelines and Flow Diagrams
+Version: 0.1.0
+Authors@R:
+    person("Ahmad", "Sofi-Mahmudi", , "ahmad.pub@gmail.com",
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-6829-0823"))
+Description: A toolkit for the health research reporting guidelines curated by
+    the EQUATOR Network. 'reportilo' bundles a searchable catalog of reporting
+    guidelines, machine-readable checklists for the major families (such as
+    CONSORT, STROBE, PRISMA, SPIRIT and STARD), and data-driven flow diagram
+    templates (PRISMA 2020, CONSORT and STARD). Users fill in checklist
+    responses and flow diagram counts and export the result to Word, Excel or
+    image files. A bundled 'shiny' application provides a point-and-click front
+    end, and the same data powers a companion browser application.
+License: GPL-3
+URL: https://github.com/choxos/reportilo, https://choxos.github.io/reportilo/
+BugReports: https://github.com/choxos/reportilo/issues
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Depends:
+    R (>= 4.1)
+Imports:
+    utils
+Suggests:
+    bslib,
+    DiagrammeR,
+    DiagrammeRsvg,
+    DT,
+    flextable,
+    htmltools,
+    jsonlite,
+    knitr,
+    officer,
+    openxlsx,
+    rmarkdown,
+    rsvg,
+    shiny,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0

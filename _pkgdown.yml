@@ -1,0 +1,61 @@
+url: https://choxos.github.io/reportilo/
+
+template:
+  bootstrap: 5
+
+navbar:
+  structure:
+    left: [intro, reference, articles, news]
+    right: [search, app, github]
+  components:
+    app:
+      text: Web app
+      href: https://choxos.github.io/reportilo/app/
+    articles:
+      text: Articles
+      menu:
+      - text: Getting started
+        href: articles/reportilo.html
+      - text: Filling in checklists
+        href: articles/checklists.html
+      - text: Building flow diagrams
+        href: articles/flowcharts.html
+      - text: Exporting to Word, Excel and images
+        href: articles/export.html
+
+reference:
+- title: Find guidelines
+  desc: Browse and search the EQUATOR reporting guideline catalog.
+  contents:
+  - reportilo_guidelines
+  - search_guidelines
+  - guideline_info
+- title: Fill in checklists
+  desc: Retrieve and complete a reporting checklist.
+  contents:
+  - get_checklist
+  - new_checklist
+  - validate_checklist
+- title: Build flow diagrams
+  desc: Create and fill PRISMA, CONSORT and STARD flow diagrams.
+  contents:
+  - new_flowchart
+  - set_counts
+  - render_flowchart
+- title: Export
+  desc: Write a filled checklist or flow diagram to Word, Excel or an image.
+  contents:
+  - reportilo_export
+- title: Application
+  contents:
+  - launch_reportilo
+- title: Data
+  desc: Bundled datasets.
+  contents:
+  - guidelines
+  - checklist_items
+  - parse_status
+  - flowchart_nodes
+  - flowchart_edges
+  - flowchart_counts
+  - flowchart_templates
