@@ -31,8 +31,9 @@ reportilo_export(x, file, format = NULL, ...)
 
 - ...:
 
-  Passed to the underlying writer. For flow diagrams: `width` (image
-  pixel width) and `background` (`"white"` or `"transparent"`).
+  Passed to the underlying writer. Flow diagrams and risk-of-bias plots
+  accept `background` (`"white"` or `"transparent"`); flow diagrams also
+  accept `width`, and risk-of-bias accepts `type`.
 
 ## Value
 
@@ -53,7 +54,8 @@ Supported formats:
 - Risk of bias:
 
   `png`, `svg`, `pdf`, `docx`, `xlsx` (the table), `csv` (the table).
-  Pass `type = "traffic_light"` (default) or `type = "summary"`.
+  Pass `type = "traffic_light"` (default) or `type = "summary"`, and
+  `background = "transparent"` for no background.
 
 Word and Excel export need the suggested packages `officer` +
 `flextable` and `openxlsx` respectively; image export needs

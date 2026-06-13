@@ -113,6 +113,8 @@ Create and fill PRISMA, CONSORT and STARD flow diagrams.
   : List the fillable fields of a flow diagram template
 - [`set_counts()`](https://choxos.github.io/reportilo/reference/set_counts.md)
   : Set counts on a flow diagram
+- [`flowchart_consistency()`](https://choxos.github.io/reportilo/reference/flowchart_consistency.md)
+  : Check a flow diagram for count inconsistencies
 - [`render_flowchart()`](https://choxos.github.io/reportilo/reference/render_flowchart.md)
   : Render a flow diagram for viewing
 - [`flowchart_dot()`](https://choxos.github.io/reportilo/reference/flowchart_dot.md)

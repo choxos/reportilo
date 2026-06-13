@@ -75,8 +75,9 @@ extension.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Passed to the underlying writer. For flow diagrams: <code>width</code> (image
-pixel width) and <code>background</code> (<code>"white"</code> or <code>"transparent"</code>).</p></dd>
+<dd><p>Passed to the underlying writer. Flow diagrams and risk-of-bias
+plots accept <code>background</code> (<code>"white"</code> or <code>"transparent"</code>); flow diagrams also
+accept <code>width</code>, and risk-of-bias accepts <code>type</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -94,7 +95,8 @@ pixel width) and <code>background</code> (<code>"white"</code> or <code>"transpa
 
 <dt>Risk of bias</dt>
 <dd><p><code>png</code>, <code>svg</code>, <code>pdf</code>, <code>docx</code>, <code>xlsx</code> (the table), <code>csv</code>
-(the table). Pass <code>type = "traffic_light"</code> (default) or <code>type = "summary"</code>.</p></dd>
+(the table). Pass <code>type = "traffic_light"</code> (default) or <code>type = "summary"</code>,
+and <code>background = "transparent"</code> for no background.</p></dd>
 
 
 </dl><p>Word and Excel export need the suggested packages <code>officer</code> + <code>flextable</code> and

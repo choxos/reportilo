@@ -1,4 +1,4 @@
-# reportilo: Fill In and Export EQUATOR Reporting Guidelines and Flow Diagrams
+# reportilo: Fill in and Export EQUATOR Reporting Guidelines and Flow Diagrams
 
 A toolkit for the health research reporting guidelines curated by the
 EQUATOR Network. 'reportilo' bundles a searchable catalog of reporting
