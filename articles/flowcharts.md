@@ -6,10 +6,20 @@ one generic node/edge/count model:
 ``` r
 
 flowchart_templates[, c("template_id", "name", "study_type", "n_count_fields")]
-#>    template_id                      name          study_type n_count_fields
-#> 1  prisma_2020  PRISMA 2020 flow diagram   Systematic review             12
-#> 2 consort_2010 CONSORT 2010 flow diagram    Randomised trial             18
-#> 3   stard_2015   STARD 2015 flow diagram Diagnostic accuracy              8
+#>       template_id                               name            study_type
+#> 1     prisma_2020           PRISMA 2020 flow diagram     Systematic review
+#> 2    consort_2010          CONSORT 2010 flow diagram      Randomised trial
+#> 3      stard_2015            STARD 2015 flow diagram   Diagnostic accuracy
+#> 4    cohort_study          Cohort study flow diagram          Cohort study
+#> 5    case_control    Case-control study flow diagram    Case-control study
+#> 6 cross_sectional Cross-sectional study flow diagram Cross-sectional study
+#>   n_count_fields
+#> 1             12
+#> 2             18
+#> 3              8
+#> 4             11
+#> 5             10
+#> 6              8
 ```
 
 ## Start a diagram
@@ -144,8 +154,8 @@ which is also what the image and Word exporters use.
 
 cat(substr(flowchart_dot(fc), 1, 120), "...")
 #> digraph reportilo {
-#>   graph [rankdir=TB, splines=ortho, nodesep=0.45, ranksep=0.55];
-#>   node [shape=box, fontname="Helvet ...
+#>   graph [rankdir=TB, splines=ortho, nodesep=0.45, ranksep=0.55, bgcolor="white"];
+#>   node [shape=box, ...
 ```
 
 ## Export

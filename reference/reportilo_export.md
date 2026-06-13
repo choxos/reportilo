@@ -31,7 +31,8 @@ reportilo_export(x, file, format = NULL, ...)
 
 - ...:
 
-  Passed to the underlying writer (e.g. `width` for images).
+  Passed to the underlying writer. For flow diagrams: `width` (image
+  pixel width) and `background` (`"white"` or `"transparent"`).
 
 ## Value
 

@@ -8,7 +8,7 @@ and by the image/Word exporters.
 ## Usage
 
 ``` r
-flowchart_dot(x)
+flowchart_dot(x, background = "white")
 ```
 
 ## Arguments
@@ -16,6 +16,12 @@ flowchart_dot(x)
 - x:
 
   A `reportilo_flowchart`.
+
+- background:
+
+  Diagram background color. Use `"white"` (default) for a solid white
+  background, or `"transparent"` for no background (useful for slides
+  and figures). Any Graphviz color name or hex value is accepted.
 
 ## Value
 
@@ -26,6 +32,9 @@ A length-one character string of Graphviz DOT.
 ``` r
 fc <- new_flowchart("stard_2015")
 cat(substr(flowchart_dot(fc), 1, 80))
+#> digraph reportilo {
+#>   graph [rankdir=TB, splines=ortho, nodesep=0.45, ranksep=0.
+cat(substr(flowchart_dot(fc, background = "transparent"), 1, 80))
 #> digraph reportilo {
 #>   graph [rankdir=TB, splines=ortho, nodesep=0.45, ranksep=0.
 ```
