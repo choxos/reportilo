@@ -81,9 +81,11 @@
 <h2 id="what-is-inside">What is inside<a class="anchor" aria-label="anchor" href="#what-is-inside"></a>
 </h2>
 <ul>
-<li>A searchable <strong>catalog</strong> of the EQUATOR reporting guidelines.</li>
-<li>Machine-readable <strong>checklists</strong> for the major families (CONSORT, STROBE, PRISMA, SPIRIT, STARD and more), with provenance and parse-confidence for every item.</li>
-<li>Data-driven <strong>flow diagram</strong> templates: PRISMA 2020, CONSORT and STARD.</li>
+<li>A searchable <strong>catalog</strong> of all the EQUATOR reporting guidelines.</li>
+<li>Fillable <strong>checklists</strong> for a subset of guidelines: a small hand-verified core (currently PRISMA 2020, CONSORT and STROBE) plus best-effort, automatically extracted checklists for many more, each item carrying its provenance and a parse-confidence score. Coverage is partial and not all extracted checklists are verified; <code><a href="reference/reportilo_coverage.html">reportilo_coverage()</a></code> reports what is verified versus extracted, by category.</li>
+<li>Data-driven <strong>flow diagram</strong> templates: PRISMA 2020, CONSORT and STARD, plus observational designs (cohort, case-control and cross-sectional).</li>
+<li>
+<strong>Risk-of-bias</strong> traffic-light and summary plots for the common tools (RoB 2, ROBINS-I and more).</li>
 <li>An <strong>export engine</strong> for Word (<code>.docx</code>), Excel (<code>.xlsx</code>) and image (<code>.png</code> / <code>.svg</code> / <code>.pdf</code>) output.</li>
 </ul>
 </div>
@@ -122,7 +124,7 @@
 <div class="section level2">
 <h2 id="data-provenance">Data provenance<a class="anchor" aria-label="anchor" href="#data-provenance"></a>
 </h2>
-<p>Guideline metadata is derived from the EQUATOR Network reporting guideline library. Checklist items are extracted from the guideline source documents; guidelines without a machine-readable checklist remain available as catalog entries that link to their original source. See <code>parse_status</code> for per-guideline coverage.</p>
+<p>Guideline metadata is derived from the EQUATOR Network reporting guideline library. Checklist items are extracted from the guideline source documents; guidelines without a machine-readable checklist remain available as catalog entries that link to their original source. Most checklists are extracted automatically and should be verified against the source before use; only a small core is hand-verified. See <code><a href="reference/reportilo_coverage.html">reportilo_coverage()</a></code> for verified-versus-extracted coverage by category, and <code>parse_status</code> for per-guideline detail.</p>
 </div>
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
