@@ -14,7 +14,8 @@ steps <- sprintf("data-raw/%s", c(
   "08_build_flowcharts.R",
   "09_save_rda.R",
   "10_export_json.R",
-  "11_validation_report.R"
+  "11_validation_report.R",
+  "12_build_rob.R"
 ))
 
 for (s in steps) {

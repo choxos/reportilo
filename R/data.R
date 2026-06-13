@@ -135,3 +135,61 @@
 #' }
 #' @source reportilo.
 "flowchart_templates"
+
+#' Risk-of-bias assessment tools
+#'
+#' The supported risk-of-bias tools.
+#'
+#' @format A data frame with columns:
+#' \describe{
+#'   \item{tool_id}{Tool identifier (e.g. "rob2", "robins_i").}
+#'   \item{name}{Display name.}
+#'   \item{study_type}{Study type the tool applies to.}
+#'   \item{n_domains}{Number of domains.}
+#'   \item{levels}{Allowed judgment levels, "; "-separated, in order.}
+#' }
+#' @source robvis (McGuinness & Higgins) and the underlying tool manuals.
+"rob_tools"
+
+#' Risk-of-bias tool domains
+#'
+#' The domains of each risk-of-bias tool (see [rob_tools]).
+#'
+#' @format A data frame with columns:
+#' \describe{
+#'   \item{tool_id}{Tool identifier.}
+#'   \item{domain_id}{Domain id within the tool (e.g. "D1").}
+#'   \item{label}{Full domain description.}
+#'   \item{domain_order}{Display order.}
+#' }
+#' @source robvis and the underlying tool manuals.
+"rob_domains"
+
+#' Risk-of-bias judgment levels
+#'
+#' The judgment levels used across the tools, with the color and symbol used to
+#' render them (following robvis).
+#'
+#' @format A data frame with columns:
+#' \describe{
+#'   \item{level}{Judgment level (e.g. "Low", "High", "Critical").}
+#'   \item{color}{Hex fill color.}
+#'   \item{symbol}{Symbol drawn on the traffic-light point.}
+#'   \item{level_order}{Severity rank for ordering summary bars.}
+#' }
+#' @source robvis color scheme.
+"rob_levels"
+
+#' Example risk-of-bias assessments
+#'
+#' A small example assessment for each tool, used to seed [reportilo_rob()].
+#'
+#' @format A data frame in long format with columns:
+#' \describe{
+#'   \item{tool_id}{Tool identifier.}
+#'   \item{study}{Study label.}
+#'   \item{domain_id}{Domain id (or "Overall").}
+#'   \item{judgment}{The judgment level.}
+#' }
+#' @source reportilo (illustrative).
+"rob_example"

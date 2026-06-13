@@ -9,13 +9,15 @@
 #'   \item{Checklist}{`docx`, `xlsx`, `csv`.}
 #'   \item{Flow diagram}{`png`, `svg`, `pdf`, `docx`, `xlsx` (the counts), `csv`
 #'     (the counts).}
+#'   \item{Risk of bias}{`png`, `svg`, `pdf`, `docx`, `xlsx` (the table), `csv`
+#'     (the table). Pass `type = "traffic_light"` (default) or `type = "summary"`.}
 #' }
 #'
 #' Word and Excel export need the suggested packages `officer` + `flextable` and
 #' `openxlsx` respectively; image export needs `DiagrammeR`, `DiagrammeRsvg` and
 #' `rsvg`.
 #'
-#' @param x A `reportilo_checklist` or `reportilo_flowchart`.
+#' @param x A `reportilo_checklist`, `reportilo_flowchart` or `reportilo_rob`.
 #' @param file Output file path. Its extension sets the format unless `format` is
 #'   given.
 #' @param format Optional explicit format (e.g. `"docx"`). Defaults to the file
@@ -51,6 +53,21 @@ reportilo_export <- function(x, file, format = NULL, ...) {
     )
     return(invisible(file))
   }
+  if (inherits(x, "reportilo_rob")) {
+    switch(fmt,
+      png = ,
+      svg = ,
+      pdf = export_rob_image(x, file, format = fmt, ...),
+      docx = export_rob_docx(x, file, ...),
+      xlsx = export_rob_xlsx(x, file),
+      csv = utils::write.csv(rob_wide(x), file, row.names = FALSE),
+      stop("Unsupported risk-of-bias format '", fmt,
+        "'. Use png, svg, pdf, docx, xlsx or csv.",
+        call. = FALSE
+      )
+    )
+    return(invisible(file))
+  }
   if (inherits(x, "reportilo_flowchart")) {
     switch(fmt,
       png = ,
@@ -66,5 +83,7 @@ reportilo_export <- function(x, file, format = NULL, ...) {
     )
     return(invisible(file))
   }
-  stop("`x` must be a reportilo_checklist or a reportilo_flowchart.", call. = FALSE)
+  stop("`x` must be a reportilo_checklist, reportilo_flowchart or reportilo_rob.",
+    call. = FALSE
+  )
 }

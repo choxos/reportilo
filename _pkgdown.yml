@@ -45,8 +45,16 @@ reference:
   - set_counts
   - render_flowchart
   - flowchart_dot
+- title: Risk of bias
+  desc: Traffic-light and summary plots for risk-of-bias tools.
+  contents:
+  - rob_tools_available
+  - rob_template
+  - reportilo_rob
+  - rob_traffic_light
+  - rob_summary
 - title: Export
-  desc: Write a filled checklist or flow diagram to Word, Excel or an image.
+  desc: Write a filled checklist, flow diagram or risk-of-bias plot to Word, Excel or an image.
   contents:
   - reportilo_export
 - title: Application
@@ -62,3 +70,7 @@ reference:
   - flowchart_edges
   - flowchart_counts
   - flowchart_templates
+  - rob_tools
+  - rob_domains
+  - rob_levels
+  - rob_example

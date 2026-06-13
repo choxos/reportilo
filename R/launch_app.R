@@ -26,7 +26,7 @@ launch_reportilo <- function(...) {
       call. = FALSE
     )
   }
-  for (pkg in c("shiny", "bslib", "DT", "DiagrammeR")) {
+  for (pkg in c("shiny", "bslib", "DT", "DiagrammeR", "ggplot2")) {
     if (!requireNamespace(pkg, quietly = TRUE)) {
       stop(
         "Package `", pkg, "` is required to run the app. Install it with ",

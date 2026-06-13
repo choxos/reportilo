@@ -30,6 +30,8 @@ checklist_choices <- stats::setNames(
 category_tabs <- c("All", levels(guidelines$category))
 templates <- reportilo::flowchart_templates
 template_choices <- stats::setNames(templates$template_id, templates$name)
+rob_tools_df <- reportilo::rob_tools_available()
+rob_tool_choices <- stats::setNames(rob_tools_df$tool_id, rob_tools_df$name)
 
 notify_export <- function(expr, fmt) {
   tryCatch(expr, error = function(e) {
@@ -253,6 +255,85 @@ flowchartServer <- function(id) {
   })
 }
 
+# =========================== Risk-of-bias module ===========================
+robUI <- function(id) {
+  ns <- NS(id)
+  layout_sidebar(
+    sidebar = sidebar(
+      width = 340,
+      selectInput(ns("tool"), "Tool", choices = rob_tool_choices),
+      radioButtons(ns("ptype"), "Plot",
+        c("Traffic light" = "traffic_light", "Summary" = "summary")),
+      helpText("Edit each cell with a judgment (e.g. Low, High). Allowed values depend on the tool."),
+      downloadButton(ns("dl_png"), "PNG", class = "btn-primary btn-sm"),
+      downloadButton(ns("dl_svg"), "SVG", class = "btn-secondary btn-sm"),
+      downloadButton(ns("dl_docx"), "Word", class = "btn-outline-secondary btn-sm"),
+      downloadButton(ns("dl_xlsx"), "Excel", class = "btn-outline-secondary btn-sm"),
+      downloadButton(ns("dl_csv"), "CSV", class = "btn-outline-secondary btn-sm")
+    ),
+    card(card_header("Assessment"), DT::DTOutput(ns("table"))),
+    card(full_screen = TRUE, card_header("Preview"), plotOutput(ns("plot"), height = "520px"))
+  )
+}
+
+robServer <- function(id) {
+  moduleServer(id, function(input, output, session) {
+    rv <- reactiveValues(data = NULL)
+
+    observeEvent(input$tool,
+      {
+        rv$data <- as.data.frame(reportilo::reportilo_rob(input$tool))
+      },
+      ignoreInit = FALSE
+    )
+
+    rob_obj <- reactive({
+      req(rv$data)
+      reportilo::reportilo_rob(input$tool, rv$data)
+    })
+
+    output$table <- DT::renderDT(
+      {
+        req(rv$data)
+        DT::datatable(rv$data,
+          rownames = FALSE, editable = list(target = "cell", disable = list(columns = 0)),
+          options = list(dom = "t", pageLength = 50, scrollX = TRUE)
+        )
+      },
+      server = FALSE
+    )
+
+    observeEvent(input$table_cell_edit, {
+      info <- input$table_cell_edit
+      d <- rv$data
+      d[info$row, info$col + 1] <- info$value
+      rv$data <- d
+    })
+
+    output$plot <- renderPlot({
+      obj <- rob_obj()
+      if (input$ptype == "summary") reportilo::rob_summary(obj) else reportilo::rob_traffic_light(obj)
+    })
+
+    dl <- function(ext) {
+      downloadHandler(
+        filename = function() paste0(input$tool, "_rob.", ext),
+        content = function(file) {
+          notify_export(
+            reportilo::reportilo_export(rob_obj(), file, format = ext, type = input$ptype),
+            ext
+          )
+        }
+      )
+    }
+    output$dl_png <- dl("png")
+    output$dl_svg <- dl("svg")
+    output$dl_docx <- dl("docx")
+    output$dl_xlsx <- dl("xlsx")
+    output$dl_csv <- dl("csv")
+  })
+}
+
 # ================================== App ====================================
 ui <- page_navbar(
   title = "reportilo",
@@ -261,6 +342,7 @@ ui <- page_navbar(
   nav_panel("Catalog", icon = icon("table-list"), catalogUI("catalog")),
   nav_panel("Checklists", icon = icon("list-check"), checklistUI("checklist")),
   nav_panel("Flow diagrams", icon = icon("diagram-project"), flowchartUI("flow")),
+  nav_panel("Risk of bias", icon = icon("traffic-light"), robUI("rob")),
   nav_spacer(),
   nav_item(tags$a(href = "https://choxos.github.io/reportilo/", "Docs", target = "_blank")),
   nav_item(tags$a(href = "https://github.com/choxos/reportilo", "GitHub", target = "_blank"))
@@ -270,6 +352,7 @@ server <- function(input, output, session) {
   catalogServer("catalog")
   checklistServer("checklist")
   flowchartServer("flow")
+  robServer("rob")
 }
 
 shinyApp(ui, server)
