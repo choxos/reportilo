@@ -157,7 +157,7 @@ head(reportilo_guidelines())
 #> 5                                                                                                                              NULL
 #> 6                                here, https://care.healthandresilience.org/wp-content/uploads/2025/11/CARE-DN_round_2-E-E.pdf, pdf
 #>   has_checklist checklist_tier          category category_order is_primary
-#> 1         FALSE   catalog_only Randomised trials              1      FALSE
+#> 1         FALSE   catalog_only Randomized trials              1      FALSE
 #> 2          TRUE      checklist             Other             12      FALSE
 #> 3         FALSE   catalog_only             Other             12      FALSE
 #> 4         FALSE   catalog_only             Other             12      FALSE
@@ -165,6 +165,6 @@ head(reportilo_guidelines())
 #> 6         FALSE   catalog_only      Case reports              6      FALSE
 nrow(reportilo_guidelines(checklist_only = TRUE))
 #> [1] 86
-nrow(reportilo_guidelines(category = "Randomised trials"))
+nrow(reportilo_guidelines(category = "Randomized trials"))
 #> [1] 23
 ```

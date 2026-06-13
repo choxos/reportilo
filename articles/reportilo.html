@@ -93,25 +93,37 @@ checklist or flow diagram, and <strong>export</strong> the result.</p>
 <span><span class="co">#&gt; [1] 86</span></span>
 <span></span>
 <span><span class="co"># search across acronym, title, study design and clinical area</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/search_guidelines.html">search_guidelines</a></span><span class="op">(</span><span class="st">"randomised trial"</span><span class="op">)</span>, <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt;         guideline_id          acronym</span></span>
-<span><span class="co">#&gt; 278    ace-statement    ACE Statement</span></span>
-<span><span class="co">#&gt; 304           sw-crt           SW-CRT</span></span>
-<span><span class="co">#&gt; 307 consort-spi-2018 CONSORT-SPI 2018</span></span>
-<span><span class="co">#&gt; 320   consort-equity   CONSORT-Equity</span></span>
-<span><span class="co">#&gt; 348          consort          CONSORT</span></span>
-<span><span class="co">#&gt;                                                                                                                                                                          title</span></span>
-<span><span class="co">#&gt; 278 The adaptive designs CONSORT extension (ACE) statement: a checklist with explanation and elaboration guideline for reporting randomised trials that use an adaptive design</span></span>
-<span><span class="co">#&gt; 304                                             Reporting of stepped wedge cluster randomised trials: extension of the CONSORT 2010 statement with explanation and elaboration</span></span>
-<span><span class="co">#&gt; 307                                                                      Reporting randomised trials of social and psychological interventions: the CONSORT-SPI 2018 Extension</span></span>
-<span><span class="co">#&gt; 320                                                                   CONSORT-Equity 2017 extension and elaboration for better reporting of health equity in randomised trials</span></span>
-<span><span class="co">#&gt; 348                                                                                                  CONSORT 2025 Statement: updated guideline for reporting randomised trials</span></span>
-<span><span class="co">#&gt;              category                          study_design has_checklist</span></span>
-<span><span class="co">#&gt; 278             Other Clinical trials, Experimental studies          TRUE</span></span>
-<span><span class="co">#&gt; 304             Other Clinical trials, Experimental studies          TRUE</span></span>
-<span><span class="co">#&gt; 307 Randomised trials Clinical trials, Experimental studies          TRUE</span></span>
-<span><span class="co">#&gt; 320 Randomised trials Clinical trials, Experimental studies         FALSE</span></span>
-<span><span class="co">#&gt; 348 Randomised trials Clinical trials, Experimental studies          TRUE</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/search_guidelines.html">search_guidelines</a></span><span class="op">(</span><span class="st">"randomized trial"</span><span class="op">)</span>, <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                                                      guideline_id</span></span>
+<span><span class="co">#&gt; 96                                              consort-factorial</span></span>
+<span><span class="co">#&gt; 98                                               spirit-factorial</span></span>
+<span><span class="co">#&gt; 135 new-reporting-items-and-recommendations-for-randomized-trials</span></span>
+<span><span class="co">#&gt; 227                                                        agrema</span></span>
+<span><span class="co">#&gt; 283                                                       prirate</span></span>
+<span><span class="co">#&gt;               acronym</span></span>
+<span><span class="co">#&gt; 96  CONSORT Factorial</span></span>
+<span><span class="co">#&gt; 98   SPIRIT Factorial</span></span>
+<span><span class="co">#&gt; 135              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 227            AGReMA</span></span>
+<span><span class="co">#&gt; 283           PRIRATE</span></span>
+<span><span class="co">#&gt;                                                                                                                                 title</span></span>
+<span><span class="co">#&gt; 96                                                  Reporting of Factorial Randomized Trials: Extension of the CONSORT 2010 Statement</span></span>
+<span><span class="co">#&gt; 98                           Consensus Statement for Protocols of Factorial Randomized Trials: Extension of the SPIRIT 2013 Statement</span></span>
+<span><span class="co">#&gt; 135 New reporting items and recommendations for randomized trials impacted by COVID- 19 and force majeure events: a targeted approach</span></span>
+<span><span class="co">#&gt; 227                 A Guideline for Reporting Mediation Analyses of Randomized Trials and Observational Studies: The AGReMA Statement</span></span>
+<span><span class="co">#&gt; 283                             PRIRATE 2020 guidelines for reporting randomized trials in Endodontics: a consensus-based development</span></span>
+<span><span class="co">#&gt;                  category</span></span>
+<span><span class="co">#&gt; 96      Randomized trials</span></span>
+<span><span class="co">#&gt; 98        Study protocols</span></span>
+<span><span class="co">#&gt; 135                 Other</span></span>
+<span><span class="co">#&gt; 227 Observational studies</span></span>
+<span><span class="co">#&gt; 283                 Other</span></span>
+<span><span class="co">#&gt;                                                     study_design has_checklist</span></span>
+<span><span class="co">#&gt; 96                         Clinical trials, Experimental studies          TRUE</span></span>
+<span><span class="co">#&gt; 98                                               Study protocols         FALSE</span></span>
+<span><span class="co">#&gt; 135                        Clinical trials, Experimental studies         FALSE</span></span>
+<span><span class="co">#&gt; 227 Clinical trials, Experimental studies, Observational studies         FALSE</span></span>
+<span><span class="co">#&gt; 283                        Clinical trials, Experimental studies          TRUE</span></span></code></pre></div>
 <p>Look up one guideline (by <code>guideline_id</code> or an unambiguous
 acronym):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">

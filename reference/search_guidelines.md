@@ -39,43 +39,62 @@ A data frame of matching guidelines with the most useful columns.
 ## Examples
 
 ``` r
-search_guidelines("randomised trial")
-#>                                                        guideline_id
-#> 278                                                   ace-statement
-#> 304                                                          sw-crt
-#> 307                                                consort-spi-2018
-#> 320                                                  consort-equity
-#> 348                                                         consort
-#> 349 consort-2010-statement-extension-checklist-for-reporting-within
-#> 674                                                 consort-cluster
-#> 684                                           consort-for-abstracts
-#>                   acronym
-#> 278         ACE Statement
-#> 304                SW-CRT
-#> 307      CONSORT-SPI 2018
-#> 320        CONSORT-Equity
-#> 348               CONSORT
-#> 349                  <NA>
-#> 674       CONSORT Cluster
-#> 684 CONSORT for abstracts
-#>                                                                                                                                                                          title
-#> 278 The adaptive designs CONSORT extension (ACE) statement: a checklist with explanation and elaboration guideline for reporting randomised trials that use an adaptive design
-#> 304                                             Reporting of stepped wedge cluster randomised trials: extension of the CONSORT 2010 statement with explanation and elaboration
-#> 307                                                                      Reporting randomised trials of social and psychological interventions: the CONSORT-SPI 2018 Extension
-#> 320                                                                   CONSORT-Equity 2017 extension and elaboration for better reporting of health equity in randomised trials
-#> 348                                                                                                  CONSORT 2025 Statement: updated guideline for reporting randomised trials
-#> 349                                                                                  CONSORT 2010 statement: extension checklist for reporting within person randomised trials
-#> 674                                                                                                             Consort 2010 statement: extension to cluster randomised trials
-#> 684                                                                                                CONSORT for reporting randomised trials in journal and conference abstracts
-#>              category                          study_design has_checklist
-#> 278             Other Clinical trials, Experimental studies          TRUE
-#> 304             Other Clinical trials, Experimental studies          TRUE
-#> 307 Randomised trials Clinical trials, Experimental studies          TRUE
-#> 320 Randomised trials Clinical trials, Experimental studies         FALSE
-#> 348 Randomised trials Clinical trials, Experimental studies          TRUE
-#> 349             Other Clinical trials, Experimental studies         FALSE
-#> 674 Randomised trials Clinical trials, Experimental studies         FALSE
-#> 684 Randomised trials Clinical trials, Experimental studies         FALSE
+search_guidelines("randomized trial")
+#>                                                      guideline_id
+#> 96                                              consort-factorial
+#> 98                                               spirit-factorial
+#> 135 new-reporting-items-and-recommendations-for-randomized-trials
+#> 227                                                        agrema
+#> 283                                                       prirate
+#> 295       reporting-of-multi-arm-parallel-group-randomized-trials
+#> 492                                            consort-harms-2022
+#> 660                                                   consort-pro
+#> 683                                       consort-non-inferiority
+#> 685             consort-non-pharmacologic-treatment-interventions
+#>                                               acronym
+#> 96                                  CONSORT Factorial
+#> 98                                   SPIRIT Factorial
+#> 135                                              <NA>
+#> 227                                            AGReMA
+#> 283                                           PRIRATE
+#> 295                                              <NA>
+#> 492                                CONSORT Harms 2022
+#> 660                                       CONSORT-PRO
+#> 683                           CONSORT Non-inferiority
+#> 685 CONSORT Non-pharmacologic treatment interventions
+#>                                                                                                                                                  title
+#> 96                                                                   Reporting of Factorial Randomized Trials: Extension of the CONSORT 2010 Statement
+#> 98                                            Consensus Statement for Protocols of Factorial Randomized Trials: Extension of the SPIRIT 2013 Statement
+#> 135                  New reporting items and recommendations for randomized trials impacted by COVID- 19 and force majeure events: a targeted approach
+#> 227                                  A Guideline for Reporting Mediation Analyses of Randomized Trials and Observational Studies: The AGReMA Statement
+#> 283                                              PRIRATE 2020 guidelines for reporting randomized trials in Endodontics: a consensus-based development
+#> 295                                                 Reporting of Multi -Arm Parallel -Group Randomized Trials: Extension of the CONSORT 2010 Statement
+#> 492                      CONSORT Harms 2022 statement, explanation, and elaboration: updated guideline for the reporting of harms in randomized trials
+#> 660                                                             Reporting of patient-reported outcomes in randomized trials: the CONSORT PRO extension
+#> 683                                             Reporting of noninferiority and equivalence randomized trials: extension of the CONSORT 2010 statement
+#> 685 CONSORT Statement for Randomized Trials of Nonpharmacologic Treatments: A 2017 Update and a CONSORT Extension for Nonpharmacologic Trial Abstracts
+#>                  category
+#> 96      Randomized trials
+#> 98        Study protocols
+#> 135                 Other
+#> 227 Observational studies
+#> 283                 Other
+#> 295                 Other
+#> 492     Randomized trials
+#> 660     Randomized trials
+#> 683     Randomized trials
+#> 685     Randomized trials
+#>                                                     study_design has_checklist
+#> 96                         Clinical trials, Experimental studies          TRUE
+#> 98                                               Study protocols         FALSE
+#> 135                        Clinical trials, Experimental studies         FALSE
+#> 227 Clinical trials, Experimental studies, Observational studies         FALSE
+#> 283                        Clinical trials, Experimental studies          TRUE
+#> 295                        Clinical trials, Experimental studies         FALSE
+#> 492                        Clinical trials, Experimental studies          TRUE
+#> 660                        Clinical trials, Experimental studies          TRUE
+#> 683                        Clinical trials, Experimental studies         FALSE
+#> 685                        Clinical trials, Experimental studies         FALSE
 search_guidelines("qualitative")
 #>                                                                     guideline_id
 #> 10                                                                        mentor

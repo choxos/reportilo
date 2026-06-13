@@ -62,7 +62,7 @@ An object of class `reportilo_rob`.
 ``` r
 rob <- reportilo_rob("rob2")
 rob
-#> <reportilo risk of bias> RoB 2 (randomised trials)
+#> <reportilo risk of bias> RoB 2 (randomized trials)
 #> 6 studies, 5 domains
 #>    Study            D1            D2            D3            D4            D5
 #>  Study 1          High           Low Some concerns          High           Low

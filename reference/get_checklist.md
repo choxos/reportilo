@@ -50,7 +50,7 @@ head(chk)
 #> 3 Describe the rationale for the review in the context of existing knowledge.                                                                                                   
 #> 4 Provide an explicit statement of the objective(s) or question(s) the review addresses.                                                                                        
 #> 5 Specify the inclusion and exclusion criteria for the review and how studies were grouped for the syntheses.                                                                   
-#> 6 Specify all databases, registers, websites, organisations, reference lists and other sources searched or consulted; specify the date when each was last searched or consulted.
+#> 6 Specify all databases, registers, websites, organizations, reference lists and other sources searched or consulted; specify the date when each was last searched or consulted.
 #>   response
 #> 1 <NA>    
 #> 2 <NA>    

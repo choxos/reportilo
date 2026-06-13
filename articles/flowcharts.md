@@ -8,7 +8,7 @@ one generic node/edge/count model:
 flowchart_templates[, c("template_id", "name", "study_type", "n_count_fields")]
 #>       template_id                               name            study_type
 #> 1     prisma_2020           PRISMA 2020 flow diagram     Systematic review
-#> 2    consort_2010          CONSORT 2010 flow diagram      Randomised trial
+#> 2    consort_2010          CONSORT 2010 flow diagram      Randomized trial
 #> 3      stard_2015            STARD 2015 flow diagram   Diagnostic accuracy
 #> 4    cohort_study          Cohort study flow diagram          Cohort study
 #> 5    case_control    Case-control study flow diagram    Case-control study

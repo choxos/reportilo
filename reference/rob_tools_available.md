@@ -25,19 +25,19 @@ allowed judgment `levels`.
 ``` r
 rob_tools_available()
 #>        tool_id                                    name
-#> 1         rob2               RoB 2 (randomised trials)
-#> 2 rob2_cluster       RoB 2 (cluster-randomised trials)
+#> 1         rob2               RoB 2 (randomized trials)
+#> 2 rob2_cluster       RoB 2 (cluster-randomized trials)
 #> 3         rob1                        RoB 1 (Cochrane)
-#> 4     robins_i ROBINS-I (non-randomised interventions)
+#> 4     robins_i ROBINS-I (non-randomized interventions)
 #> 5     robins_e                    ROBINS-E (exposures)
 #> 6      quadas2          QUADAS-2 (diagnostic accuracy)
 #> 7        quips              QUIPS (prognostic factors)
 #>                          study_type n_domains
-#> 1                  Randomised trial         5
-#> 2          Cluster-randomised trial         6
-#> 3                  Randomised trial         7
-#> 4 Non-randomised intervention study         7
-#> 5     Non-randomised exposure study         7
+#> 1                  Randomized trial         5
+#> 2          Cluster-randomized trial         6
+#> 3                  Randomized trial         7
+#> 4 Non-randomized intervention study         7
+#> 5     Non-randomized exposure study         7
 #> 6         Diagnostic accuracy study         4
 #> 7                  Prognostic study         6
 #>                                                levels

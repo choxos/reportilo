@@ -22,7 +22,7 @@ A data frame with `category`, `category_order` and `n`.
 ``` r
 reportilo_categories()
 #>                         category category_order   n
-#> 1              Randomised trials              1  23
+#> 1              Randomized trials              1  23
 #> 2          Observational studies              2 174
 #> 3             Systematic reviews              3  61
 #> 4                Study protocols              4  24

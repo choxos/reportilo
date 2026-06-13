@@ -29,7 +29,7 @@ flowchart_fields("consort_2010")
 #> 13            assessed                              Assessed for eligibility
 #> 14      excluded_total                                      Excluded (total)
 #> 15            excluded                                    Excluded (reasons)
-#> 16          randomized                                            Randomised
+#> 16          randomized                                            Randomized
 #> 17           alloc_int                             Allocated to intervention
 #> 18  alloc_int_received        Received allocated intervention (intervention)
 #> 19       alloc_int_not Did not receive allocated intervention (intervention)
@@ -40,9 +40,9 @@ flowchart_fields("consort_2010")
 #> 24       foll_int_disc              Discontinued intervention (intervention)
 #> 25      foll_ctrl_lost                           Lost to follow-up (control)
 #> 26      foll_ctrl_disc                   Discontinued intervention (control)
-#> 27            anal_int                               Analysed (intervention)
+#> 27            anal_int                               Analyzed (intervention)
 #> 28       anal_int_excl                 Excluded from analysis (intervention)
-#> 29           anal_ctrl                                    Analysed (control)
+#> 29           anal_ctrl                                    Analyzed (control)
 #> 30      anal_ctrl_excl                      Excluded from analysis (control)
 #>    is_reasons
 #> 13      FALSE

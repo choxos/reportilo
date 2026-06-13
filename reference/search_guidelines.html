@@ -82,43 +82,62 @@ title, study design and clinical area.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">search_guidelines</span><span class="op">(</span><span class="st">"randomised trial"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                        guideline_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 278                                                   ace-statement</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 304                                                          sw-crt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 307                                                consort-spi-2018</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 320                                                  consort-equity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 348                                                         consort</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 349 consort-2010-statement-extension-checklist-for-reporting-within</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 674                                                 consort-cluster</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 684                                           consort-for-abstracts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   acronym</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 278         ACE Statement</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 304                SW-CRT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 307      CONSORT-SPI 2018</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 320        CONSORT-Equity</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 348               CONSORT</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 349                  &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 674       CONSORT Cluster</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 684 CONSORT for abstracts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                                          title</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 278 The adaptive designs CONSORT extension (ACE) statement: a checklist with explanation and elaboration guideline for reporting randomised trials that use an adaptive design</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 304                                             Reporting of stepped wedge cluster randomised trials: extension of the CONSORT 2010 statement with explanation and elaboration</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 307                                                                      Reporting randomised trials of social and psychological interventions: the CONSORT-SPI 2018 Extension</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 320                                                                   CONSORT-Equity 2017 extension and elaboration for better reporting of health equity in randomised trials</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 348                                                                                                  CONSORT 2025 Statement: updated guideline for reporting randomised trials</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 349                                                                                  CONSORT 2010 statement: extension checklist for reporting within person randomised trials</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 674                                                                                                             Consort 2010 statement: extension to cluster randomised trials</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 684                                                                                                CONSORT for reporting randomised trials in journal and conference abstracts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              category                          study_design has_checklist</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 278             Other Clinical trials, Experimental studies          TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 304             Other Clinical trials, Experimental studies          TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 307 Randomised trials Clinical trials, Experimental studies          TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 320 Randomised trials Clinical trials, Experimental studies         FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 348 Randomised trials Clinical trials, Experimental studies          TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 349             Other Clinical trials, Experimental studies         FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 674 Randomised trials Clinical trials, Experimental studies         FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 684 Randomised trials Clinical trials, Experimental studies         FALSE</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">search_guidelines</span><span class="op">(</span><span class="st">"randomized trial"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                      guideline_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96                                              consort-factorial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98                                               spirit-factorial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 135 new-reporting-items-and-recommendations-for-randomized-trials</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 227                                                        agrema</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 283                                                       prirate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 295       reporting-of-multi-arm-parallel-group-randomized-trials</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 492                                            consort-harms-2022</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 660                                                   consort-pro</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 683                                       consort-non-inferiority</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 685             consort-non-pharmacologic-treatment-interventions</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                               acronym</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96                                  CONSORT Factorial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98                                   SPIRIT Factorial</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 135                                              &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 227                                            AGReMA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 283                                           PRIRATE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 295                                              &lt;NA&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 492                                CONSORT Harms 2022</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 660                                       CONSORT-PRO</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 683                           CONSORT Non-inferiority</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 685 CONSORT Non-pharmacologic treatment interventions</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                                                                  title</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96                                                                   Reporting of Factorial Randomized Trials: Extension of the CONSORT 2010 Statement</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98                                            Consensus Statement for Protocols of Factorial Randomized Trials: Extension of the SPIRIT 2013 Statement</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 135                  New reporting items and recommendations for randomized trials impacted by COVID- 19 and force majeure events: a targeted approach</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 227                                  A Guideline for Reporting Mediation Analyses of Randomized Trials and Observational Studies: The AGReMA Statement</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 283                                              PRIRATE 2020 guidelines for reporting randomized trials in Endodontics: a consensus-based development</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 295                                                 Reporting of Multi -Arm Parallel -Group Randomized Trials: Extension of the CONSORT 2010 Statement</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 492                      CONSORT Harms 2022 statement, explanation, and elaboration: updated guideline for the reporting of harms in randomized trials</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 660                                                             Reporting of patient-reported outcomes in randomized trials: the CONSORT PRO extension</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 683                                             Reporting of noninferiority and equivalence randomized trials: extension of the CONSORT 2010 statement</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 685 CONSORT Statement for Randomized Trials of Nonpharmacologic Treatments: A 2017 Update and a CONSORT Extension for Nonpharmacologic Trial Abstracts</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                  category</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96      Randomized trials</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98        Study protocols</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 135                 Other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 227 Observational studies</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 283                 Other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 295                 Other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 492     Randomized trials</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 660     Randomized trials</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 683     Randomized trials</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 685     Randomized trials</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                     study_design has_checklist</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 96                         Clinical trials, Experimental studies          TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 98                                               Study protocols         FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 135                        Clinical trials, Experimental studies         FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 227 Clinical trials, Experimental studies, Observational studies         FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 283                        Clinical trials, Experimental studies          TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 295                        Clinical trials, Experimental studies         FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 492                        Clinical trials, Experimental studies          TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 660                        Clinical trials, Experimental studies          TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 683                        Clinical trials, Experimental studies         FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 685                        Clinical trials, Experimental studies         FALSE</span>
 <span class="r-in"><span><span class="fu">search_guidelines</span><span class="op">(</span><span class="st">"qualitative"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                                                                     guideline_id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10                                                                        mentor</span>

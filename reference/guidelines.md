@@ -76,7 +76,7 @@ A data frame with one row per guideline and columns including:
 
 - category:
 
-  Factor; EQUATOR main study type (e.g. "Randomised trials",
+  Factor; EQUATOR main study type (e.g. "Randomized trials",
   "Observational studies"), with "Other" as the catch-all.
 
 - category_order:
