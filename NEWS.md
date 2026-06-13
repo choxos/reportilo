@@ -5,6 +5,10 @@ First development release.
 * Package skeleton: documentation, tests, continuous integration
   (R-CMD-check) and a pkgdown website.
 * `launch_reportilo()` starts the bundled Shiny application.
+* `flowchart_consistency()` gains a `complete` argument: with `complete = TRUE`
+  it requires exact accounting (no silently unaccounted records) at every stage
+  whose removals or exclusions are fully specified, for checking a finished
+  diagram. The default remains bounds-only, suited to a draft.
 
 Subsequent pull requests add the EQUATOR guideline catalog and checklist data,
 the checklist and flow diagram API, the Word / Excel / image export engine, the
