@@ -21,6 +21,10 @@
 #'   \item{downloadable_files}{List column of files (label, url, ext).}
 #'   \item{has_checklist}{Logical; is a bundled checklist available.}
 #'   \item{checklist_tier}{Factor: "checklist" or "catalog_only".}
+#'   \item{category}{Factor; EQUATOR main study type (e.g. "Randomised trials",
+#'     "Observational studies"), with "Other" as the catch-all.}
+#'   \item{category_order}{Integer ordering of `category` for display.}
+#'   \item{is_primary}{Logical; the flagship guideline of its family (shown first).}
 #' }
 #' @source EQUATOR Network reporting guideline library,
 #'   \url{https://www.equator-network.org/}.

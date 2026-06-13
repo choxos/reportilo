@@ -5,17 +5,43 @@
 #'
 #' @param checklist_only Logical; if `TRUE`, return only guidelines that have a
 #'   bundled fillable checklist. Default `FALSE` (all guidelines).
+#' @param category Optional EQUATOR study-type category to filter by (see
+#'   [reportilo_categories()] for valid values).
 #'
 #' @return A data frame of guidelines (see [guidelines]).
-#' @seealso [search_guidelines()], [guideline_info()]
+#' @seealso [search_guidelines()], [guideline_info()], [reportilo_categories()]
 #' @examples
 #' head(reportilo_guidelines())
 #' nrow(reportilo_guidelines(checklist_only = TRUE))
+#' nrow(reportilo_guidelines(category = "Randomised trials"))
 #' @export
-reportilo_guidelines <- function(checklist_only = FALSE) {
+reportilo_guidelines <- function(checklist_only = FALSE, category = NULL) {
   g <- get_data("guidelines")
   if (isTRUE(checklist_only)) g <- g[g$has_checklist, , drop = FALSE]
+  if (!is.null(category)) {
+    g <- g[!is.na(g$category) & as.character(g$category) == category, , drop = FALSE]
+  }
   g
+}
+
+#' EQUATOR study-type categories
+#'
+#' The main study-type categories used to group the catalog, in display order,
+#' with the number of guidelines in each.
+#'
+#' @return A data frame with `category`, `category_order` and `n`.
+#' @seealso [reportilo_guidelines()]
+#' @examples
+#' reportilo_categories()
+#' @export
+reportilo_categories <- function() {
+  g <- get_data("guidelines")
+  tab <- as.data.frame(table(category = g$category), stringsAsFactors = FALSE)
+  tab$category_order <- match(tab$category, levels(g$category))
+  tab <- tab[order(tab$category_order), c("category", "category_order", "Freq")]
+  names(tab)[names(tab) == "Freq"] <- "n"
+  rownames(tab) <- NULL
+  tab
 }
 
 #' Search the reporting guideline catalog
@@ -45,7 +71,7 @@ search_guidelines <- function(query,
   )))
   hit <- grepl(tolower(query), hay, fixed = TRUE)
   cols <- intersect(
-    c("guideline_id", "acronym", "title", "study_design", "has_checklist"),
+    c("guideline_id", "acronym", "title", "category", "study_design", "has_checklist"),
     names(g)
   )
   g[hit, cols, drop = FALSE]
@@ -75,6 +101,7 @@ guideline_info <- function(id) {
       guideline_id = id,
       acronym = row$acronym,
       title = row$title,
+      category = as.character(row$category),
       study_design = row$study_design,
       clinical_area = row$clinical_area,
       reference = row$reference,
@@ -94,6 +121,7 @@ print.reportilo_guideline_info <- function(x, ...) {
   cat0 <- function(...) cat(..., "\n", sep = "")
   cat0(x$acronym %||% x$guideline_id, " - ", x$title %||% "")
   cat0(strrep("-", 60))
+  if (!is.na(x$category %||% NA)) cat0("Category     : ", x$category)
   if (!is.na(x$study_design %||% NA)) cat0("Study design : ", x$study_design)
   if (!is.na(x$clinical_area %||% NA)) cat0("Clinical area: ", x$clinical_area)
   cat0("Checklist    : ", if (isTRUE(x$has_checklist)) "yes (get_checklist())" else "no (catalog only)")

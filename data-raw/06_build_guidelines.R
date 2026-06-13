@@ -79,6 +79,94 @@ guidelines$checklist_tier <- factor(
   levels = c("checklist", "catalog_only")
 )
 
+# ---- EQUATOR "main study type" categories ---------------------------------
+# Order follows the EQUATOR site; "Other" is the catch-all (always last).
+category_levels <- c(
+  "Randomised trials", "Observational studies", "Systematic reviews",
+  "Study protocols", "Diagnostic/prognostic studies", "Case reports",
+  "Clinical practice guidelines", "Qualitative research",
+  "Animal pre-clinical studies", "Quality improvement studies",
+  "Economic evaluations", "Other"
+)
+
+# acronym family (first alnum token, upper-cased) -> category
+family_cat <- c(
+  CONSORT = "Randomised trials",
+  STROBE = "Observational studies",
+  PRISMA = "Systematic reviews", MOOSE = "Systematic reviews",
+  SPIRIT = "Study protocols",
+  STARD = "Diagnostic/prognostic studies", TRIPOD = "Diagnostic/prognostic studies",
+  QUADAS = "Diagnostic/prognostic studies",
+  CARE = "Case reports",
+  AGREE = "Clinical practice guidelines", RIGHT = "Clinical practice guidelines",
+  SRQR = "Qualitative research", COREQ = "Qualitative research",
+  ENTREQ = "Qualitative research",
+  ARRIVE = "Animal pre-clinical studies",
+  SQUIRE = "Quality improvement studies",
+  CHEERS = "Economic evaluations"
+)
+
+# study-design keyword -> category, for guidelines with no matching acronym
+design_cat <- list(
+  "Randomised trials" = "randomi",
+  "Systematic reviews" = "systematic review|meta-anal-?ysis|meta analysis|evidence synthesis|scoping review",
+  "Study protocols" = "protocol",
+  "Diagnostic/prognostic studies" = "diagnostic|prognostic|prediction model|accuracy",
+  "Case reports" = "case report|case series",
+  "Qualitative research" = "qualitative",
+  "Animal pre-clinical studies" = "animal|pre-?clinical|in vivo",
+  "Quality improvement studies" = "quality improvement",
+  "Economic evaluations" = "economic|cost-effectiveness|health technology",
+  "Clinical practice guidelines" = "practice guideline|clinical guideline",
+  "Observational studies" = "observational|cohort|case-control|cross-sectional|surveillance"
+)
+
+acronym_family <- function(ac) {
+  if (is.na(ac) || !nzchar(ac)) {
+    return(NA_character_)
+  }
+  toupper(sub("^([A-Za-z0-9]+).*$", "\\1", trimws(ac)))
+}
+
+categorize <- function(ac, design) {
+  # PRISMA-P (and "PRISMA P") are protocol guidelines, not reviews
+  if (!is.na(ac) && grepl("^PRISMA[ -]?P\\b", toupper(ac))) {
+    return("Study protocols")
+  }
+  fam <- acronym_family(ac)
+  if (!is.na(fam) && fam %in% names(family_cat)) {
+    return(unname(family_cat[[fam]]))
+  }
+  d <- tolower(if (is.na(design)) "" else design)
+  if (nzchar(d)) {
+    for (cat in names(design_cat)) {
+      if (grepl(design_cat[[cat]], d)) {
+        return(cat)
+      }
+    }
+  }
+  "Other"
+}
+
+guidelines$category <- factor(
+  mapply(categorize, guidelines$acronym, guidelines$study_design),
+  levels = category_levels
+)
+guidelines$category_order <- as.integer(guidelines$category)
+
+# Flagship (most important) guideline of each family: shown first in its category.
+core_regex <- paste(
+  c(
+    "^CONSORT$", "^STROBE$", "^PRISMA$", "^PRISMA 2020$", "^PRISMA-P$",
+    "^SPIRIT$", "^SPIRIT 2013$", "^STARD$", "^STARD 2015$", "^TRIPOD$",
+    "^CARE$", "^AGREE", "^RIGHT$", "^SRQR$", "^COREQ$", "^ARRIVE",
+    "^SQUIRE$", "^SQUIRE 2.0$", "^CHEERS$", "^CHEERS 2022$", "^MOOSE$", "^TIDieR$"
+  ),
+  collapse = "|"
+)
+guidelines$is_primary <- !is.na(guidelines$acronym) &
+  grepl(core_regex, guidelines$acronym, ignore.case = TRUE)
+
 stopifnot(!any(is.na(guidelines$guideline_id)), !any(duplicated(guidelines$guideline_id)))
 
 saveRDS(guidelines, here("parsed", "guidelines.rds"))

@@ -4,11 +4,14 @@
 \alias{reportilo_guidelines}
 \title{Browse the EQUATOR reporting guideline catalog}
 \usage{
-reportilo_guidelines(checklist_only = FALSE)
+reportilo_guidelines(checklist_only = FALSE, category = NULL)
 }
 \arguments{
 \item{checklist_only}{Logical; if \code{TRUE}, return only guidelines that have a
 bundled fillable checklist. Default \code{FALSE} (all guidelines).}
+
+\item{category}{Optional EQUATOR study-type category to filter by (see
+\code{\link[=reportilo_categories]{reportilo_categories()}} for valid values).}
 }
 \value{
 A data frame of guidelines (see \link{guidelines}).
@@ -20,7 +23,8 @@ ship a machine-readable checklist.
 \examples{
 head(reportilo_guidelines())
 nrow(reportilo_guidelines(checklist_only = TRUE))
+nrow(reportilo_guidelines(category = "Randomised trials"))
 }
 \seealso{
-\code{\link[=search_guidelines]{search_guidelines()}}, \code{\link[=guideline_info]{guideline_info()}}
+\code{\link[=search_guidelines]{search_guidelines()}}, \code{\link[=guideline_info]{guideline_info()}}, \code{\link[=reportilo_categories]{reportilo_categories()}}
 }
