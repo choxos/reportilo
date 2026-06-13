@@ -7,6 +7,7 @@ export function flowchartDot(
   nodes: FlowNode[],
   edges: FlowEdge[],
   counts: Record<string, string>,
+  background = "white",
 ): string {
   const visible = nodes.filter((n) => n.role !== "stage_title");
 
@@ -58,7 +59,7 @@ export function flowchartDot(
 
   return [
     "digraph reportilo {",
-    "  graph [rankdir=TB, splines=ortho, nodesep=0.45, ranksep=0.55];",
+    `  graph [rankdir=TB, splines=ortho, nodesep=0.45, ranksep=0.55, bgcolor="${background}"];`,
     '  node [shape=box, fontname="Helvetica", fontsize=10, margin="0.14,0.09"];',
     "  edge [arrowsize=0.7];",
     ...nodeLines.map((l) => "  " + l),

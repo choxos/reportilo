@@ -28,13 +28,18 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
   );
 
   const [counts, setCounts] = useState<Record<string, string>>({});
+  const [transparent, setTransparent] = useState(false);
   useEffect(() => {
     const init: Record<string, string> = {};
     for (const f of fields) init[f.count_field] = f.value;
     setCounts(init);
   }, [templateId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const dot = useMemo(() => flowchartDot(nodes, edges, counts), [nodes, edges, counts]);
+  const background = transparent ? "transparent" : "white";
+  const dot = useMemo(
+    () => flowchartDot(nodes, edges, counts, background),
+    [nodes, edges, counts, background],
+  );
   const [svg, setSvg] = useState("");
   const [busy, setBusy] = useState(false);
   useEffect(() => {
@@ -59,7 +64,7 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
   const exportWord = async () => {
     setBusy(true);
     try {
-      const png = await svgToPng(svg);
+      const png = await svgToPng(svg, 2, transparent);
       await flowchartDocx(templateName, png, `${templateId}.docx`);
     } finally {
       setBusy(false);
@@ -99,11 +104,20 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
           ))}
         </div>
 
+        <label className="flex items-center gap-2 text-sm pt-1">
+          <input
+            type="checkbox"
+            checked={transparent}
+            onChange={(e) => setTransparent(e.target.checked)}
+          />
+          Transparent background
+        </label>
+
         <div className="grid grid-cols-2 gap-2 pt-2">
           <button
             className="rounded bg-ink text-white px-3 py-2 text-sm font-medium hover:bg-ink/90 disabled:opacity-50"
             disabled={!svg}
-            onClick={() => downloadPng(svg, `${templateId}.png`)}
+            onClick={() => downloadPng(svg, `${templateId}.png`, 2, transparent)}
           >
             PNG
           </button>
