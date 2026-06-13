@@ -1,0 +1,90 @@
+---
+title: "Building flow diagrams"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Building flow diagrams}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(reportilo)
+```
+
+`reportilo` ships three fillable flow diagram templates, all built on one
+generic node/edge/count model:
+
+```{r}
+flowchart_templates[, c("template_id", "name", "study_type", "n_count_fields")]
+```
+
+## Start a diagram
+
+```{r}
+fc <- new_flowchart("prisma_2020")
+fc
+```
+
+## See the fields
+
+Each template exposes a set of fillable fields. Most are numeric counts; some
+hold a semicolon-separated list of exclusion reasons.
+
+```{r}
+head(flowchart_fields("prisma_2020"), 8)
+```
+
+## Fill in the counts
+
+Set fields by name with `set_counts()`. Unknown names raise an error, so typos
+are caught early.
+
+```{r}
+fc <- set_counts(fc,
+  identified_db = 2451,
+  duplicates = 320,
+  screened = 2034,
+  excluded = 1789,
+  sought = 245,
+  assessed = 237,
+  reports_excluded = "Wrong population (n = 120); Wrong outcome (n = 73)",
+  studies_included = 42,
+  reports_included = 48
+)
+fc
+```
+
+## View it
+
+`render_flowchart()` returns an interactive Graphviz widget.
+
+```{r, eval = requireNamespace("DiagrammeR", quietly = TRUE), fig.width = 7}
+render_flowchart(fc)
+```
+
+The underlying Graphviz source is available with `flowchart_dot()`, which is
+also what the image and Word exporters use.
+
+```{r}
+cat(substr(flowchart_dot(fc), 1, 120), "...")
+```
+
+## Export
+
+```{r, eval = FALSE}
+reportilo_export(fc, "prisma-flow.png") # also svg, pdf
+reportilo_export(fc, "prisma-flow.docx") # embedded image
+reportilo_export(fc, "prisma-counts.xlsx") # the counts as a table
+```
+
+## The CONSORT and STARD templates
+
+`"consort_2010"` is a two-arm parallel trial diagram and `"stard_2015"` is a
+diagnostic accuracy flow. They are filled the same way; use
+`flowchart_fields()` to discover their fields.
+
+```{r}
+nrow(flowchart_fields("consort_2010"))
+nrow(flowchart_fields("stard_2015"))
+```

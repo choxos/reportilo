@@ -40,8 +40,10 @@ reference:
   desc: Create and fill PRISMA, CONSORT and STARD flow diagrams.
   contents:
   - new_flowchart
+  - flowchart_fields
   - set_counts
   - render_flowchart
+  - flowchart_dot
 - title: Export
   desc: Write a filled checklist or flow diagram to Word, Excel or an image.
   contents:
