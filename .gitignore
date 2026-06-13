@@ -1,0 +1,30 @@
+# R
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rcheck/
+*.tar.gz
+docs/
+
+# reference material and reproducibility scratch (local only)
+refs/
+
+# data pipeline: downloaded third-party files and caches are not redistributed
+data-raw/downloads/
+data-raw/cache/
+data-raw/reports/
+data-raw/parsed/
+
+# macOS
+.DS_Store
+**/.DS_Store
+Rplots.pdf
+
+# web app build
+node_modules/
+dist/
+
+# tooling
+.gstack/
+.vscode/

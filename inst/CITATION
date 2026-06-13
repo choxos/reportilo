@@ -1,0 +1,9 @@
+bibentry(
+  bibtype  = "Manual",
+  title    = "reportilo: Fill In and Export EQUATOR Reporting Guidelines and Flow Diagrams",
+  author   = person("Ahmad", "Sofi-Mahmudi"),
+  year     = "2026",
+  note     = sprintf("R package version %s", meta$Version),
+  url      = "https://github.com/choxos/reportilo",
+  header   = "To cite reportilo in publications use:"
+)
