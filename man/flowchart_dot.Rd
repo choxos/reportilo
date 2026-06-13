@@ -4,10 +4,14 @@
 \alias{flowchart_dot}
 \title{Build the Graphviz DOT for a flow diagram}
 \usage{
-flowchart_dot(x)
+flowchart_dot(x, background = "white")
 }
 \arguments{
 \item{x}{A \code{reportilo_flowchart}.}
+
+\item{background}{Diagram background color. Use \code{"white"} (default) for a solid
+white background, or \code{"transparent"} for no background (useful for slides and
+figures). Any Graphviz color name or hex value is accepted.}
 }
 \value{
 A length-one character string of Graphviz DOT.
@@ -20,4 +24,5 @@ filled counts into the box labels. This is the shared core used by
 \examples{
 fc <- new_flowchart("stard_2015")
 cat(substr(flowchart_dot(fc), 1, 80))
+cat(substr(flowchart_dot(fc, background = "transparent"), 1, 80))
 }

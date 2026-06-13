@@ -20,7 +20,8 @@
 #'   given.
 #' @param format Optional explicit format (e.g. `"docx"`). Defaults to the file
 #'   extension.
-#' @param ... Passed to the underlying writer (e.g. `width` for images).
+#' @param ... Passed to the underlying writer. For flow diagrams: `width` (image
+#'   pixel width) and `background` (`"white"` or `"transparent"`).
 #'
 #' @return The output `file` path, invisibly.
 #' @seealso [get_checklist()], [new_flowchart()]

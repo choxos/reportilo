@@ -4,10 +4,13 @@
 \alias{render_flowchart}
 \title{Render a flow diagram for viewing}
 \usage{
-render_flowchart(x)
+render_flowchart(x, background = "white")
 }
 \arguments{
 \item{x}{A \code{reportilo_flowchart}.}
+
+\item{background}{Diagram background color (default \code{"white"}; use
+\code{"transparent"} for no background).}
 }
 \value{
 A \code{DiagrammeR} \code{grViz} htmlwidget.

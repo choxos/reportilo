@@ -44,9 +44,9 @@ export_checklist_docx <- function(x, file) {
   invisible(file)
 }
 
-export_flowchart_docx <- function(x, file, width = 1400) {
+export_flowchart_docx <- function(x, file, width = 1400, background = "white") {
   require_officer()
-  svg <- flowchart_svg(x)
+  svg <- flowchart_svg(x, background = background)
   # aspect ratio from the SVG canvas (no png dependency)
   m <- regmatches(svg, regexec('width="([0-9.]+)pt"[^>]*height="([0-9.]+)pt"', svg))[[1]]
   aspect <- if (length(m) == 3) as.numeric(m[3]) / as.numeric(m[2]) else 1.3

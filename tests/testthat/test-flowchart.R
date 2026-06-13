@@ -31,6 +31,27 @@ test_that("flowchart_dot substitutes counts and is valid-ish DOT", {
   expect_false(grepl("title_scr", dot, fixed = TRUE))
 })
 
+test_that("observational study templates are available and build", {
+  tpl <- flowchart_templates
+  for (t in c("cohort_study", "case_control", "cross_sectional")) {
+    expect_true(t %in% tpl$template_id)
+    fc <- new_flowchart(t)
+    expect_s3_class(fc, "reportilo_flowchart")
+    expect_gt(length(fc$counts), 0)
+    expect_match(flowchart_dot(fc), "digraph reportilo")
+  }
+})
+
+test_that("background option sets the Graphviz bgcolor", {
+  fc <- new_flowchart("cohort_study")
+  expect_match(flowchart_dot(fc), 'bgcolor="white"', fixed = TRUE)
+  expect_match(
+    flowchart_dot(fc, background = "transparent"),
+    'bgcolor="transparent"',
+    fixed = TRUE
+  )
+})
+
 test_that("render_flowchart returns a widget when DiagrammeR is available", {
   skip_if_not_installed("DiagrammeR")
   w <- render_flowchart(new_flowchart("stard_2015"))
