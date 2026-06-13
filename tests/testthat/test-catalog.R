@@ -19,12 +19,12 @@ test_that("search_guidelines finds known guidelines case-insensitively", {
 test_that("categories are assigned and filterable", {
   cats <- reportilo_categories()
   expect_true(all(c("category", "category_order", "n") %in% names(cats)))
-  expect_true("Randomised trials" %in% cats$category)
-  expect_identical(cats$category[1], "Randomised trials") # EQUATOR display order
+  expect_true("Randomized trials" %in% cats$category)
+  expect_identical(cats$category[1], "Randomized trials") # EQUATOR display order
   expect_identical(cats$category[nrow(cats)], "Other") # catch-all last
 
-  rt <- reportilo_guidelines(category = "Randomised trials")
-  expect_true(all(as.character(rt$category) == "Randomised trials"))
+  rt <- reportilo_guidelines(category = "Randomized trials")
+  expect_true(all(as.character(rt$category) == "Randomized trials"))
   expect_true("consort" %in% rt$guideline_id)
   expect_true(sum(rt$is_primary) >= 1)
 

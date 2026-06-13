@@ -82,7 +82,7 @@ guidelines$checklist_tier <- factor(
 # ---- EQUATOR "main study type" categories ---------------------------------
 # Order follows the EQUATOR site; "Other" is the catch-all (always last).
 category_levels <- c(
-  "Randomised trials", "Observational studies", "Systematic reviews",
+  "Randomized trials", "Observational studies", "Systematic reviews",
   "Study protocols", "Diagnostic/prognostic studies", "Case reports",
   "Clinical practice guidelines", "Qualitative research",
   "Animal pre-clinical studies", "Quality improvement studies",
@@ -91,7 +91,7 @@ category_levels <- c(
 
 # acronym family (first alnum token, upper-cased) -> category
 family_cat <- c(
-  CONSORT = "Randomised trials",
+  CONSORT = "Randomized trials",
   STROBE = "Observational studies",
   PRISMA = "Systematic reviews", MOOSE = "Systematic reviews",
   SPIRIT = "Study protocols",
@@ -108,7 +108,7 @@ family_cat <- c(
 
 # study-design keyword -> category, for guidelines with no matching acronym
 design_cat <- list(
-  "Randomised trials" = "randomi",
+  "Randomized trials" = "randomi",
   "Systematic reviews" = "systematic review|meta-anal-?ysis|meta analysis|evidence synthesis|scoping review",
   "Study protocols" = "protocol",
   "Diagnostic/prognostic studies" = "diagnostic|prognostic|prediction model|accuracy",

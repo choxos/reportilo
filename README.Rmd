@@ -55,7 +55,7 @@ pak::pak("choxos/reportilo")
 library(reportilo)
 
 # 1. Find a guideline
-search_guidelines("randomised trial")
+search_guidelines("randomized trial")
 guideline_info("consort")
 
 # 2. Fill in its checklist

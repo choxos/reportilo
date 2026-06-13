@@ -23,7 +23,7 @@ ship a machine-readable checklist.
 \examples{
 head(reportilo_guidelines())
 nrow(reportilo_guidelines(checklist_only = TRUE))
-nrow(reportilo_guidelines(category = "Randomised trials"))
+nrow(reportilo_guidelines(category = "Randomized trials"))
 }
 \seealso{
 \code{\link[=search_guidelines]{search_guidelines()}}, \code{\link[=guideline_info]{guideline_info()}}, \code{\link[=reportilo_categories]{reportilo_categories()}}

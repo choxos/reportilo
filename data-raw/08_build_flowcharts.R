@@ -82,7 +82,7 @@ add_count(tp, "studies_included", "Studies included in review", 0, 11)
 add_count(tp, "reports_included", "Reports of included studies", 0, 12)
 
 # ============================ CONSORT 2010 =================================
-# Parallel two-arm randomised trial.
+# Parallel two-arm randomized trial.
 tc <- "consort_2010"
 add_node(tc, "title_enrol", "Enrollment", 1, 0, "stage_title", "Enrollment", "title", "#cfe2d4")
 add_node(tc, "title_alloc", "Allocation", 2, 0, "stage_title", "Allocation", "title", "#cfe2d4")
@@ -94,7 +94,7 @@ add_node(tc, "assessed", "Enrollment", 1, 1, "count_box",
 add_node(tc, "excluded", "Enrollment", 1, 1, "exclusion_box",
   "Excluded (n = {excluded_total}):\\n{excluded}", "right", "#eef3ef")
 add_node(tc, "randomized", "Enrollment", 1, 2, "count_box",
-  "Randomised (n = {randomized})", "main", "#eef3ef")
+  "Randomized (n = {randomized})", "main", "#eef3ef")
 
 add_node(tc, "alloc_int", "Allocation", 2, 1, "arm",
   "Allocated to intervention (n = {alloc_int})\\nReceived allocated intervention (n = {alloc_int_received})\\nDid not receive allocated\\nintervention (n = {alloc_int_not})", "left", "#eef3ef")
@@ -107,9 +107,9 @@ add_node(tc, "foll_ctrl", "Follow-Up", 3, 1, "arm",
   "Lost to follow-up (n = {foll_ctrl_lost})\\nDiscontinued intervention (n = {foll_ctrl_disc})", "right", "#eef3ef")
 
 add_node(tc, "anal_int", "Analysis", 4, 1, "arm",
-  "Analysed (n = {anal_int})\\nExcluded from analysis (n = {anal_int_excl})", "left", "#eef3ef")
+  "Analyzed (n = {anal_int})\\nExcluded from analysis (n = {anal_int_excl})", "left", "#eef3ef")
 add_node(tc, "anal_ctrl", "Analysis", 4, 1, "arm",
-  "Analysed (n = {anal_ctrl})\\nExcluded from analysis (n = {anal_ctrl_excl})", "right", "#eef3ef")
+  "Analyzed (n = {anal_ctrl})\\nExcluded from analysis (n = {anal_ctrl_excl})", "right", "#eef3ef")
 
 add_edge(tc, "assessed", "randomized")
 add_edge(tc, "assessed", "excluded", "exclude")
@@ -124,7 +124,7 @@ cc <- function(field, label, value = 0, ord = NA, is_reasons = FALSE) add_count(
 cc("assessed", "Assessed for eligibility", 0, 1)
 cc("excluded_total", "Excluded (total)", 0, 2)
 cc("excluded", "Excluded (reasons)", "Not meeting inclusion criteria (n = 0); Declined to participate (n = 0); Other reasons (n = 0)", 3, TRUE)
-cc("randomized", "Randomised", 0, 4)
+cc("randomized", "Randomized", 0, 4)
 cc("alloc_int", "Allocated to intervention", 0, 5)
 cc("alloc_int_received", "Received allocated intervention (intervention)", 0, 6)
 cc("alloc_int_not", "Did not receive allocated intervention (intervention)", 0, 7)
@@ -135,9 +135,9 @@ cc("foll_int_lost", "Lost to follow-up (intervention)", 0, 11)
 cc("foll_int_disc", "Discontinued intervention (intervention)", 0, 12)
 cc("foll_ctrl_lost", "Lost to follow-up (control)", 0, 13)
 cc("foll_ctrl_disc", "Discontinued intervention (control)", 0, 14)
-cc("anal_int", "Analysed (intervention)", 0, 15)
+cc("anal_int", "Analyzed (intervention)", 0, 15)
 cc("anal_int_excl", "Excluded from analysis (intervention)", 0, 16)
-cc("anal_ctrl", "Analysed (control)", 0, 17)
+cc("anal_ctrl", "Analyzed (control)", 0, 17)
 cc("anal_ctrl_excl", "Excluded from analysis (control)", 0, 18)
 
 # ============================ STARD 2015 ===================================
@@ -195,9 +195,9 @@ add_node(tco, "exp_follow", "Follow-Up", 3, 1, "arm",
 add_node(tco, "unexp_follow", "Follow-Up", 3, 1, "arm",
   "Lost to follow-up (n = {unexp_lost})\\nExcluded during follow-up (n = {unexp_excluded})", "right", "#eaf4ee")
 add_node(tco, "exp_analyzed", "Analysis", 4, 1, "arm",
-  "Analysed (n = {exp_analyzed})", "left", "#eaf4ee")
+  "Analyzed (n = {exp_analyzed})", "left", "#eaf4ee")
 add_node(tco, "unexp_analyzed", "Analysis", 4, 1, "arm",
-  "Analysed (n = {unexp_analyzed})", "right", "#eaf4ee")
+  "Analyzed (n = {unexp_analyzed})", "right", "#eaf4ee")
 add_edge(tco, "assessed", "exposed")
 add_edge(tco, "assessed", "unexposed")
 add_edge(tco, "assessed", "excluded", "exclude")
@@ -215,8 +215,8 @@ cco("exp_lost", "Lost to follow-up (exposed)", 0, 6)
 cco("exp_excluded", "Excluded during follow-up (exposed)", 0, 7)
 cco("unexp_lost", "Lost to follow-up (unexposed)", 0, 8)
 cco("unexp_excluded", "Excluded during follow-up (unexposed)", 0, 9)
-cco("exp_analyzed", "Analysed (exposed)", 0, 10)
-cco("unexp_analyzed", "Analysed (unexposed)", 0, 11)
+cco("exp_analyzed", "Analyzed (exposed)", 0, 10)
+cco("unexp_analyzed", "Analyzed (unexposed)", 0, 11)
 
 # ============================ Case-control study ==========================
 # Observational case-control (STROBE): cases and controls selected separately.
@@ -230,9 +230,9 @@ add_node(tcc2, "cases_enr", "Enrollment", 2, 1, "arm",
 add_node(tcc2, "controls_enr", "Enrollment", 2, 1, "arm",
   "Controls eligible (n = {controls_eligible})\\nEnrolled (n = {controls_enrolled})\\nExcluded (n = {controls_excluded})", "right", "#f6eef7")
 add_node(tcc2, "cases_anal", "Analysis", 3, 1, "arm",
-  "Cases analysed (n = {cases_analyzed})", "left", "#f6eef7")
+  "Cases analyzed (n = {cases_analyzed})", "left", "#f6eef7")
 add_node(tcc2, "controls_anal", "Analysis", 3, 1, "arm",
-  "Controls analysed (n = {controls_analyzed})", "right", "#f6eef7")
+  "Controls analyzed (n = {controls_analyzed})", "right", "#f6eef7")
 add_edge(tcc2, "cases_src", "cases_enr")
 add_edge(tcc2, "controls_src", "controls_enr")
 add_edge(tcc2, "cases_enr", "cases_anal")
@@ -242,12 +242,12 @@ ccc("cases_identified", "Cases identified", 0, 1)
 ccc("cases_eligible", "Cases eligible", 0, 2)
 ccc("cases_enrolled", "Cases enrolled", 0, 3)
 ccc("cases_excluded", "Cases excluded", 0, 4)
-ccc("cases_analyzed", "Cases analysed", 0, 5)
+ccc("cases_analyzed", "Cases analyzed", 0, 5)
 ccc("controls_identified", "Controls identified", 0, 6)
 ccc("controls_eligible", "Controls eligible", 0, 7)
 ccc("controls_enrolled", "Controls enrolled", 0, 8)
 ccc("controls_excluded", "Controls excluded", 0, 9)
-ccc("controls_analyzed", "Controls analysed", 0, 10)
+ccc("controls_analyzed", "Controls analyzed", 0, 10)
 
 # ============================ Cross-sectional study =======================
 # Observational cross-sectional / survey (STROBE): one sample, no follow-up.
@@ -300,7 +300,7 @@ flowchart_templates <- data.frame(
   ),
   guideline_id = c("prisma-2020", "consort", "stard-2015", "strobe", "strobe", "strobe"),
   study_type = c(
-    "Systematic review", "Randomised trial", "Diagnostic accuracy",
+    "Systematic review", "Randomized trial", "Diagnostic accuracy",
     "Cohort study", "Case-control study", "Cross-sectional study"
   ),
   stringsAsFactors = FALSE
