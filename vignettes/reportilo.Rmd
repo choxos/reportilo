@@ -1,0 +1,96 @@
+---
+title: "Getting started with reportilo"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with reportilo}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(reportilo)
+```
+
+`reportilo` turns the [EQUATOR Network](https://www.equator-network.org/)
+library of reporting guidelines into a working toolkit. The workflow is three
+steps: **find** a guideline, **fill** its checklist or flow diagram, and
+**export** the result.
+
+## Find
+
+Browse or search the catalog of reporting guidelines.
+
+```{r}
+# the whole catalog
+nrow(reportilo_guidelines())
+
+# only guidelines that ship a fillable checklist
+nrow(reportilo_guidelines(checklist_only = TRUE))
+
+# search across acronym, title, study design and clinical area
+head(search_guidelines("randomised trial"), 5)
+```
+
+Look up one guideline (by `guideline_id` or an unambiguous acronym):
+
+```{r}
+guideline_info("prisma-2020")
+```
+
+## Fill
+
+Get a fillable checklist. Each row is one item; record where you address it in
+the `response` column.
+
+```{r}
+chk <- get_checklist("strobe")
+head(chk)
+
+chk$response[1:3] <- c("p1", "p2", "p2")
+validate_checklist(chk)
+```
+
+Flow diagrams work the same way. Start from a template, set the counts, and
+view it.
+
+```{r}
+fc <- new_flowchart("prisma_2020")
+fc <- set_counts(fc, identified_db = 1200, screened = 980, excluded = 700)
+fc
+```
+
+```{r, eval = requireNamespace("DiagrammeR", quietly = TRUE), fig.width = 6}
+render_flowchart(fc)
+```
+
+## Export
+
+Write either object to Word, Excel or an image. The format follows the file
+extension.
+
+```{r, eval = FALSE}
+reportilo_export(chk, "strobe-checklist.docx")
+reportilo_export(chk, "strobe-checklist.xlsx")
+reportilo_export(fc, "prisma-flow.png")
+```
+
+## Three front ends
+
+The same data and logic power three interfaces:
+
+- the **R package** documented here;
+- a bundled **Shiny app**, `launch_reportilo()`; and
+- a **browser app** at <https://choxos.github.io/reportilo/app/>.
+
+## Data coverage and provenance
+
+For v0.1.0 the main families (such as PRISMA 2020, CONSORT 2010 and STROBE) ship
+as hand-verified checklists. Other guidelines are best-effort auto-extracted
+from their source documents, and the rest are catalog entries that link to the
+original. The `parse_status` dataset records the coverage and confidence for
+every guideline.
+
+```{r}
+table(parse_status$status)
+```

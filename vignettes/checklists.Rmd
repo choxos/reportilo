@@ -1,0 +1,86 @@
+---
+title: "Filling in reporting checklists"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Filling in reporting checklists}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(reportilo)
+```
+
+## Getting a checklist
+
+`get_checklist()` (or its alias `new_checklist()`) returns a fillable checklist
+for a guideline: one row per item, with an empty `response` column.
+
+```{r}
+chk <- get_checklist("prisma-2020")
+class(chk)
+nrow(chk)
+head(chk[, c("item_no", "section", "item_text")])
+```
+
+The object carries the guideline id, title and whether the checklist was
+hand-verified:
+
+```{r}
+attr(chk, "guideline_id")
+attr(chk, "verified")
+```
+
+## Filling it in
+
+`response` is an ordinary character column. Record the page number (or any note)
+where each item is addressed.
+
+```{r}
+chk$response[chk$item_no == "1"] <- "p1"
+chk$response[chk$item_no == "16a"] <- "p7, Figure 1"
+
+validate_checklist(chk)
+```
+
+## Verified versus auto-extracted
+
+The main families ship as hand-verified checklists. Many other guidelines are
+auto-extracted from their source documents; treat those as a starting point and
+check them against the original. Use `parse_status` to see which is which.
+
+```{r}
+ps <- parse_status
+head(ps[ps$verified, c("guideline_id", "n_items", "status")])
+
+# guidelines flagged for review (lower-confidence auto-extraction)
+sum(ps$needs_review)
+```
+
+## Catalog-only guidelines
+
+Guidelines without a machine-readable checklist return `NULL` with a pointer to
+their source.
+
+```{r}
+catalog_only <- reportilo_guidelines()
+catalog_only <- catalog_only$guideline_id[!catalog_only$has_checklist][1]
+res <- get_checklist(catalog_only)
+is.null(res)
+```
+
+For those, `guideline_info()` gives the metadata and source links so you can
+work from the original document.
+
+## Exporting
+
+Write the filled checklist to Word, Excel or CSV:
+
+```{r, eval = FALSE}
+reportilo_export(chk, "prisma-2020-checklist.docx")
+reportilo_export(chk, "prisma-2020-checklist.xlsx")
+reportilo_export(chk, "prisma-2020-checklist.csv")
+```
+
+See `vignette("export")` for the full list of formats.
