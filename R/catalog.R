@@ -13,7 +13,7 @@
 #' @examples
 #' head(reportilo_guidelines())
 #' nrow(reportilo_guidelines(checklist_only = TRUE))
-#' nrow(reportilo_guidelines(category = "Randomised trials"))
+#' nrow(reportilo_guidelines(category = "Randomized trials"))
 #' @export
 reportilo_guidelines <- function(checklist_only = FALSE, category = NULL) {
   g <- get_data("guidelines")
@@ -56,7 +56,7 @@ reportilo_categories <- function() {
 #' @return A data frame of matching guidelines with the most useful columns.
 #' @seealso [reportilo_guidelines()], [guideline_info()]
 #' @examples
-#' search_guidelines("randomised trial")
+#' search_guidelines("randomized trial")
 #' search_guidelines("qualitative")
 #' @export
 search_guidelines <- function(query,

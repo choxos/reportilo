@@ -29,7 +29,7 @@ nrow(reportilo_guidelines())
 nrow(reportilo_guidelines(checklist_only = TRUE))
 
 # search across acronym, title, study design and clinical area
-head(search_guidelines("randomised trial"), 5)
+head(search_guidelines("randomized trial"), 5)
 ```
 
 Look up one guideline (by `guideline_id` or an unambiguous acronym):

@@ -29,7 +29,7 @@ rob_levels <- data.frame(
 # ordered domains (D-id + full label).
 tool_defs <- list(
   rob2 = list(
-    name = "RoB 2 (randomised trials)", study_type = "Randomised trial",
+    name = "RoB 2 (randomized trials)", study_type = "Randomized trial",
     levels = c("Low", "Some concerns", "High"),
     domains = c(
       D1 = "Bias arising from the randomization process",
@@ -40,7 +40,7 @@ tool_defs <- list(
     )
   ),
   rob2_cluster = list(
-    name = "RoB 2 (cluster-randomised trials)", study_type = "Cluster-randomised trial",
+    name = "RoB 2 (cluster-randomized trials)", study_type = "Cluster-randomized trial",
     levels = c("Low", "Some concerns", "High"),
     domains = c(
       D1 = "Bias arising from the randomization process",
@@ -52,7 +52,7 @@ tool_defs <- list(
     )
   ),
   rob1 = list(
-    name = "RoB 1 (Cochrane)", study_type = "Randomised trial",
+    name = "RoB 1 (Cochrane)", study_type = "Randomized trial",
     levels = c("Low", "Unclear", "High"),
     domains = c(
       D1 = "Random sequence generation",
@@ -65,7 +65,7 @@ tool_defs <- list(
     )
   ),
   robins_i = list(
-    name = "ROBINS-I (non-randomised interventions)", study_type = "Non-randomised intervention study",
+    name = "ROBINS-I (non-randomized interventions)", study_type = "Non-randomized intervention study",
     levels = c("Low", "Moderate", "Serious", "Critical", "No information"),
     domains = c(
       D1 = "Bias due to confounding",
@@ -78,7 +78,7 @@ tool_defs <- list(
     )
   ),
   robins_e = list(
-    name = "ROBINS-E (exposures)", study_type = "Non-randomised exposure study",
+    name = "ROBINS-E (exposures)", study_type = "Non-randomized exposure study",
     levels = c("Low", "Some concerns", "High", "Very high", "No information"),
     domains = c(
       D1 = "Bias due to confounding",

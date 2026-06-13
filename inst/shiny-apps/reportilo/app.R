@@ -75,8 +75,9 @@ catalogServer <- function(id) {
         hay <- tolower(paste(g$acronym, g$title, g$study_design, g$clinical_area))
         g <- g[grepl(tolower(input$search), hay, fixed = TRUE), ]
       }
-      # flagship guideline of each family first, then alphabetical
-      g[order(!g$is_primary, is.na(g$acronym), tolower(g$acronym), tolower(g$title)), ]
+      # alphabetical by acronym; guidelines without an acronym go last
+      no_acronym <- is.na(g$acronym) | !nzchar(g$acronym)
+      g[order(no_acronym, tolower(ifelse(no_acronym, g$title, g$acronym))), ]
     })
 
     output$table <- DT::renderDT({

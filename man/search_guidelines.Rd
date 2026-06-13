@@ -25,7 +25,7 @@ A data frame of matching guidelines with the most useful columns.
 Case-insensitive substring search across selected fields of the catalog.
 }
 \examples{
-search_guidelines("randomised trial")
+search_guidelines("randomized trial")
 search_guidelines("qualitative")
 }
 \seealso{
