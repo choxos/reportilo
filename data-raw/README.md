@@ -40,11 +40,24 @@ Output policy:
 * `data/*.rda` — committed and shipped in the package tarball.
 * `inst/extdata/*.json` — committed for the browser app, but `.Rbuildignore`d
   (not shipped in the tarball); copied to `public/data/` on the `webapp` branch.
-* `data-raw/downloads/`, `parsed/`, `reports/` — gitignored scratch.
+* `data-raw/downloads/`, `parsed/`, `reports/` — gitignored scratch, **not
+  committed**.
 
-Run the whole thing with `Rscript data-raw/run_all.R`. Each step reads and
-writes committed intermediates, so the `.rda` and JSON artifacts can be rebuilt
-from `parsed/` without re-downloading.
+## Two kinds of rebuild
+
+* **Rebuild the package datasets from committed inputs (no network).** The
+  shipped `data/*.rda` and `inst/extdata/*.json` are derived from committed
+  inputs only: `equator_guidelines.csv`, `overrides/`, `flowcharts/` and
+  `id_map.csv`. Steps 06-12 (`06_build_guidelines.R` onward) regenerate them
+  without touching the network, *provided* a `parsed/` cache already exists from
+  an earlier full run.
+* **Rebuild the extracted checklists from the source documents (needs
+  network).** Running the full pipeline with `Rscript data-raw/run_all.R`
+  re-downloads the guideline source files over the network (step 02) and
+  re-parses them into `parsed/`. Because `downloads/` and `parsed/` are
+  gitignored scratch and are not committed, a clean clone cannot reproduce the
+  extracted checklist data offline: the first run must have network access to
+  the EQUATOR source documents.
 
 ## R packages used at build time
 

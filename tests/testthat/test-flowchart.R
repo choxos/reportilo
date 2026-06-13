@@ -84,6 +84,75 @@ test_that("consort and prisma encode removal/exclusion invariants", {
   expect_true(any(grepl("screened", flowchart_consistency(pr), ignore.case = TRUE)))
 })
 
+test_that("complete mode flags under-accounted diagrams that bounds mode allows", {
+  # identified 210 - 50 removed = 160 should flow to screened, but only 150 do:
+  # 10 records unaccounted. Within bounds (150 <= 160), so default mode is silent.
+  fc <- set_counts(new_flowchart("prisma_2020"),
+    identified_db = 210, duplicates = 50, auto_removed = 0, other_removed = 0,
+    screened = 150, excluded = 100, sought = 50, not_retrieved = 10,
+    assessed = 40, studies_included = 30
+  )
+  expect_length(flowchart_consistency(fc), 0)
+  comp <- flowchart_consistency(fc, complete = TRUE)
+  expect_gte(length(comp), 1)
+  expect_true(any(grepl("unaccounted", comp)))
+  expect_true(any(grepl("screened", comp, ignore.case = TRUE)))
+})
+
+test_that("complete mode passes a fully balanced diagram", {
+  fc <- set_counts(new_flowchart("prisma_2020"),
+    identified_db = 200, duplicates = 50, auto_removed = 0, other_removed = 0,
+    screened = 150, excluded = 100, sought = 50, not_retrieved = 10,
+    assessed = 40, studies_included = 30
+  )
+  expect_length(flowchart_consistency(fc, complete = TRUE), 0)
+})
+
+test_that("complete mode catches under-accounting across templates", {
+  # each: bounds pass (lhs <= base - minus) but lhs < base - minus -> flagged
+  consort <- set_counts(new_flowchart("consort_2010"),
+    assessed = 110, excluded_total = 10, randomized = 90, alloc_int = 45, alloc_ctrl = 45
+  )
+  expect_length(flowchart_consistency(consort), 0)
+  expect_true(any(grepl("unaccounted", flowchart_consistency(consort, complete = TRUE))))
+
+  stard <- set_counts(new_flowchart("stard_2015"),
+    eligible = 100, no_index = 10, index_test = 80, no_reference = 0, reference = 80
+  )
+  expect_length(flowchart_consistency(stard), 0)
+  expect_true(any(grepl("unaccounted", flowchart_consistency(stard, complete = TRUE))))
+
+  cohort <- set_counts(new_flowchart("cohort_study"),
+    assessed = 110, excluded_total = 10, exposed = 40, unexposed = 50
+  )
+  expect_length(flowchart_consistency(cohort), 0)
+  expect_true(any(grepl("unaccounted", flowchart_consistency(cohort, complete = TRUE))))
+
+  cc <- set_counts(new_flowchart("case_control"),
+    cases_identified = 100, cases_eligible = 100, cases_excluded = 10, cases_enrolled = 80
+  )
+  expect_length(flowchart_consistency(cc), 0)
+  expect_true(any(grepl("unaccounted", flowchart_consistency(cc, complete = TRUE))))
+
+  cs <- set_counts(new_flowchart("cross_sectional"),
+    target = 100, not_eligible = 10, invited = 80, nonresponse = 0, participated = 80
+  )
+  expect_length(flowchart_consistency(cs), 0)
+  expect_true(any(grepl("unaccounted", flowchart_consistency(cs, complete = TRUE))))
+})
+
+test_that("complete mode does not flag stages without specified removals", {
+  # studies_included (30) < assessed (40) is legitimate (full-text exclusions are
+  # a reason field, not a count), so complete mode must not flag that stage even
+  # though every upstream stage balances exactly.
+  fc <- set_counts(new_flowchart("prisma_2020"),
+    identified_db = 50, duplicates = 0, auto_removed = 0, other_removed = 0,
+    screened = 50, excluded = 0, sought = 50, not_retrieved = 10,
+    assessed = 40, studies_included = 30
+  )
+  expect_length(flowchart_consistency(fc, complete = TRUE), 0)
+})
+
 test_that("strict export blocks impossible flow diagrams", {
   skip_if_not_installed("DiagrammeRsvg")
   bad <- set_counts(new_flowchart("prisma_2020"), identified_db = 1, screened = 999)

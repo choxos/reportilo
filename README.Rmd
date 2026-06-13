@@ -34,11 +34,17 @@ It ships three coordinated front ends from a single source of truth:
 
 ## What is inside
 
-* A searchable **catalog** of the EQUATOR reporting guidelines.
-* Machine-readable **checklists** for the major families (CONSORT, STROBE,
-  PRISMA, SPIRIT, STARD and more), with provenance and parse-confidence for
-  every item.
-* Data-driven **flow diagram** templates: PRISMA 2020, CONSORT and STARD.
+* A searchable **catalog** of all the EQUATOR reporting guidelines.
+* Fillable **checklists** for a subset of guidelines: a small hand-verified
+  core (currently PRISMA 2020, CONSORT and STROBE) plus best-effort,
+  automatically extracted checklists for many more, each item carrying its
+  provenance and a parse-confidence score. Coverage is partial and not all
+  extracted checklists are verified; `reportilo_coverage()` reports what is
+  verified versus extracted, by category.
+* Data-driven **flow diagram** templates: PRISMA 2020, CONSORT and STARD, plus
+  observational designs (cohort, case-control and cross-sectional).
+* **Risk-of-bias** traffic-light and summary plots for the common tools
+  (RoB 2, ROBINS-I and more).
 * An **export engine** for Word (`.docx`), Excel (`.xlsx`) and image
   (`.png` / `.svg` / `.pdf`) output.
 
@@ -82,8 +88,10 @@ launch_reportilo()
 Guideline metadata is derived from the EQUATOR Network reporting guideline
 library. Checklist items are extracted from the guideline source documents;
 guidelines without a machine-readable checklist remain available as catalog
-entries that link to their original source. See `parse_status` for per-guideline
-coverage.
+entries that link to their original source. Most checklists are extracted
+automatically and should be verified against the source before use; only a small
+core is hand-verified. See `reportilo_coverage()` for verified-versus-extracted
+coverage by category, and `parse_status` for per-guideline detail.
 
 ## License
 
