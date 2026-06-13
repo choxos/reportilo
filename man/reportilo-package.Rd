@@ -4,7 +4,7 @@
 \name{reportilo-package}
 \alias{reportilo}
 \alias{reportilo-package}
-\title{reportilo: Fill In and Export EQUATOR Reporting Guidelines and Flow Diagrams}
+\title{reportilo: Fill in and Export EQUATOR Reporting Guidelines and Flow Diagrams}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 

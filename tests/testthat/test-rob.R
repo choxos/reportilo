@@ -43,6 +43,24 @@ test_that("rob plots return ggplot objects", {
   expect_s3_class(rob_summary(reportilo_rob("robins_i")), "ggplot")
 })
 
+test_that("rob_summary keeps missing judgments in the denominator", {
+  skip_if_not_installed("ggplot2")
+  d <- rob_template("rob2", n_studies = 2)
+  d$D1 <- c("Low", "") # one missing judgment
+  rob <- suppressWarnings(reportilo_rob("rob2", d))
+  p <- rob_summary(rob)
+  expect_s3_class(p, "ggplot")
+  built <- ggplot2::ggplot_build(p)
+  expect_true("Missing" %in% levels(built$plot$data$judgment))
+})
+
+test_that("rob image export supports a transparent background", {
+  skip_if_not_installed("ggplot2")
+  f <- tempfile(fileext = ".png")
+  reportilo_export(reportilo_rob("rob2"), f, type = "traffic_light", background = "transparent")
+  expect_true(file.exists(f) && file.size(f) > 0)
+})
+
 test_that("rob exports to image, Excel and CSV", {
   skip_if_not_installed("ggplot2")
   rob <- reportilo_rob("rob2")

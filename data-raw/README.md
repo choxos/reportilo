@@ -33,6 +33,14 @@ The pipeline is written entirely in **R**.
 | 09 | `09_save_rda.R` | `data/*.rda` |
 | 10 | `10_export_json.R` | `inst/extdata/*.json` |
 | 11 | `11_validation_report.R` | `reports/parse_review.html` (gitignored) |
+| 12 | `12_build_rob.R` | risk-of-bias datasets (`data/rob_*.rda`) + `inst/extdata/rob.json` |
+
+Output policy:
+
+* `data/*.rda` — committed and shipped in the package tarball.
+* `inst/extdata/*.json` — committed for the browser app, but `.Rbuildignore`d
+  (not shipped in the tarball); copied to `public/data/` on the `webapp` branch.
+* `data-raw/downloads/`, `parsed/`, `reports/` — gitignored scratch.
 
 Run the whole thing with `Rscript data-raw/run_all.R`. Each step reads and
 writes committed intermediates, so the `.rda` and JSON artifacts can be rebuilt

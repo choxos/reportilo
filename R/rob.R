@@ -232,13 +232,17 @@ rob_summary <- function(x) {
   rob_require_ggplot2()
   lev <- get_data("rob_levels")
   jl <- x$judgments[x$judgments$domain_id != "Overall", ]
-  jl <- jl[!is.na(jl$judgment) & nzchar(jl$judgment), ]
+  # Keep every study in the denominator: blank, NA or out-of-scale judgments
+  # become a visible "Missing" category rather than being silently dropped.
+  valid <- !is.na(jl$judgment) & jl$judgment %in% x$levels
+  jl$judgment[!valid] <- "Missing"
   # order domains top-to-bottom and levels by severity within the tool
   jl$domain <- factor(jl$domain_id,
     levels = rev(x$domains$domain_id[x$domains$domain_id != "Overall"]))
-  lvls <- x$levels
+  lvls <- c(x$levels, "Missing")
   jl$judgment <- factor(jl$judgment, levels = lvls)
   pal <- stats::setNames(lev$color[match(lvls, lev$level)], lvls)
+  pal[["Missing"]] <- "#cccccc"
   ggplot2::ggplot(jl, ggplot2::aes(y = domain, fill = judgment)) +
     ggplot2::geom_bar(position = "fill", width = 0.7, color = "grey40", linewidth = 0.3) +
     ggplot2::scale_fill_manual(values = pal, drop = FALSE, name = NULL) +

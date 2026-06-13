@@ -10,6 +10,23 @@ get_data <- function(name) {
 
 `%||%` <- function(a, b) if (is.null(a) || length(a) == 0 || (length(a) == 1 && is.na(a))) b else a
 
+# Neutralize spreadsheet formula injection: prefix any character cell that
+# begins with =, +, -, @, tab or CR with a single quote, so spreadsheet software
+# treats it as text rather than a formula. Numeric columns are left untouched.
+csv_neutralize <- function(df) {
+  df <- as.data.frame(df, stringsAsFactors = FALSE)
+  for (j in seq_along(df)) {
+    col <- df[[j]]
+    if (is.character(col) || is.factor(col)) {
+      col <- as.character(col)
+      hit <- !is.na(col) & grepl("^[-=+@\t\r]", col)
+      col[hit] <- paste0("'", col[hit])
+      df[[j]] <- col
+    }
+  }
+  df
+}
+
 # Resolve a guideline_id, allowing a case-insensitive acronym as a convenience.
 resolve_guideline_id <- function(id) {
   g <- get_data("guidelines")

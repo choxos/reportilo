@@ -13,9 +13,8 @@ library(bslib)
 theme <- bs_theme(
   version = 5,
   primary = "#0E3A5F",
-  secondary = "#1FA37A",
-  base_font = font_google("Inter", local = FALSE),
-  heading_font = font_google("Poppins", local = FALSE)
+  secondary = "#1FA37A"
+  # fonts: use the Bootstrap system-ui stack (no runtime Google font fetch)
 )
 
 guidelines <- reportilo::reportilo_guidelines()
@@ -106,9 +105,9 @@ catalogServer <- function(id) {
           tags$p(tags$strong("Study design: "), info$study_design %||% "NA"),
           tags$p(tags$strong("Checklist: "), if (isTRUE(info$has_checklist)) "available (Checklists tab)" else "catalog only"),
           if (!is.na(info$flowchart_template)) tags$p(tags$strong("Flow diagram: "), info$flowchart_template),
-          if (!is.na(info$equator_url %||% NA)) tags$p(tags$a(href = info$equator_url, "EQUATOR page", target = "_blank")),
+          if (!is.na(info$equator_url %||% NA)) tags$p(tags$a(href = info$equator_url, "EQUATOR page", target = "_blank", rel = "noopener noreferrer")),
           if (length(files)) {
-            tags$ul(lapply(files, function(f) tags$li(tags$a(href = f$url, f$label %||% f$url, target = "_blank"))))
+            tags$ul(lapply(files, function(f) tags$li(tags$a(href = f$url, f$label %||% f$url, target = "_blank", rel = "noopener noreferrer"))))
           }
         )
       )
@@ -146,11 +145,35 @@ checklistServer <- function(id) {
 
     output$badge <- renderUI({
       req(rv$chk)
-      if (isTRUE(attr(rv$chk, "verified"))) {
-        tags$span(class = "badge bg-success", "Hand-verified checklist")
+      verified <- isTRUE(attr(rv$chk, "verified"))
+      status <- attr(rv$chk, "status") %||% "parsed_ok"
+      conf <- attr(rv$chk, "parse_confidence")
+      method <- attr(rv$chk, "parse_method") %||% "unknown"
+      needs_review <- isTRUE(attr(rv$chk, "needs_review"))
+
+      badge <- if (verified) {
+        tags$span(class = "badge bg-success", "Hand-verified")
+      } else if (status == "parsed_ok") {
+        tags$span(class = "badge bg-info text-dark", "Auto-extracted")
       } else {
-        tags$span(class = "badge bg-warning text-dark", "Auto-extracted (verify against source)")
+        tags$span(class = "badge bg-warning text-dark", paste0("Auto-extracted (", status, ")"))
       }
+      meta <- tags$span(
+        class = "text-muted", style = "font-size:0.8em; margin-left:0.4rem;",
+        sprintf(
+          "method: %s%s", method,
+          if (!is.na(conf)) sprintf(" | confidence: %.2f", conf) else ""
+        )
+      )
+      warn <- if (!verified && (needs_review || status %in% c("partial", "failed"))) {
+        div(
+          class = "alert alert-warning p-2 mt-2", style = "font-size:0.85em;",
+          tags$strong("Verify against the source. "),
+          "This checklist was extracted automatically and may be incomplete or ",
+          "mislabeled. Use guideline_info() / the source link, and check each item."
+        )
+      }
+      tagList(div(badge, meta), warn)
     })
 
     output$table <- DT::renderDT(
@@ -199,7 +222,11 @@ flowchartUI <- function(id) {
       downloadButton(ns("dl_pdf"), "PDF", class = "btn-outline-secondary btn-sm"),
       downloadButton(ns("dl_docx"), "Word", class = "btn-outline-secondary btn-sm")
     ),
-    card(full_screen = TRUE, card_header("Preview"), DiagrammeR::grVizOutput(ns("preview"), height = "640px"))
+    card(
+      full_screen = TRUE, card_header("Preview"),
+      uiOutput(ns("consistency")),
+      DiagrammeR::grVizOutput(ns("preview"), height = "640px")
+    )
   )
 }
 
@@ -226,13 +253,34 @@ flowchartServer <- function(id) {
       vals <- list()
       for (i in seq_len(nrow(f))) {
         v <- input[[paste0("fld_", f$count_field[i])]]
-        if (!is.null(v)) vals[[f$count_field[i]]] <- v
+        if (is.null(v)) next
+        if (isTRUE(f$is_reasons[i])) {
+          vals[[f$count_field[i]]] <- v
+        } else {
+          # ignore blank/invalid numeric inputs (keep the field default)
+          num <- suppressWarnings(as.numeric(v))
+          if (length(num) == 1 && is.finite(num) && num >= 0 && num == round(num)) {
+            vals[[f$count_field[i]]] <- num
+          }
+        }
       }
       if (length(vals)) obj <- do.call(reportilo::set_counts, c(list(obj), vals))
       obj
     })
 
     bg <- reactive(if (isTRUE(input$transparent)) "transparent" else "white")
+
+    output$consistency <- renderUI({
+      issues <- reportilo::flowchart_consistency(fc())
+      if (!length(issues)) {
+        return(NULL)
+      }
+      div(
+        class = "alert alert-warning p-2", style = "font-size:0.85em;",
+        tags$strong("Check these counts: "),
+        tags$ul(lapply(issues, tags$li))
+      )
+    })
 
     output$preview <- DiagrammeR::renderGrViz({
       DiagrammeR::grViz(reportilo::flowchart_dot(fc(), background = bg()))
@@ -265,6 +313,7 @@ robUI <- function(id) {
       selectInput(ns("tool"), "Tool", choices = rob_tool_choices),
       radioButtons(ns("ptype"), "Plot",
         c("Traffic light" = "traffic_light", "Summary" = "summary")),
+      checkboxInput(ns("transparent"), "Transparent background", FALSE),
       helpText("Edit each cell with a judgment (e.g. Low, High). Allowed values depend on the tool."),
       downloadButton(ns("dl_png"), "PNG", class = "btn-primary btn-sm"),
       downloadButton(ns("dl_svg"), "SVG", class = "btn-secondary btn-sm"),
@@ -316,12 +365,16 @@ robServer <- function(id) {
       if (input$ptype == "summary") reportilo::rob_summary(obj) else reportilo::rob_traffic_light(obj)
     })
 
+    rob_bg <- reactive(if (isTRUE(input$transparent)) "transparent" else "white")
+
     dl <- function(ext) {
       downloadHandler(
         filename = function() paste0(input$tool, "_rob.", ext),
         content = function(file) {
           notify_export(
-            reportilo::reportilo_export(rob_obj(), file, format = ext, type = input$ptype),
+            reportilo::reportilo_export(rob_obj(), file,
+              format = ext, type = input$ptype, background = rob_bg()
+            ),
             ext
           )
         }
@@ -345,8 +398,8 @@ ui <- page_navbar(
   nav_panel("Flow diagrams", icon = icon("diagram-project"), flowchartUI("flow")),
   nav_panel("Risk of bias", icon = icon("traffic-light"), robUI("rob")),
   nav_spacer(),
-  nav_item(tags$a(href = "https://choxos.github.io/reportilo/", "Docs", target = "_blank")),
-  nav_item(tags$a(href = "https://github.com/choxos/reportilo", "GitHub", target = "_blank"))
+  nav_item(tags$a(href = "https://choxos.github.io/reportilo/", "Docs", target = "_blank", rel = "noopener noreferrer")),
+  nav_item(tags$a(href = "https://github.com/choxos/reportilo", "GitHub", target = "_blank", rel = "noopener noreferrer"))
 )
 
 server <- function(input, output, session) {
