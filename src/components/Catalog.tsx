@@ -31,10 +31,12 @@ export default function Catalog({ data }: { data: Dataset }) {
         return true;
       })
       .sort((a, b) => {
-        // flagship of each family first, then alphabetical by acronym/title
-        if (a.is_primary !== b.is_primary) return a.is_primary ? -1 : 1;
-        const aa = (a.acronym ?? a.title ?? "").toLowerCase();
-        const bb = (b.acronym ?? b.title ?? "").toLowerCase();
+        // alphabetical by acronym; guidelines without an acronym go last
+        const aBlank = !a.acronym;
+        const bBlank = !b.acronym;
+        if (aBlank !== bBlank) return aBlank ? 1 : -1;
+        const aa = ((aBlank ? a.title : a.acronym) ?? "").toLowerCase();
+        const bb = ((bBlank ? b.title : b.acronym) ?? "").toLowerCase();
         return aa.localeCompare(bb);
       });
   }, [data, search, activeCat, checklistOnly]);
