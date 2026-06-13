@@ -164,18 +164,33 @@ set_counts <- function(x, ...) {
 #' template has explicit removal/exclusion counts: for example PRISMA *screened*
 #' cannot exceed *identified - duplicates - automation - other*, and CONSORT
 #' *randomized* cannot exceed *assessed - excluded*. Reason fields are ignored.
-#' Bounds are checked (not strict equality), so a partially filled diagram is not
-#' flagged.
+#'
+#' By default only bounds are checked (not strict equality), so a partially
+#' filled draft is not flagged. Set `complete = TRUE` for a finished diagram to
+#' additionally require *exact* accounting at every stage whose removals or
+#' exclusions are fully specified: there the inflowing count must equal base
+#' minus removals, not merely fall within it. This catches records that are
+#' silently unaccounted for in an otherwise complete diagram.
 #'
 #' @param x A `reportilo_flowchart`.
+#' @param complete If `TRUE`, also flag stages where the count is *less* than the
+#'   base minus its fully specified removals (records unaccounted for), not only
+#'   stages where it exceeds the bound. Use this for a final, fully filled
+#'   diagram. Default `FALSE` (bounds only), which suits a draft.
 #'
 #' @return A character vector of issue messages (empty if the counts are
 #'   consistent).
 #' @examples
 #' fc <- set_counts(new_flowchart("prisma_2020"), identified_db = 100, screened = 200)
 #' flowchart_consistency(fc)
+#'
+#' # complete mode catches under-accounting that bounds mode allows
+#' draft <- set_counts(new_flowchart("prisma_2020"),
+#'   identified_db = 200, duplicates = 50, screened = 100)
+#' flowchart_consistency(draft) # ok within bounds
+#' flowchart_consistency(draft, complete = TRUE) # 50 records unaccounted
 #' @export
-flowchart_consistency <- function(x) {
+flowchart_consistency <- function(x, complete = FALSE) {
   if (!inherits(x, "reportilo_flowchart")) {
     stop("`x` must be a reportilo_flowchart (see new_flowchart()).", call. = FALSE)
   }
@@ -199,12 +214,16 @@ flowchart_consistency <- function(x) {
     rhs_lab <- nm(r$base %||% r$lhs[1])
     if (!is.null(r$plus)) rhs_lab <- paste(rhs_lab, "+", paste(vapply(r$plus, nm, character(1)), collapse = " + "))
     if (!is.null(r$minus)) rhs_lab <- paste(rhs_lab, "-", paste(vapply(r$minus, nm, character(1)), collapse = " - "))
-    if (r$op == "le" && lhs_val > rhs_val) {
+    if (lhs_val > rhs_val) {
       issues <- c(issues, sprintf("%s (%d) exceeds %s (%d).",
         lhs_lab, as.integer(lhs_val), rhs_lab, as.integer(rhs_val)))
-    } else if (r$op == "eq" && lhs_val != rhs_val) {
-      issues <- c(issues, sprintf("%s (%d) should equal %s (%d).",
-        lhs_lab, as.integer(lhs_val), rhs_lab, as.integer(rhs_val)))
+    } else if (isTRUE(complete) && !is.null(r$minus) && lhs_val < rhs_val) {
+      # exact accounting: with removals fully specified, the difference should be
+      # absorbed, so a shortfall means records are unaccounted for.
+      issues <- c(issues, sprintf(
+        "%s (%d) is less than %s (%d); %d record(s) unaccounted.",
+        lhs_lab, as.integer(lhs_val), rhs_lab, as.integer(rhs_val),
+        as.integer(rhs_val - lhs_val)))
     }
   }
   issues

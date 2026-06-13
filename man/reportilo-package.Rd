@@ -14,8 +14,10 @@ A toolkit for the health research reporting guidelines curated by the EQUATOR Ne
 The EQUATOR Network (Enhancing the QUAlity and Transparency Of health
 Research) maintains the canonical library of reporting guidelines for health
 research. \code{reportilo} turns that library into a working toolkit: a searchable
-catalog of every guideline, machine-readable checklists for the major
-families, and data-driven flow diagram templates.
+catalog of every guideline, fillable checklists for a subset of them (a small
+hand-verified core plus best-effort, automatically extracted data),
+data-driven flow diagram templates, and risk-of-bias plots. Checklist
+coverage is partial and is reported by \code{reportilo_coverage()}.
 
 The package is organized around three verbs:
 \itemize{

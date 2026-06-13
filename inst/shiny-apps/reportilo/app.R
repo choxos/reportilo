@@ -217,10 +217,13 @@ flowchartUI <- function(id) {
       selectInput(ns("template"), "Template", choices = template_choices),
       uiOutput(ns("fields")),
       checkboxInput(ns("transparent"), "Transparent background", FALSE),
+      checkboxInput(ns("allow_warn"), "Export despite consistency warnings", FALSE),
       downloadButton(ns("dl_png"), "PNG", class = "btn-primary btn-sm"),
       downloadButton(ns("dl_svg"), "SVG", class = "btn-secondary btn-sm"),
       downloadButton(ns("dl_pdf"), "PDF", class = "btn-outline-secondary btn-sm"),
-      downloadButton(ns("dl_docx"), "Word", class = "btn-outline-secondary btn-sm")
+      downloadButton(ns("dl_docx"), "Word", class = "btn-outline-secondary btn-sm"),
+      downloadButton(ns("dl_xlsx"), "Excel", class = "btn-outline-secondary btn-sm"),
+      downloadButton(ns("dl_csv"), "CSV (counts)", class = "btn-outline-secondary btn-sm")
     ),
     card(
       full_screen = TRUE, card_header("Preview"),
@@ -278,7 +281,12 @@ flowchartServer <- function(id) {
       div(
         class = "alert alert-warning p-2", style = "font-size:0.85em;",
         tags$strong("Check these counts: "),
-        tags$ul(lapply(issues, tags$li))
+        tags$ul(lapply(issues, tags$li)),
+        tags$div(
+          class = "mt-1",
+          "Exports are blocked until these are resolved. ",
+          "Tick 'Export despite consistency warnings' to download a draft anyway."
+        )
       )
     })
 
@@ -286,12 +294,15 @@ flowchartServer <- function(id) {
       DiagrammeR::grViz(reportilo::flowchart_dot(fc(), background = bg()))
     })
 
+    # strict export blocks impossible diagrams unless the user opts into a draft
     dl <- function(ext) {
       downloadHandler(
         filename = function() paste0(input$template, ".", ext),
         content = function(file) {
           notify_export(
-            reportilo::reportilo_export(fc(), file, format = ext, background = bg()),
+            reportilo::reportilo_export(fc(), file,
+              format = ext, background = bg(), strict = !isTRUE(input$allow_warn)
+            ),
             ext
           )
         }
@@ -301,6 +312,8 @@ flowchartServer <- function(id) {
     output$dl_svg <- dl("svg")
     output$dl_pdf <- dl("pdf")
     output$dl_docx <- dl("docx")
+    output$dl_xlsx <- dl("xlsx")
+    output$dl_csv <- dl("csv")
   })
 }
 
