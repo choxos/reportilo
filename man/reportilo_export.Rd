@@ -4,7 +4,7 @@
 \alias{reportilo_export}
 \title{Export a checklist or flow diagram to a file}
 \usage{
-reportilo_export(x, file, format = NULL, ...)
+reportilo_export(x, file, format = NULL, ..., strict = FALSE)
 }
 \arguments{
 \item{x}{A \code{reportilo_checklist}, \code{reportilo_flowchart} or \code{reportilo_rob}.}
@@ -18,6 +18,10 @@ extension.}
 \item{...}{Passed to the underlying writer. Flow diagrams and risk-of-bias
 plots accept \code{background} (\code{"white"} or \code{"transparent"}); flow diagrams also
 accept \code{width}, and risk-of-bias accepts \code{type}.}
+
+\item{strict}{For flow diagrams: if \code{TRUE}, refuse to export when
+\code{\link[=flowchart_consistency]{flowchart_consistency()}} reports impossible counts (otherwise a warning is
+issued and the file is still written). Default \code{FALSE}.}
 }
 \value{
 The output \code{file} path, invisibly.

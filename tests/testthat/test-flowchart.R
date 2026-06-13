@@ -56,10 +56,40 @@ test_that("set_counts rejects invalid count values", {
 test_that("flowchart_consistency flags impossible counts", {
   bad <- set_counts(new_flowchart("prisma_2020"), identified_db = 100, screened = 200)
   expect_gte(length(flowchart_consistency(bad)), 1)
+  # exact PRISMA accounting: screened = identified - removals
   ok <- set_counts(new_flowchart("prisma_2020"),
-    identified_db = 200, screened = 100, sought = 50, assessed = 40, studies_included = 30
+    identified_db = 200, duplicates = 50, screened = 150, excluded = 100,
+    sought = 50, not_retrieved = 10, assessed = 40, studies_included = 30
   )
   expect_length(flowchart_consistency(ok), 0)
+})
+
+test_that("case_control has consistency rules", {
+  bad <- set_counts(new_flowchart("case_control"),
+    cases_identified = 10, cases_eligible = 20
+  )
+  expect_gte(length(flowchart_consistency(bad)), 1)
+})
+
+test_that("consort and prisma encode removal/exclusion invariants", {
+  # CONSORT: randomized should equal assessed - excluded_total
+  cc <- set_counts(new_flowchart("consort_2010"),
+    assessed = 100, excluded_total = 90, randomized = 100
+  )
+  expect_true(any(grepl("Randomised|Randomized", flowchart_consistency(cc))))
+  # PRISMA: screened should equal identified minus removals
+  pr <- set_counts(new_flowchart("prisma_2020"),
+    identified_db = 100, duplicates = 0, screened = 500
+  )
+  expect_true(any(grepl("screened", flowchart_consistency(pr), ignore.case = TRUE)))
+})
+
+test_that("strict export blocks impossible flow diagrams", {
+  skip_if_not_installed("DiagrammeRsvg")
+  bad <- set_counts(new_flowchart("prisma_2020"), identified_db = 1, screened = 999)
+  f <- tempfile(fileext = ".svg")
+  expect_error(reportilo_export(bad, f, strict = TRUE), "inconsistent")
+  expect_warning(reportilo_export(bad, f, strict = FALSE), "inconsistent")
 })
 
 test_that("background option sets the Graphviz bgcolor", {

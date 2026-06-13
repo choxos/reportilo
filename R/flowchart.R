@@ -113,43 +113,59 @@ set_counts <- function(x, ...) {
   x
 }
 
-# Template-specific consistency rules: each rule is "the count for `whole` should
-# be >= the sum of the counts for `parts`". Returns human-readable issues.
+# Template-specific consistency rules. Each rule asserts a bound: the left-hand
+# side (sum of `lhs` fields) must not exceed a right-hand side built from a
+# `base` field plus `plus` fields minus `minus` fields. This catches impossible
+# counts (more out than in) without flagging legitimately incomplete diagrams.
+.rule <- function(op, lhs, base = NULL, minus = NULL, plus = NULL) {
+  list(op = op, lhs = lhs, base = base, minus = minus, plus = plus)
+}
 .flowchart_rules <- list(
   prisma_2020 = list(
-    list(whole = "identified_db", parts = "screened"),
-    list(whole = "screened", parts = "sought"),
-    list(whole = "sought", parts = "assessed"),
-    list(whole = "assessed", parts = "studies_included")
+    .rule("le", "screened", base = "identified_db", minus = c("duplicates", "auto_removed", "other_removed")),
+    .rule("le", "sought", base = "screened", minus = "excluded"),
+    .rule("le", "assessed", base = "sought", minus = "not_retrieved"),
+    .rule("le", "studies_included", base = "assessed")
   ),
   consort_2010 = list(
-    list(whole = "assessed", parts = "randomized"),
-    list(whole = "randomized", parts = c("alloc_int", "alloc_ctrl")),
-    list(whole = "alloc_int", parts = "anal_int"),
-    list(whole = "alloc_ctrl", parts = "anal_ctrl")
+    .rule("le", "randomized", base = "assessed", minus = "excluded_total"),
+    .rule("le", c("alloc_int", "alloc_ctrl"), base = "randomized"),
+    .rule("le", "anal_int", base = "alloc_int"),
+    .rule("le", "anal_ctrl", base = "alloc_ctrl")
   ),
   stard_2015 = list(
-    list(whole = "eligible", parts = "index_test"),
-    list(whole = "index_test", parts = "reference"),
-    list(whole = "reference", parts = "analyzed")
+    .rule("le", "index_test", base = "eligible", minus = "no_index"),
+    .rule("le", "reference", base = "index_test", minus = "no_reference"),
+    .rule("le", "analyzed", base = "reference")
   ),
   cohort_study = list(
-    list(whole = "assessed", parts = c("exposed", "unexposed")),
-    list(whole = "exposed", parts = "exp_analyzed"),
-    list(whole = "unexposed", parts = "unexp_analyzed")
+    .rule("le", c("exposed", "unexposed"), base = "assessed", minus = "excluded_total"),
+    .rule("le", "exp_analyzed", base = "exposed"),
+    .rule("le", "unexp_analyzed", base = "unexposed")
+  ),
+  case_control = list(
+    .rule("le", "cases_eligible", base = "cases_identified"),
+    .rule("le", "cases_enrolled", base = "cases_eligible", minus = "cases_excluded"),
+    .rule("le", "cases_analyzed", base = "cases_enrolled"),
+    .rule("le", "controls_eligible", base = "controls_identified"),
+    .rule("le", "controls_enrolled", base = "controls_eligible", minus = "controls_excluded"),
+    .rule("le", "controls_analyzed", base = "controls_enrolled")
   ),
   cross_sectional = list(
-    list(whole = "target", parts = "invited"),
-    list(whole = "invited", parts = "participated"),
-    list(whole = "participated", parts = "analyzed")
+    .rule("le", "invited", base = "target", minus = "not_eligible"),
+    .rule("le", "participated", base = "invited", minus = "nonresponse"),
+    .rule("le", "analyzed", base = "participated")
   )
 )
 
 #' Check a flow diagram for count inconsistencies
 #'
-#' Apply template-specific sanity rules (for example, *screened* cannot exceed
-#' *identified*, *randomized* cannot exceed *assessed for eligibility*). Reason
-#' fields are ignored.
+#' Apply template-specific accounting bounds, including flow invariants where the
+#' template has explicit removal/exclusion counts: for example PRISMA *screened*
+#' cannot exceed *identified - duplicates - automation - other*, and CONSORT
+#' *randomized* cannot exceed *assessed - excluded*. Reason fields are ignored.
+#' Bounds are checked (not strict equality), so a partially filled diagram is not
+#' flagged.
 #'
 #' @param x A `reportilo_flowchart`.
 #'
@@ -168,19 +184,27 @@ flowchart_consistency <- function(x) {
     return(character(0))
   }
   num <- function(field) suppressWarnings(as.numeric(x$counts[[field]]))
-  issues <- character(0)
   lab <- stats::setNames(x$fields$label, x$fields$count_field)
+  nm <- function(f) lab[[f]] %||% f
+  issues <- character(0)
   for (r in rules) {
-    whole <- num(r$whole)
-    parts <- vapply(r$parts, num, numeric(1))
-    if (anyNA(c(whole, parts))) next
-    if (whole < sum(parts)) {
-      issues <- c(issues, sprintf(
-        "%s (%d) is less than %s (%d).",
-        lab[[r$whole]] %||% r$whole, as.integer(whole),
-        paste(vapply(r$parts, function(p) lab[[p]] %||% p, character(1)), collapse = " + "),
-        as.integer(sum(parts))
-      ))
+    fields <- c(r$lhs, r$base, r$minus, r$plus)
+    vals <- vapply(fields, num, numeric(1))
+    if (anyNA(vals)) next
+    lhs_val <- sum(vapply(r$lhs, num, numeric(1)))
+    rhs_val <- (if (!is.null(r$base)) num(r$base) else 0) +
+      (if (!is.null(r$plus)) sum(vapply(r$plus, num, numeric(1))) else 0) -
+      (if (!is.null(r$minus)) sum(vapply(r$minus, num, numeric(1))) else 0)
+    lhs_lab <- paste(vapply(r$lhs, nm, character(1)), collapse = " + ")
+    rhs_lab <- nm(r$base %||% r$lhs[1])
+    if (!is.null(r$plus)) rhs_lab <- paste(rhs_lab, "+", paste(vapply(r$plus, nm, character(1)), collapse = " + "))
+    if (!is.null(r$minus)) rhs_lab <- paste(rhs_lab, "-", paste(vapply(r$minus, nm, character(1)), collapse = " - "))
+    if (r$op == "le" && lhs_val > rhs_val) {
+      issues <- c(issues, sprintf("%s (%d) exceeds %s (%d).",
+        lhs_lab, as.integer(lhs_val), rhs_lab, as.integer(rhs_val)))
+    } else if (r$op == "eq" && lhs_val != rhs_val) {
+      issues <- c(issues, sprintf("%s (%d) should equal %s (%d).",
+        lhs_lab, as.integer(lhs_val), rhs_lab, as.integer(rhs_val)))
     }
   }
   issues
