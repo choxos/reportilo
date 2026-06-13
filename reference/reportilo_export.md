@@ -17,7 +17,7 @@ reportilo_export(x, file, format = NULL, ...)
 
 - x:
 
-  A `reportilo_checklist` or `reportilo_flowchart`.
+  A `reportilo_checklist`, `reportilo_flowchart` or `reportilo_rob`.
 
 - file:
 
@@ -49,6 +49,11 @@ Supported formats:
 - Flow diagram:
 
   `png`, `svg`, `pdf`, `docx`, `xlsx` (the counts), `csv` (the counts).
+
+- Risk of bias:
+
+  `png`, `svg`, `pdf`, `docx`, `xlsx` (the table), `csv` (the table).
+  Pass `type = "traffic_light"` (default) or `type = "summary"`.
 
 Word and Excel export need the suggested packages `officer` +
 `flextable` and `openxlsx` respectively; image export needs

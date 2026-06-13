@@ -38,9 +38,26 @@ Create and fill PRISMA, CONSORT and STARD flow diagrams.
 - [`flowchart_dot()`](https://choxos.github.io/reportilo/reference/flowchart_dot.md)
   : Build the Graphviz DOT for a flow diagram
 
+## Risk of bias
+
+Traffic-light and summary plots for risk-of-bias tools.
+
+- [`rob_tools_available()`](https://choxos.github.io/reportilo/reference/rob_tools_available.md)
+  : Risk-of-bias assessment tools
+- [`rob_template()`](https://choxos.github.io/reportilo/reference/rob_template.md)
+  : Blank risk-of-bias template
+- [`reportilo_rob()`](https://choxos.github.io/reportilo/reference/reportilo_rob.md)
+  [`as.data.frame(`*`<reportilo_rob>`*`)`](https://choxos.github.io/reportilo/reference/reportilo_rob.md)
+  : Create a risk-of-bias assessment
+- [`rob_traffic_light()`](https://choxos.github.io/reportilo/reference/rob_traffic_light.md)
+  : Risk-of-bias traffic-light plot
+- [`rob_summary()`](https://choxos.github.io/reportilo/reference/rob_summary.md)
+  : Risk-of-bias summary plot
+
 ## Export
 
-Write a filled checklist or flow diagram to Word, Excel or an image.
+Write a filled checklist, flow diagram or risk-of-bias plot to Word,
+Excel or an image.
 
 - [`reportilo_export()`](https://choxos.github.io/reportilo/reference/reportilo_export.md)
   : Export a checklist or flow diagram to a file
@@ -68,3 +85,11 @@ Bundled datasets.
   : Flow diagram fillable counts
 - [`flowchart_templates`](https://choxos.github.io/reportilo/reference/flowchart_templates.md)
   : Flow diagram templates
+- [`rob_tools`](https://choxos.github.io/reportilo/reference/rob_tools.md)
+  : Risk-of-bias assessment tools
+- [`rob_domains`](https://choxos.github.io/reportilo/reference/rob_domains.md)
+  : Risk-of-bias tool domains
+- [`rob_levels`](https://choxos.github.io/reportilo/reference/rob_levels.md)
+  : Risk-of-bias judgment levels
+- [`rob_example`](https://choxos.github.io/reportilo/reference/rob_example.md)
+  : Example risk-of-bias assessments

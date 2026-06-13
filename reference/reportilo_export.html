@@ -61,7 +61,7 @@ output format is taken from <code>format</code>, or inferred from the file exten
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>A <code>reportilo_checklist</code> or <code>reportilo_flowchart</code>.</p></dd>
+<dd><p>A <code>reportilo_checklist</code>, <code>reportilo_flowchart</code> or <code>reportilo_rob</code>.</p></dd>
 
 
 <dt id="arg-file">file<a class="anchor" aria-label="anchor" href="#arg-file"></a></dt>
@@ -91,6 +91,10 @@ pixel width) and <code>background</code> (<code>"white"</code> or <code>"transpa
 <dt>Flow diagram</dt>
 <dd><p><code>png</code>, <code>svg</code>, <code>pdf</code>, <code>docx</code>, <code>xlsx</code> (the counts), <code>csv</code>
 (the counts).</p></dd>
+
+<dt>Risk of bias</dt>
+<dd><p><code>png</code>, <code>svg</code>, <code>pdf</code>, <code>docx</code>, <code>xlsx</code> (the table), <code>csv</code>
+(the table). Pass <code>type = "traffic_light"</code> (default) or <code>type = "summary"</code>.</p></dd>
 
 
 </dl><p>Word and Excel export need the suggested packages <code>officer</code> + <code>flextable</code> and
