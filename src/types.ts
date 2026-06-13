@@ -16,6 +16,9 @@ export interface Guideline {
   website_url: string | null;
   has_checklist: boolean;
   checklist_tier: string;
+  category: string;
+  category_order: number;
+  is_primary: boolean;
   downloadable_files: DownloadableFile[];
   [key: string]: unknown;
 }
