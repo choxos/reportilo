@@ -16,6 +16,24 @@ test_that("search_guidelines finds known guidelines case-insensitively", {
   expect_error(search_guidelines(c("a", "b")))
 })
 
+test_that("categories are assigned and filterable", {
+  cats <- reportilo_categories()
+  expect_true(all(c("category", "category_order", "n") %in% names(cats)))
+  expect_true("Randomised trials" %in% cats$category)
+  expect_identical(cats$category[1], "Randomised trials") # EQUATOR display order
+  expect_identical(cats$category[nrow(cats)], "Other") # catch-all last
+
+  rt <- reportilo_guidelines(category = "Randomised trials")
+  expect_true(all(as.character(rt$category) == "Randomised trials"))
+  expect_true("consort" %in% rt$guideline_id)
+  expect_true(sum(rt$is_primary) >= 1)
+
+  # CONSORT is the flagship of randomised trials; STROBE of observational
+  g <- reportilo_guidelines()
+  expect_true(g$is_primary[g$guideline_id == "consort"])
+  expect_identical(as.character(g$category[g$guideline_id == "strobe"]), "Observational studies")
+})
+
 test_that("guideline_info resolves ids and acronyms and reports checklist status", {
   info <- guideline_info("prisma-2020")
   expect_s3_class(info, "reportilo_guideline_info")

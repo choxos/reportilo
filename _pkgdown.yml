@@ -28,6 +28,7 @@ reference:
   desc: Browse and search the EQUATOR reporting guideline catalog.
   contents:
   - reportilo_guidelines
+  - reportilo_categories
   - search_guidelines
   - guideline_info
 - title: Fill in checklists

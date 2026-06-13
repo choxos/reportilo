@@ -27,7 +27,7 @@ checklist_choices <- stats::setNames(
     " - ", substr(checklist_guidelines$title, 1, 70)
   )
 )
-study_designs <- sort(unique(stats::na.omit(guidelines$study_design)))
+category_tabs <- c("All", levels(guidelines$category))
 templates <- reportilo::flowchart_templates
 template_choices <- stats::setNames(templates$template_id, templates$name)
 
@@ -48,11 +48,14 @@ catalogUI <- function(id) {
     sidebar = sidebar(
       width = 320,
       textInput(ns("search"), "Search", placeholder = "acronym, title, topic..."),
-      selectInput(ns("design"), "Study design", choices = c("All" = "", study_designs)),
       checkboxInput(ns("checklist_only"), "Only guidelines with a checklist", FALSE),
-      helpText("Click a row to see details.")
+      helpText("Pick a study type, then click a row for details. The main guideline of each family is listed first.")
     ),
-    DT::DTOutput(ns("table")),
+    do.call(
+      tabsetPanel,
+      c(list(id = ns("cat"), type = "pills"), lapply(category_tabs, tabPanel))
+    ),
+    div(class = "pt-3", DT::DTOutput(ns("table"))),
     uiOutput(ns("detail"))
   )
 }
@@ -62,19 +65,23 @@ catalogServer <- function(id) {
     filtered <- reactive({
       g <- guidelines
       if (isTRUE(input$checklist_only)) g <- g[g$has_checklist, ]
-      if (nzchar(input$design)) g <- g[!is.na(g$study_design) & g$study_design == input$design, ]
-      if (nzchar(input$search)) {
+      cat <- input$cat %||% "All"
+      if (!is.null(cat) && cat != "All") {
+        g <- g[!is.na(g$category) & as.character(g$category) == cat, ]
+      }
+      if (nzchar(input$search %||% "")) {
         hay <- tolower(paste(g$acronym, g$title, g$study_design, g$clinical_area))
         g <- g[grepl(tolower(input$search), hay, fixed = TRUE), ]
       }
-      g
+      # flagship guideline of each family first, then alphabetical
+      g[order(!g$is_primary, is.na(g$acronym), tolower(g$acronym), tolower(g$title)), ]
     })
 
     output$table <- DT::renderDT({
       g <- filtered()
       DT::datatable(
         data.frame(
-          Acronym = g$acronym, Title = g$title, `Study design` = g$study_design,
+          Acronym = g$acronym, Title = g$title, Category = as.character(g$category),
           Checklist = ifelse(g$has_checklist, "yes", ""), check.names = FALSE
         ),
         rownames = FALSE, selection = "single",
