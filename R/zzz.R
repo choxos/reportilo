@@ -1,3 +1,7 @@
+# ggplot2 aes() column names referenced without .data (ggplot2 is Suggests, so
+# its .data pronoun cannot be imported); declare them to satisfy R CMD check.
+utils::globalVariables(c("x", "study", "color", "symbol", "domain", "judgment"))
+
 .onAttach <- function(libname, pkgname) {
   version <- packageVersion(pkgname)
   packageStartupMessage(sprintf(

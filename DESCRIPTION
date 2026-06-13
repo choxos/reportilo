@@ -28,6 +28,7 @@ Suggests:
     DiagrammeRsvg,
     DT,
     flextable,
+    ggplot2,
     htmltools,
     jsonlite,
     knitr,
@@ -36,6 +37,7 @@ Suggests:
     rmarkdown,
     rsvg,
     shiny,
+    svglite,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 LazyData: true

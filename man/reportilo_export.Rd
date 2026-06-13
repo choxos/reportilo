@@ -7,7 +7,7 @@
 reportilo_export(x, file, format = NULL, ...)
 }
 \arguments{
-\item{x}{A \code{reportilo_checklist} or \code{reportilo_flowchart}.}
+\item{x}{A \code{reportilo_checklist}, \code{reportilo_flowchart} or \code{reportilo_rob}.}
 
 \item{file}{Output file path. Its extension sets the format unless \code{format} is
 given.}
@@ -32,6 +32,8 @@ Supported formats:
 \item{Checklist}{\code{docx}, \code{xlsx}, \code{csv}.}
 \item{Flow diagram}{\code{png}, \code{svg}, \code{pdf}, \code{docx}, \code{xlsx} (the counts), \code{csv}
 (the counts).}
+\item{Risk of bias}{\code{png}, \code{svg}, \code{pdf}, \code{docx}, \code{xlsx} (the table), \code{csv}
+(the table). Pass \code{type = "traffic_light"} (default) or \code{type = "summary"}.}
 }
 
 Word and Excel export need the suggested packages \code{officer} + \code{flextable} and
