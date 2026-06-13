@@ -1,0 +1,18 @@
+# reportilo browser app (webapp branch)
+node_modules/
+dist/
+*.local
+.DS_Store
+*.tsbuildinfo
+
+# leftovers from the package branches; not part of the app
+refs/
+data-raw/
+docs/
+inst/
+man/
+R/
+tests/
+vignettes/
+pkgdown/
+.gstack/
