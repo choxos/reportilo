@@ -37,5 +37,7 @@ Suggests:
     rsvg,
     shiny,
     testthat (>= 3.0.0)
+LazyData: true
+LazyDataCompression: xz
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0

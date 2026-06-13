@@ -5,6 +5,7 @@
 ^pkgdown$
 ^data-raw$
 ^refs$
+^inst/extdata/.*\.json$
 ^\.github$
 ^man/figures/generate_logo\.R$
 ^cran-comments\.md$
