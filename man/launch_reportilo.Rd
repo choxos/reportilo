@@ -19,9 +19,11 @@ package: browse the EQUATOR guideline catalog, fill in a reporting checklist
 or a flow diagram, and download the result as Word, Excel or an image.
 }
 \details{
-The application requires the suggested packages \code{shiny}, \code{bslib} and \code{DT}.
-Install them with \code{install.packages(c("shiny", "bslib", "DT"))} if they are
-not already available.
+The application requires the suggested packages \code{shiny}, \code{bslib}, \code{DT} and
+\code{DiagrammeR}. Install them with
+\code{install.packages(c("shiny", "bslib", "DT", "DiagrammeR"))} if they are not
+already available. Word, Excel and image downloads additionally use \code{officer},
+\code{flextable}, \code{openxlsx}, \code{DiagrammeRsvg} and \code{rsvg}.
 }
 \examples{
 \dontshow{if (interactive()) withAutoprint(\{ # examplesIf}
