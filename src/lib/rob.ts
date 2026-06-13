@@ -21,7 +21,7 @@ function symbol(levels: RobLevel[], lvl: string): string {
   return levels.find((l) => l.level === lvl)?.symbol ?? "";
 }
 
-export function robTrafficLightSvg(input: RobInput): string {
+export function robTrafficLightSvg(input: RobInput, transparent = false): string {
   const { name, domains, levels, rows } = input;
   const cell = 48;
   const r = 17;
@@ -44,7 +44,9 @@ export function robTrafficLightSvg(input: RobInput): string {
   parts.push(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" font-family="Helvetica, Arial, sans-serif">`,
   );
-  parts.push(`<rect width="${width}" height="${height}" fill="#ffffff"/>`);
+  if (!transparent) {
+    parts.push(`<rect width="${width}" height="${height}" fill="#ffffff"/>`);
+  }
   parts.push(
     `<text x="${leftMargin}" y="22" font-size="15" font-weight="bold">${esc(name)}</text>`,
   );
@@ -96,9 +98,14 @@ export function robTrafficLightSvg(input: RobInput): string {
   return parts.join("");
 }
 
-export function robSummarySvg(input: RobInput): string {
+export function robSummarySvg(input: RobInput, transparent = false): string {
   const { name, domains, levels, toolLevels, rows } = input;
   const doms = domains.filter((d) => d.id !== "Overall");
+  // Keep every study in the denominator; blank/invalid -> a visible "Missing".
+  const segLevels = [...toolLevels, "Missing"];
+  const segColor = (lvl: string) => (lvl === "Missing" ? "#cccccc" : color(levels, lvl));
+  const classify = (v: string | undefined) =>
+    v && toolLevels.includes(v) ? v : "Missing";
   const barLeft = 64;
   const barWidth = 470;
   const rowH = 34;
@@ -111,36 +118,41 @@ export function robSummarySvg(input: RobInput): string {
   parts.push(
     `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" font-family="Helvetica, Arial, sans-serif">`,
   );
-  parts.push(`<rect width="${width}" height="${height}" fill="#ffffff"/>`);
+  if (!transparent) {
+    parts.push(`<rect width="${width}" height="${height}" fill="#ffffff"/>`);
+  }
   parts.push(
     `<text x="${barLeft}" y="24" font-size="15" font-weight="bold">${esc(name)}</text>`,
   );
 
   doms.forEach((d, di) => {
     const y = top + di * rowH;
-    const counts = rows.map((row) => row.values[d.id]).filter((v) => v && v.length);
-    const total = counts.length || 1;
+    const classed = rows.map((row) => classify(row.values[d.id]));
+    const total = classed.length || 1;
     parts.push(
       `<text x="${barLeft - 8}" y="${y + rowH / 2}" font-size="12" text-anchor="end" dominant-baseline="middle">${esc(d.id)}</text>`,
     );
     let x = barLeft;
-    for (const lvl of toolLevels) {
-      const n = counts.filter((v) => v === lvl).length;
+    for (const lvl of segLevels) {
+      const n = classed.filter((v) => v === lvl).length;
       if (!n) continue;
       const w = (n / total) * barWidth;
       parts.push(
-        `<rect x="${x}" y="${y + 4}" width="${w}" height="${rowH - 10}" fill="${color(levels, lvl)}" stroke="#555" stroke-width="0.5"/>`,
+        `<rect x="${x}" y="${y + 4}" width="${w}" height="${rowH - 10}" fill="${segColor(lvl)}" stroke="#555" stroke-width="0.5"/>`,
       );
       x += w;
     }
   });
 
-  // legend
+  // legend (only levels that actually appear)
+  const present = segLevels.filter((lvl) =>
+    doms.some((d) => rows.some((row) => classify(row.values[d.id]) === lvl)),
+  );
   const ly = top + doms.length * rowH + 16;
   let lx = barLeft;
-  for (const lvl of toolLevels) {
+  for (const lvl of present) {
     parts.push(
-      `<rect x="${lx}" y="${ly}" width="12" height="12" fill="${color(levels, lvl)}" stroke="#555" stroke-width="0.5"/>`,
+      `<rect x="${lx}" y="${ly}" width="12" height="12" fill="${segColor(lvl)}" stroke="#555" stroke-width="0.5"/>`,
     );
     parts.push(
       `<text x="${lx + 16}" y="${ly + 11}" font-size="11">${esc(lvl)}</text>`,

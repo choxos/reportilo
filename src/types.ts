@@ -83,6 +83,7 @@ export interface ParseStatus {
   status: string;
   n_items: number | null;
   parse_confidence: number | null;
+  parse_method: string | null;
   verified: boolean;
   needs_review: boolean;
 }

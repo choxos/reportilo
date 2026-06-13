@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { checklistFor, type Dataset } from "../lib/data";
 import { checklistDocx, type ChecklistRow } from "../lib/exportDocx";
 import { checklistXlsx } from "../lib/exportXlsx";
-import { saveText, toCsv } from "../lib/download";
+import { saveText, toCsv, saveJson, readJsonFile } from "../lib/download";
 
 export default function ChecklistEditor({ data }: { data: Dataset }) {
   const options = useMemo(
@@ -19,9 +19,16 @@ export default function ChecklistEditor({ data }: { data: Dataset }) {
 
   const [guidelineId, setGuidelineId] = useState(options[0]?.id ?? "");
   const [responses, setResponses] = useState<Record<string, string>>({});
+  const [error, setError] = useState<string | null>(null);
+  const loadInput = useRef<HTMLInputElement>(null);
 
   const items = useMemo(() => checklistFor(data, guidelineId), [data, guidelineId]);
-  const verified = items[0]?.is_override ?? false;
+  // provenance is a guideline-level property: read it from parse_status
+  const status = useMemo(
+    () => data.parseStatus.find((p) => p.guideline_id === guidelineId),
+    [data, guidelineId],
+  );
+  const verified = status?.verified ?? false;
   const filled = items.filter((i) => (responses[i.item_uid] ?? "").trim()).length;
 
   const rows = (): ChecklistRow[] =>
@@ -33,6 +40,26 @@ export default function ChecklistEditor({ data }: { data: Dataset }) {
     }));
 
   const title = options.find((o) => o.id === guidelineId)?.label ?? guidelineId;
+
+  const runExport = (fn: () => void | Promise<void>) => async () => {
+    setError(null);
+    try {
+      await fn();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    }
+  };
+
+  const onLoad = async (file: File) => {
+    setError(null);
+    try {
+      const obj = await readJsonFile<{ guideline?: string; responses?: Record<string, string> }>(file);
+      if (obj.guideline && obj.guideline !== guidelineId) setGuidelineId(obj.guideline);
+      if (obj.responses) setResponses(obj.responses);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    }
+  };
 
   return (
     <div className="grid md:grid-cols-[320px_1fr] gap-6">
@@ -53,14 +80,39 @@ export default function ChecklistEditor({ data }: { data: Dataset }) {
           ))}
         </select>
 
-        <span
-          className={
-            "inline-block rounded px-2 py-1 text-xs font-medium " +
-            (verified ? "bg-teal/20 text-teal" : "bg-amber-100 text-amber-800")
-          }
-        >
-          {verified ? "Hand-verified checklist" : "Auto-extracted (verify against source)"}
-        </span>
+        <div className="space-y-1">
+          <span
+            className={
+              "inline-block rounded px-2 py-1 text-xs font-medium " +
+              (verified
+                ? "bg-teal/20 text-teal"
+                : status?.status === "parsed_ok"
+                  ? "bg-sky-100 text-sky-800"
+                  : "bg-amber-100 text-amber-800")
+            }
+          >
+            {verified
+              ? "Hand-verified"
+              : status?.status === "parsed_ok"
+                ? "Auto-extracted"
+                : `Auto-extracted (${status?.status ?? "unverified"})`}
+          </span>
+          {status && (
+            <p className="text-[11px] text-slate-500">
+              method: {status.parse_method ?? "unknown"}
+              {status.parse_confidence != null &&
+                ` | confidence: ${status.parse_confidence.toFixed(2)}`}
+            </p>
+          )}
+        </div>
+
+        {!verified && (status?.needs_review || ["partial", "failed"].includes(status?.status ?? "")) && (
+          <div className="rounded bg-amber-50 border border-amber-200 text-amber-800 p-2 text-xs">
+            <strong>Verify against the source.</strong> This checklist was extracted
+            automatically and may be incomplete or mislabeled. Check each item against
+            the original guideline (see the Catalog tab for source links).
+          </div>
+        )}
 
         <p className="text-xs text-slate-500">
           {filled} of {items.length} items completed
@@ -69,29 +121,38 @@ export default function ChecklistEditor({ data }: { data: Dataset }) {
         <div className="space-y-2 pt-2">
           <button
             className="w-full rounded bg-ink text-white px-3 py-2 text-sm font-medium hover:bg-ink/90"
-            onClick={() => checklistDocx(guidelineId, rows(), `${guidelineId}_checklist.docx`)}
+            onClick={runExport(() => checklistDocx(guidelineId, rows(), `${guidelineId}_checklist.docx`))}
           >
             Download Word (.docx)
           </button>
           <button
             className="w-full rounded bg-teal text-white px-3 py-2 text-sm font-medium hover:bg-teal/90"
-            onClick={() => checklistXlsx(rows(), `${guidelineId}_checklist.xlsx`)}
+            onClick={runExport(() => checklistXlsx(rows(), `${guidelineId}_checklist.xlsx`))}
           >
             Download Excel (.xlsx)
           </button>
           <button
             className="w-full rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100"
-            onClick={() =>
+            onClick={runExport(() =>
               saveText(
                 toCsv(rows() as unknown as Record<string, string>[]),
                 `${guidelineId}_checklist.csv`,
                 "text/csv;charset=utf-8",
-              )
-            }
+              ),
+            )}
           >
             Download CSV
           </button>
+          <div className="flex gap-2">
+            <button className="flex-1 rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100" onClick={() => saveJson({ guideline: guidelineId, responses }, `${guidelineId}_checklist.reportilo.json`)}>Save</button>
+            <button className="flex-1 rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100" onClick={() => loadInput.current?.click()}>Load</button>
+            <input ref={loadInput} type="file" accept="application/json" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onLoad(f); e.target.value = ""; }} />
+          </div>
         </div>
+
+        {error && (
+          <div className="rounded bg-red-50 border border-red-200 text-red-700 p-2 text-xs">{error}</div>
+        )}
       </aside>
 
       <div className="overflow-auto border border-slate-200 rounded-md bg-white max-h-[78vh]">
