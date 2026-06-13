@@ -46,19 +46,19 @@ pak::pak("choxos/reportilo")
 library(reportilo)
 
 # 1. Find a guideline
-search_guidelines("randomized trial")
-guideline_info("consort-2010")
+search_guidelines("randomised trial")
+guideline_info("consort")
 
 # 2. Fill in its checklist
 chk <- get_checklist("prisma-2020")
-chk$page[1:3] <- c("1", "2", "2")
+chk$response[1:3] <- c("1", "2", "2")
 
 # 3. Export
 reportilo_export(chk, "prisma-checklist.docx")
 
 # Flow diagrams work the same way
 fc <- new_flowchart("prisma_2020")
-fc <- set_counts(fc, database_results = 1200, records_screened = 980)
+fc <- set_counts(fc, identified_db = 1200, screened = 980)
 reportilo_export(fc, "prisma-flow.png")
 ```
 
