@@ -10,7 +10,7 @@ to Word, Excel, an image, or CSV. The output format is taken from
 ## Usage
 
 ``` r
-reportilo_export(x, file, format = NULL, ...)
+reportilo_export(x, file, format = NULL, ..., strict = FALSE)
 ```
 
 ## Arguments
@@ -34,6 +34,13 @@ reportilo_export(x, file, format = NULL, ...)
   Passed to the underlying writer. Flow diagrams and risk-of-bias plots
   accept `background` (`"white"` or `"transparent"`); flow diagrams also
   accept `width`, and risk-of-bias accepts `type`.
+
+- strict:
+
+  For flow diagrams: if `TRUE`, refuse to export when
+  [`flowchart_consistency()`](https://choxos.github.io/reportilo/reference/flowchart_consistency.md)
+  reports impossible counts (otherwise a warning is issued and the file
+  is still written). Default `FALSE`.
 
 ## Value
 

@@ -1,13 +1,18 @@
 # reportilo: Fill in and Export EQUATOR Reporting Guidelines and Flow Diagrams
 
 A toolkit for the health research reporting guidelines curated by the
-EQUATOR Network. 'reportilo' bundles a searchable catalog of reporting
-guidelines, machine-readable checklists for the major families (such as
-CONSORT, STROBE, PRISMA, SPIRIT and STARD), and data-driven flow diagram
-templates (PRISMA 2020, CONSORT and STARD). Users fill in checklist
-responses and flow diagram counts and export the result to Word, Excel
-or image files. A bundled 'shiny' application provides a point-and-click
-front end, and the same data powers a companion browser application.
+EQUATOR Network. 'reportilo' bundles a searchable catalog of the full
+EQUATOR guideline library plus machine-readable checklists for a subset
+of guidelines: a small hand-verified core and a larger best-effort,
+automatically extracted set whose extraction status and confidence are
+recorded (see reportilo_coverage() and the parse_status dataset). It
+also provides data-driven flow diagram templates (PRISMA 2020, CONSORT,
+STARD and common observational designs) and risk-of-bias plots. Users
+fill in checklist responses, flow diagram counts or risk-of-bias
+judgments and export the result to Word, Excel or image files. A bundled
+'shiny' application provides a point-and-click front end, and the same
+data powers a companion browser application. Auto-extracted checklists
+should be verified against the original guideline before use.
 
 ## Details
 
@@ -48,9 +53,12 @@ and a companion browser application.
 Guideline metadata is derived from the EQUATOR Network reporting
 guideline library. Checklist items are extracted from the guideline
 source documents; each item records its provenance and a
-parse-confidence score, and the coverage of each guideline is summarized
-in `parse_status`. Guidelines without a machine-readable checklist
-remain available as catalog entries that link to their original source.
+parse-confidence score, the coverage of each guideline is summarized in
+`parse_status`, and
+[`reportilo_coverage()`](https://choxos.github.io/reportilo/reference/reportilo_coverage.md)
+reports verified-versus-extracted coverage by category. Guidelines
+without a machine-readable checklist remain available as catalog entries
+that link to their original source.
 
 ## References
 
