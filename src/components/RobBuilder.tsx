@@ -3,6 +3,7 @@ import type { Dataset } from "../lib/data";
 import { robTrafficLightSvg, robSummarySvg, type RobInput } from "../lib/rob";
 import { downloadPng, downloadSvg } from "../lib/exportImage";
 import { saveText, toCsv } from "../lib/download";
+import { sanitizeSvg } from "../lib/sanitize";
 
 interface Row {
   study: string;
@@ -183,7 +184,7 @@ export default function RobBuilder({ data }: { data: Dataset }) {
         </div>
 
         <div className="border border-slate-200 rounded-md bg-white p-4 overflow-auto">
-          <div dangerouslySetInnerHTML={{ __html: svg }} />
+          <div dangerouslySetInnerHTML={{ __html: sanitizeSvg(svg) }} />
         </div>
       </div>
     </div>

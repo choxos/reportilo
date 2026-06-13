@@ -37,6 +37,9 @@ jobs:
 
       - run: npm ci
       - run: npm run typecheck
+      - run: npm test
+      # fail the build on any high-severity vulnerability in production deps
+      - run: npm audit --omit=dev --audit-level=high
       - run: npm run build
 
       - run: touch dist/.nojekyll

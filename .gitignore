@@ -15,4 +15,17 @@ R/
 tests/
 vignettes/
 pkgdown/
+audit/
 .gstack/
+
+# R build/check artifacts (generated when checking the package elsewhere)
+*.Rcheck/
+*.tar.gz
+*.Rproj
+DESCRIPTION
+NAMESPACE
+NEWS.md
+LICENSE
+LICENSE.md
+_pkgdown.yml
+inst/CITATION

@@ -14,11 +14,18 @@ export function saveText(text: string, filename: string, mime: string): void {
   saveBlob(new Blob([text], { type: mime }), filename);
 }
 
+// Neutralize spreadsheet formula injection: a cell beginning with = + - @ tab or
+// CR is prefixed with a single quote so spreadsheet software treats it as text.
+export function csvSafe(value: string): string {
+  const s = value ?? "";
+  return /^[=+\-@\t\r]/.test(s) ? `'${s}` : s;
+}
+
 export function toCsv(rows: Record<string, string>[]): string {
   if (!rows.length) return "";
   const cols = Object.keys(rows[0]);
   const esc = (v: string) => {
-    const s = v ?? "";
+    const s = csvSafe(v ?? "");
     return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
   };
   const header = cols.join(",");

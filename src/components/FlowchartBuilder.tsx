@@ -6,6 +6,7 @@ import { downloadPng, downloadSvg, svgToPng } from "../lib/exportImage";
 import { flowchartDocx } from "../lib/exportDocx";
 import { flowchartXlsx } from "../lib/exportXlsx";
 import { saveText, toCsv } from "../lib/download";
+import { sanitizeSvg } from "../lib/sanitize";
 
 export default function FlowchartBuilder({ data }: { data: Dataset }) {
   const templates = data.flowcharts.templates;
@@ -155,7 +156,7 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
       <div className="border border-slate-200 rounded-md bg-white p-4">
         <h3 className="text-sm font-semibold text-ink mb-2">{templateName}</h3>
         {svg ? (
-          <div className="flow-preview" dangerouslySetInnerHTML={{ __html: svg }} />
+          <div className="flow-preview" dangerouslySetInnerHTML={{ __html: sanitizeSvg(svg) }} />
         ) : (
           <p className="text-sm text-slate-500">Rendering…</p>
         )}

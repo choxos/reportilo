@@ -1,36 +1,53 @@
+import writeXlsxFile from "write-excel-file";
 import type { ChecklistRow } from "./exportDocx";
 
-// SheetJS is loaded lazily (its own chunk) so it stays out of the initial bundle.
+// `write-excel-file` is a maintained, vulnerability-free XLSX writer (replacing
+// SheetJS). String cells are written as text, so spreadsheet formula injection
+// does not apply to these exports.
+
+const H = (t: string) => ({ value: t, fontWeight: "bold" as const });
 
 export async function checklistXlsx(
   rows: ChecklistRow[],
   filename: string,
 ): Promise<void> {
-  const XLSX = await import("xlsx");
-  const ws = XLSX.utils.json_to_sheet(
-    rows.map((r) => ({
-      Section: r.section,
-      Item: r.item_no,
-      "Checklist item": r.item_text,
-      "Reported (page)": r.response || "",
-    })),
-  );
-  ws["!cols"] = [{ wch: 22 }, { wch: 8 }, { wch: 70 }, { wch: 18 }];
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Checklist");
-  XLSX.writeFile(wb, filename);
+  const data = [
+    [H("Section"), H("Item"), H("Checklist item"), H("Reported (page)")],
+    ...rows.map((r) => [
+      { value: r.section },
+      { value: r.item_no },
+      { value: r.item_text },
+      { value: r.response || "" },
+    ]),
+  ];
+  await writeXlsxFile(data, {
+    fileName: filename,
+    columns: [{ width: 22 }, { width: 8 }, { width: 70 }, { width: 18 }],
+  });
 }
 
 export async function flowchartXlsx(
   rows: { field: string; label: string; value: string }[],
   filename: string,
 ): Promise<void> {
-  const XLSX = await import("xlsx");
-  const ws = XLSX.utils.json_to_sheet(
-    rows.map((r) => ({ Field: r.field, Label: r.label, Value: r.value })),
-  );
-  ws["!cols"] = [{ wch: 22 }, { wch: 55 }, { wch: 18 }];
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Flow diagram");
-  XLSX.writeFile(wb, filename);
+  const data = [
+    [H("Field"), H("Label"), H("Value")],
+    ...rows.map((r) => [{ value: r.field }, { value: r.label }, { value: r.value }]),
+  ];
+  await writeXlsxFile(data, {
+    fileName: filename,
+    columns: [{ width: 22 }, { width: 55 }, { width: 18 }],
+  });
+}
+
+export async function robXlsx(
+  headers: string[],
+  rows: string[][],
+  filename: string,
+): Promise<void> {
+  const data = [
+    headers.map(H),
+    ...rows.map((r) => r.map((v) => ({ value: v || "" }))),
+  ];
+  await writeXlsxFile(data, { fileName: filename });
 }

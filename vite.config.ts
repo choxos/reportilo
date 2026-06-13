@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
@@ -8,5 +9,9 @@ export default defineConfig(({ command }) => ({
   build: {
     // the Graphviz WASM module is large but loads once; keep the log clean
     chunkSizeWarningLimit: 2000,
+  },
+  test: {
+    environment: "jsdom",
+    include: ["src/**/*.test.ts"],
   },
 }));
