@@ -76,13 +76,13 @@ p <- ggplot() +
 sticker(
   subplot = p,
   package = "reportilo",
-  p_size = 17,
-  p_y = 1.02,
+  p_size = 16,
+  p_y = 1.48, # name at the top of the hex
   p_color = paper,
   s_x = 1.0,
-  s_y = 0.78,
-  s_width = 1.5,
-  s_height = 1.5,
+  s_y = 0.80, # artwork sits below the name
+  s_width = 1.25,
+  s_height = 1.25,
   h_fill = ink,
   h_color = accent,
   h_size = 1.4,

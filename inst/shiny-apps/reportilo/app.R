@@ -183,6 +183,7 @@ flowchartUI <- function(id) {
       width = 360,
       selectInput(ns("template"), "Template", choices = template_choices),
       uiOutput(ns("fields")),
+      checkboxInput(ns("transparent"), "Transparent background", FALSE),
       downloadButton(ns("dl_png"), "PNG", class = "btn-primary btn-sm"),
       downloadButton(ns("dl_svg"), "SVG", class = "btn-secondary btn-sm"),
       downloadButton(ns("dl_pdf"), "PDF", class = "btn-outline-secondary btn-sm"),
@@ -221,14 +222,21 @@ flowchartServer <- function(id) {
       obj
     })
 
+    bg <- reactive(if (isTRUE(input$transparent)) "transparent" else "white")
+
     output$preview <- DiagrammeR::renderGrViz({
-      DiagrammeR::grViz(reportilo::flowchart_dot(fc()))
+      DiagrammeR::grViz(reportilo::flowchart_dot(fc(), background = bg()))
     })
 
     dl <- function(ext) {
       downloadHandler(
         filename = function() paste0(input$template, ".", ext),
-        content = function(file) notify_export(reportilo::reportilo_export(fc(), file, format = ext), ext)
+        content = function(file) {
+          notify_export(
+            reportilo::reportilo_export(fc(), file, format = ext, background = bg()),
+            ext
+          )
+        }
       )
     }
     output$dl_png <- dl("png")

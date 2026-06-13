@@ -5,16 +5,21 @@
 #' [render_flowchart()] and by the image/Word exporters.
 #'
 #' @param x A `reportilo_flowchart`.
+#' @param background Diagram background color. Use `"white"` (default) for a solid
+#'   white background, or `"transparent"` for no background (useful for slides and
+#'   figures). Any Graphviz color name or hex value is accepted.
 #'
 #' @return A length-one character string of Graphviz DOT.
 #' @examples
 #' fc <- new_flowchart("stard_2015")
 #' cat(substr(flowchart_dot(fc), 1, 80))
+#' cat(substr(flowchart_dot(fc, background = "transparent"), 1, 80))
 #' @export
-flowchart_dot <- function(x) {
+flowchart_dot <- function(x, background = "white") {
   if (!inherits(x, "reportilo_flowchart")) {
     stop("`x` must be a reportilo_flowchart (see new_flowchart()).", call. = FALSE)
   }
+  stopifnot(is.character(background), length(background) == 1L)
   nodes <- x$nodes
   nodes <- nodes[nodes$role != "stage_title", , drop = FALSE]
   edges <- x$edges
@@ -66,7 +71,10 @@ flowchart_dot <- function(x) {
 
   paste(c(
     "digraph reportilo {",
-    "  graph [rankdir=TB, splines=ortho, nodesep=0.45, ranksep=0.55];",
+    sprintf(
+      "  graph [rankdir=TB, splines=ortho, nodesep=0.45, ranksep=0.55, bgcolor=\"%s\"];",
+      background
+    ),
     '  node [shape=box, fontname="Helvetica", fontsize=10, margin="0.14,0.09"];',
     "  edge [arrowsize=0.7];",
     paste0("  ", node_lines),
@@ -83,6 +91,8 @@ flowchart_dot <- function(x) {
 #' `reportilo_export()`.
 #'
 #' @param x A `reportilo_flowchart`.
+#' @param background Diagram background color (default `"white"`; use
+#'   `"transparent"` for no background).
 #'
 #' @return A `DiagrammeR` `grViz` htmlwidget.
 #' @seealso `reportilo_export()`, [flowchart_dot()]
@@ -90,12 +100,12 @@ flowchart_dot <- function(x) {
 #' fc <- new_flowchart("prisma_2020")
 #' render_flowchart(fc)
 #' @export
-render_flowchart <- function(x) {
+render_flowchart <- function(x, background = "white") {
   if (!requireNamespace("DiagrammeR", quietly = TRUE)) {
     stop("Package `DiagrammeR` is required to render flow diagrams. ",
       "Install it with install.packages(\"DiagrammeR\").",
       call. = FALSE
     )
   }
-  DiagrammeR::grViz(flowchart_dot(x))
+  DiagrammeR::grViz(flowchart_dot(x, background = background))
 }

@@ -15,7 +15,8 @@ given.}
 \item{format}{Optional explicit format (e.g. \code{"docx"}). Defaults to the file
 extension.}
 
-\item{...}{Passed to the underlying writer (e.g. \code{width} for images).}
+\item{...}{Passed to the underlying writer. For flow diagrams: \code{width} (image
+pixel width) and \code{background} (\code{"white"} or \code{"transparent"}).}
 }
 \value{
 The output \code{file} path, invisibly.
