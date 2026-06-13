@@ -34,6 +34,16 @@ test_that("categories are assigned and filterable", {
   expect_identical(as.character(g$category[g$guideline_id == "strobe"]), "Observational studies")
 })
 
+test_that("reportilo_coverage reports verified vs extracted by category", {
+  cov <- reportilo_coverage()
+  expect_true(all(c("category", "records", "with_checklist", "verified", "needs_review") %in% names(cov)))
+  expect_identical(cov$category[nrow(cov)], "Total")
+  total <- cov[cov$category == "Total", ]
+  expect_identical(total$records, nrow(reportilo_guidelines()))
+  expect_true(total$verified >= 3)
+  expect_true(total$with_checklist >= total$verified)
+})
+
 test_that("guideline_info resolves ids and acronyms and reports checklist status", {
   info <- guideline_info("prisma-2020")
   expect_s3_class(info, "reportilo_guideline_info")

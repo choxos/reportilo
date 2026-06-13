@@ -27,6 +27,9 @@
 #'   plots accept `background` (`"white"` or `"transparent"`); flow diagrams also
 #'   accept `width`, and risk-of-bias accepts `type`.
 #'
+#' @param strict For flow diagrams: if `TRUE`, refuse to export when
+#'   [flowchart_consistency()] reports impossible counts (otherwise a warning is
+#'   issued and the file is still written). Default `FALSE`.
 #' @return The output `file` path, invisibly.
 #' @seealso [get_checklist()], [new_flowchart()]
 #' @examplesIf requireNamespace("officer", quietly = TRUE)
@@ -36,7 +39,7 @@
 #' fc <- set_counts(new_flowchart("prisma_2020"), identified_db = 1200)
 #' reportilo_export(fc, tempfile(fileext = ".csv"))
 #' @export
-reportilo_export <- function(x, file, format = NULL, ...) {
+reportilo_export <- function(x, file, format = NULL, ..., strict = FALSE) {
   fmt <- tolower(format %||% tools::file_ext(file))
   if (!nzchar(fmt)) {
     stop("Could not determine the output format. ",
@@ -73,10 +76,12 @@ reportilo_export <- function(x, file, format = NULL, ...) {
   if (inherits(x, "reportilo_flowchart")) {
     issues <- flowchart_consistency(x)
     if (length(issues)) {
-      warning("Flow diagram counts look inconsistent:\n  ",
-        paste(issues, collapse = "\n  "),
-        call. = FALSE
-      )
+      msg <- paste0("Flow diagram counts look inconsistent:\n  ",
+        paste(issues, collapse = "\n  "))
+      if (isTRUE(strict)) {
+        stop(msg, "\nRe-check the counts or export with strict = FALSE.", call. = FALSE)
+      }
+      warning(msg, call. = FALSE)
     }
     switch(fmt,
       png = ,
