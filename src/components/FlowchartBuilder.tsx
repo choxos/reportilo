@@ -115,7 +115,7 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
       <aside className="space-y-3">
         <label className="block text-sm font-medium">Template</label>
         <select
-          className="w-full rounded border border-slate-300 px-3 py-2 text-sm bg-white"
+          className="w-full rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm bg-white dark:bg-slate-800 dark:text-slate-100"
           value={templateId}
           onChange={(e) => setTemplateId(e.target.value)}
         >
@@ -129,11 +129,11 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
         <div className="space-y-2 max-h-[38vh] overflow-auto pr-1">
           {fields.map((f) => (
             <div key={f.count_field}>
-              <label className="block text-xs font-medium text-slate-600">{f.label}</label>
+              <label className="block text-xs font-medium text-slate-600 dark:text-slate-300">{f.label}</label>
               <input
                 type={f.is_reasons ? "text" : "number"}
                 min={f.is_reasons ? undefined : 0}
-                className="w-full rounded border border-slate-300 px-2 py-1 text-sm"
+                className="w-full rounded border border-slate-300 dark:border-slate-600 px-2 py-1 text-sm dark:bg-slate-900 dark:text-slate-100"
                 value={counts[f.count_field] ?? ""}
                 onChange={(e) =>
                   setCounts((c) => ({ ...c, [f.count_field]: e.target.value }))
@@ -175,26 +175,26 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
         <div className="grid grid-cols-2 gap-2 pt-2">
           <button className="rounded bg-ink text-white px-3 py-2 text-sm font-medium hover:bg-ink/90 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(() => downloadPng(svg, `${templateId}.png`, 2, transparent))}>PNG</button>
           <button className="rounded bg-teal text-white px-3 py-2 text-sm font-medium hover:bg-teal/90 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(() => downloadSvg(svg, `${templateId}.svg`))}>SVG</button>
-          <button className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(async () => { const png = await svgToPng(svg, 2, transparent); await flowchartDocx(templateName, png, `${templateId}.docx`); })}>Word</button>
-          <button className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-50" disabled={busy || blockExport} onClick={runExport(() => flowchartXlsx(countsRows(), `${templateId}.xlsx`))}>Excel</button>
-          <button className="col-span-2 rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100 disabled:opacity-50" disabled={blockExport} onClick={runExport(() => saveText(toCsv(countsRows()), `${templateId}.csv`, "text/csv;charset=utf-8"))}>CSV (counts)</button>
+          <button className="rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(async () => { const png = await svgToPng(svg, 2, transparent); await flowchartDocx(templateName, png, `${templateId}.docx`); })}>Word</button>
+          <button className="rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50" disabled={busy || blockExport} onClick={runExport(() => flowchartXlsx(countsRows(), `${templateId}.xlsx`))}>Excel</button>
+          <button className="col-span-2 rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50" disabled={blockExport} onClick={runExport(() => saveText(toCsv(countsRows()), `${templateId}.csv`, "text/csv;charset=utf-8"))}>CSV (counts)</button>
         </div>
 
         <div className="flex gap-2 pt-1 text-sm">
-          <button className="flex-1 rounded border border-slate-300 px-3 py-2 hover:bg-slate-100" onClick={() => saveJson({ template: templateId, counts }, `${templateId}.reportilo.json`)}>Save</button>
-          <button className="flex-1 rounded border border-slate-300 px-3 py-2 hover:bg-slate-100" onClick={() => loadInput.current?.click()}>Load</button>
+          <button className="flex-1 rounded border border-slate-300 dark:border-slate-600 px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-700" onClick={() => saveJson({ template: templateId, counts }, `${templateId}.reportilo.json`)}>Save</button>
+          <button className="flex-1 rounded border border-slate-300 dark:border-slate-600 px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-700" onClick={() => loadInput.current?.click()}>Load</button>
           <input ref={loadInput} type="file" accept="application/json" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onLoad(f); e.target.value = ""; }} />
         </div>
 
         {error && (
-          <div className="rounded bg-red-50 border border-red-200 text-red-700 p-2 text-xs">{error}</div>
+          <div className="rounded bg-red-50 border border-red-200 text-red-700 p-2 text-xs dark:bg-red-950 dark:border-red-800 dark:text-red-300">{error}</div>
         )}
       </aside>
 
-      <div className="border border-slate-200 rounded-md bg-white p-4">
-        <h3 className="text-sm font-semibold text-ink mb-2">{templateName}</h3>
+      <div className="border border-slate-200 rounded-md bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
+        <h3 className="text-sm font-semibold text-ink mb-2 dark:text-slate-100">{templateName}</h3>
         {issues.length > 0 && (
-          <div className="rounded bg-amber-50 border border-amber-200 text-amber-800 p-2 text-xs mb-3">
+          <div className="rounded bg-amber-50 border border-amber-200 text-amber-800 p-2 text-xs mb-3 dark:bg-amber-950 dark:border-amber-800 dark:text-amber-200">
             <strong>Check these counts:</strong>
             <ul className="list-disc pl-5">
               {issues.map((m, i) => (
@@ -210,7 +210,7 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
         {svg ? (
           <div className="flow-preview" dangerouslySetInnerHTML={{ __html: sanitizeSvg(svg) }} />
         ) : (
-          <p className="text-sm text-slate-500">Rendering…</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Rendering…</p>
         )}
       </div>
     </div>

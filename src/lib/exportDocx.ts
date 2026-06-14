@@ -5,6 +5,7 @@ export interface ChecklistRow {
   item_no: string;
   item_text: string;
   response: string;
+  excerpt: string;
 }
 
 // `docx` is loaded lazily (its own chunk) so it stays out of the initial bundle.
@@ -38,12 +39,19 @@ export async function checklistDocx(
       cell("Item", true),
       cell("Checklist item", true),
       cell("Reported (page)", true),
+      cell("Excerpt from manuscript", true),
     ],
   });
   const body = rows.map(
     (r) =>
       new TableRow({
-        children: [cell(r.section), cell(r.item_no), cell(r.item_text), cell(r.response || "")],
+        children: [
+          cell(r.section),
+          cell(r.item_no),
+          cell(r.item_text),
+          cell(r.response || ""),
+          cell(r.excerpt || ""),
+        ],
       }),
   );
   const doc = new Document({

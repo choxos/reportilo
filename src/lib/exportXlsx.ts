@@ -12,17 +12,18 @@ export async function checklistXlsx(
   filename: string,
 ): Promise<void> {
   const data = [
-    [H("Section"), H("Item"), H("Checklist item"), H("Reported (page)")],
+    [H("Section"), H("Item"), H("Checklist item"), H("Reported (page)"), H("Excerpt from manuscript")],
     ...rows.map((r) => [
       { value: r.section },
       { value: r.item_no },
       { value: r.item_text },
       { value: r.response || "" },
+      { value: r.excerpt || "" },
     ]),
   ];
   await writeXlsxFile(data, {
     fileName: filename,
-    columns: [{ width: 22 }, { width: 8 }, { width: 70 }, { width: 18 }],
+    columns: [{ width: 22 }, { width: 8 }, { width: 60 }, { width: 16 }, { width: 60 }],
   });
 }
 

@@ -105,7 +105,7 @@ export default function RobBuilder({ data }: { data: Dataset }) {
       <aside className="space-y-3">
         <label className="block text-sm font-medium">Tool</label>
         <select
-          className="w-full rounded border border-slate-300 px-3 py-2 text-sm bg-white"
+          className="w-full rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm bg-white dark:bg-slate-800 dark:text-slate-100"
           value={toolId}
           onChange={(e) => setToolId(e.target.value)}
         >
@@ -133,28 +133,28 @@ export default function RobBuilder({ data }: { data: Dataset }) {
         <div className="grid grid-cols-2 gap-2 pt-1">
           <button className="rounded bg-ink text-white px-3 py-2 text-sm font-medium hover:bg-ink/90" onClick={runExport(() => downloadPng(svg, `${toolId}_rob.png`, 2, transparent))}>PNG</button>
           <button className="rounded bg-teal text-white px-3 py-2 text-sm font-medium hover:bg-teal/90" onClick={runExport(() => downloadSvg(svg, `${toolId}_rob.svg`))}>SVG</button>
-          <button className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100" onClick={exportWord}>Word</button>
-          <button className="rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100" onClick={exportExcel}>Excel</button>
-          <button className="col-span-2 rounded border border-slate-300 px-3 py-2 text-sm hover:bg-slate-100" onClick={runExport(() => saveText(toCsv(csvRows()), `${toolId}_rob.csv`, "text/csv;charset=utf-8"))}>CSV</button>
+          <button className="rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700" onClick={exportWord}>Word</button>
+          <button className="rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700" onClick={exportExcel}>Excel</button>
+          <button className="col-span-2 rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700" onClick={runExport(() => saveText(toCsv(csvRows()), `${toolId}_rob.csv`, "text/csv;charset=utf-8"))}>CSV</button>
         </div>
 
         <div className="flex gap-2 text-sm">
-          <button className="flex-1 rounded border border-slate-300 px-3 py-2 hover:bg-slate-100" onClick={() => saveJson({ tool: toolId, rows }, `${toolId}_rob.reportilo.json`)}>Save</button>
-          <button className="flex-1 rounded border border-slate-300 px-3 py-2 hover:bg-slate-100" onClick={() => loadInput.current?.click()}>Load</button>
+          <button className="flex-1 rounded border border-slate-300 dark:border-slate-600 px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-700" onClick={() => saveJson({ tool: toolId, rows }, `${toolId}_rob.reportilo.json`)}>Save</button>
+          <button className="flex-1 rounded border border-slate-300 dark:border-slate-600 px-3 py-2 hover:bg-slate-100 dark:hover:bg-slate-700" onClick={() => loadInput.current?.click()}>Load</button>
           <input ref={loadInput} type="file" accept="application/json" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onLoad(f); e.target.value = ""; }} />
         </div>
 
         <button className="text-sm text-teal hover:underline" onClick={addRow}>+ Add study</button>
 
         {error && (
-          <div className="rounded bg-red-50 border border-red-200 text-red-700 p-2 text-xs">{error}</div>
+          <div className="rounded bg-red-50 border border-red-200 text-red-700 p-2 text-xs dark:bg-red-950 dark:border-red-800 dark:text-red-300">{error}</div>
         )}
       </aside>
 
       <div className="space-y-4">
-        <div className="overflow-auto border border-slate-200 rounded-md bg-white">
+        <div className="overflow-auto border border-slate-200 rounded-md bg-white dark:border-slate-700 dark:bg-slate-800">
           <table className="w-full text-sm">
-            <thead className="bg-slate-100 text-left">
+            <thead className="bg-slate-100 text-left dark:bg-slate-700">
               <tr>
                 <th className="px-2 py-2 font-semibold">Study</th>
                 {domains.map((d) => (
@@ -167,13 +167,13 @@ export default function RobBuilder({ data }: { data: Dataset }) {
             </thead>
             <tbody>
               {rows.map((r, ri) => (
-                <tr key={ri} className="border-t border-slate-100">
+                <tr key={ri} className="border-t border-slate-100 dark:border-slate-700">
                   <td className="px-2 py-1">
-                    <input className="w-28 rounded border border-slate-300 px-1 py-0.5" value={r.study} onChange={(e) => setStudy(ri, e.target.value)} />
+                    <input className="w-28 rounded border border-slate-300 dark:border-slate-600 px-1 py-0.5 dark:bg-slate-900 dark:text-slate-100" value={r.study} onChange={(e) => setStudy(ri, e.target.value)} />
                   </td>
                   {domains.map((d) => (
                     <td key={d.id} className="px-2 py-1">
-                      <select className="rounded border border-slate-300 px-1 py-0.5" value={r.values[d.id] ?? ""} onChange={(e) => setCell(ri, d.id, e.target.value)}>
+                      <select className="rounded border border-slate-300 dark:border-slate-600 px-1 py-0.5 dark:bg-slate-900 dark:text-slate-100" value={r.values[d.id] ?? ""} onChange={(e) => setCell(ri, d.id, e.target.value)}>
                         <option value="">—</option>
                         {toolLevels.map((lv) => (
                           <option key={lv} value={lv}>{lv}</option>
@@ -190,7 +190,7 @@ export default function RobBuilder({ data }: { data: Dataset }) {
           </table>
         </div>
 
-        <div className="border border-slate-200 rounded-md bg-white p-4 overflow-auto">
+        <div className="border border-slate-200 rounded-md bg-white p-4 overflow-auto dark:border-slate-700">
           <div dangerouslySetInnerHTML={{ __html: sanitizeSvg(svg) }} />
         </div>
       </div>

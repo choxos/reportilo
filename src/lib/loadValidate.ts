@@ -6,6 +6,7 @@ import type { Guideline, ChecklistItem, FlowCount, RobTool, RobDomain } from "..
 export interface ChecklistFile {
   guideline: string;
   responses: Record<string, string>;
+  excerpts: Record<string, string>;
 }
 export interface FlowchartFile {
   template: string;
@@ -45,22 +46,25 @@ export function validateChecklistFile(
   if (!guidelines.some((g) => g.has_checklist && g.guideline_id === guideline)) {
     throw new Error(`Unknown guideline "${guideline}" in file.`);
   }
-  const raw =
-    obj.responses && typeof obj.responses === "object" && !Array.isArray(obj.responses)
-      ? (obj.responses as Record<string, unknown>)
-      : {};
   // when the checklist items are supplied, keep only keys that are current
   // item_uids for this guideline (drops stale ids from older versions)
   const allowed = items
     ? new Set(items.filter((i) => i.guideline_id === guideline).map((i) => i.item_uid))
     : null;
-  const responses: Record<string, string> = {};
-  for (const [k, v] of Object.entries(raw)) {
-    if (allowed && !allowed.has(k)) continue;
-    const s = asResponseString(v);
-    if (s !== null) responses[k] = s;
-  }
-  return { guideline, responses };
+  const clean = (key: "responses" | "excerpts"): Record<string, string> => {
+    const raw =
+      obj[key] && typeof obj[key] === "object" && !Array.isArray(obj[key])
+        ? (obj[key] as Record<string, unknown>)
+        : {};
+    const out: Record<string, string> = {};
+    for (const [k, v] of Object.entries(raw)) {
+      if (allowed && !allowed.has(k)) continue;
+      const s = asResponseString(v);
+      if (s !== null) out[k] = s;
+    }
+    return out;
+  };
+  return { guideline, responses: clean("responses"), excerpts: clean("excerpts") };
 }
 
 export function validateFlowchartFile(

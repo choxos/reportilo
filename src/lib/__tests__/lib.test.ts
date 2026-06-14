@@ -157,18 +157,23 @@ describe("save/load validators", () => {
     expect(() => validateChecklistFile({ guideline: "catalog-only" }, guidelines)).toThrow();
     expect(() => validateChecklistFile("not an object", guidelines)).toThrow();
     expect(validateChecklistFile({ guideline: "prisma-2020", responses: { a: "p1" } }, guidelines))
-      .toEqual({ guideline: "prisma-2020", responses: { a: "p1" } });
+      .toEqual({ guideline: "prisma-2020", responses: { a: "p1" }, excerpts: {} });
   });
 
-  it("checklist: drops stale item ids and coerces non-string responses", () => {
+  it("checklist: drops stale item ids and coerces non-string responses and excerpts", () => {
     const out = validateChecklistFile(
-      { guideline: "prisma-2020", responses: { a: "p1", stale: "x", b: 5, c: { o: 1 } } },
+      {
+        guideline: "prisma-2020",
+        responses: { a: "p1", stale: "x", b: 5, c: { o: 1 } },
+        excerpts: { a: "we randomized 200", stale: "gone", b: 7 },
+      },
       guidelines,
       items,
     );
-    // "stale" is not a current item_uid -> dropped; b coerced to "5";
+    // "stale" is not a current item_uid -> dropped; b coerced to a string;
     // c maps to an object -> dropped (would otherwise crash .trim())
     expect(out.responses).toEqual({ a: "p1", b: "5" });
+    expect(out.excerpts).toEqual({ a: "we randomized 200", b: "7" });
   });
 
   it("flowchart: drops unknown keys and negative counts, rejects unknown template", () => {
