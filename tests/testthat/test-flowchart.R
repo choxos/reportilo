@@ -99,6 +99,20 @@ test_that("complete mode flags under-accounted diagrams that bounds mode allows"
   expect_true(any(grepl("screened", comp, ignore.case = TRUE)))
 })
 
+test_that("flowchart_dot escapes special characters in user labels", {
+  fc <- set_counts(new_flowchart("prisma_2020"),
+    reports_excluded = "x\"] color=red [y\nz\\w")
+  dot <- flowchart_dot(fc)
+  expect_true(grepl('\\"', dot, fixed = TRUE)) # quote escaped
+  expect_true(grepl("\\n", dot, fixed = TRUE)) # newline -> literal backslash-n
+  expect_true(grepl("\\\\w", dot, fixed = TRUE)) # backslash doubled
+  # every node declaration stays a single, well-formed line (ends with ];)
+  lines <- strsplit(dot, "\n", fixed = TRUE)[[1]]
+  node_lines <- grep("[label=", lines, value = TRUE, fixed = TRUE)
+  expect_true(length(node_lines) > 0)
+  expect_true(all(grepl(";\\s*$", node_lines)))
+})
+
 test_that("complete mode passes a fully balanced diagram", {
   fc <- set_counts(new_flowchart("prisma_2020"),
     identified_db = 200, duplicates = 50, auto_removed = 0, other_removed = 0,
