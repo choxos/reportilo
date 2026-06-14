@@ -40,11 +40,15 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
   const [offsets, setOffsets] = useState<NodeOffsets>({});
   const [edgeOffsets, setEdgeOffsets] = useState<EdgeOffsets>({});
   const [dpi, setDpi] = useState(300);
+  const [resetNonce, setResetNonce] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const edited = Object.keys(offsets).length > 0 || Object.keys(edgeOffsets).length > 0;
   const resetLayout = () => {
     setOffsets({});
     setEdgeOffsets({});
+    // force the preview to re-mount so the pristine Graphviz SVG is re-injected
+    // (clearing offsets alone leaves the already-mutated DOM in place)
+    setResetNonce((n) => n + 1);
   };
   const loadInput = useRef<HTMLInputElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
@@ -271,6 +275,7 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
         )}
         {svg ? (
           <div
+            key={resetNonce}
             ref={previewRef}
             className={"flow-preview rounded" + (transparent ? " bg-checkerboard" : "")}
             dangerouslySetInnerHTML={{ __html: sanitizeSvg(svg) }}

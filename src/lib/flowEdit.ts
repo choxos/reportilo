@@ -1,6 +1,6 @@
 // Manual layout editing for a rendered flow-diagram SVG. Drag any box to move it
-// (the arrows touching it follow), and drag any arrow to bend it through a
-// waypoint. Offsets are kept per node id and per edge ("from->to") so they can
+// (the arrows touching it follow) or drag any arrow to move it; arrows stay
+// straight. Offsets are kept per node id and per edge ("from->to") so they can
 // be reset. A box or arrow that has not been touched keeps Graphviz's original
 // routing.
 
@@ -111,28 +111,35 @@ export function enableFlowEditing(svg: SVGSVGElement, opts: FlowEditOptions): ()
     edges.push({ g: g as SVGGElement, from, to, key: `${from}->${to}` });
   });
 
-  // Draw an edge as a quadratic curve through a waypoint (box centers -> control
-  // point = midpoint + offset), plus a transparent fat hit path for grabbing.
-  const drawCurvedEdge = (e: Edge, nodeOverride?: NodeOffsets, edgeOverride?: { dx: number; dy: number }) => {
+  // Draw an edge as a STRAIGHT arrow between the two boxes, translated by the
+  // edge's offset so the user can move it off the boxes. A transparent fat line
+  // sits on top for easy grabbing.
+  const drawStraightEdge = (e: Edge, nodeOverride?: NodeOffsets, edgeOverride?: { dx: number; dy: number }) => {
     const a = nodeBox(e.from, nodeOverride);
     const b = nodeBox(e.to, nodeOverride);
     if (!a || !b) return;
     const off = edgeOverride ?? edgeOffsets[e.key] ?? { dx: 0, dy: 0 };
-    const ctrl = { x: (a.x + b.x) / 2 + off.dx, y: (a.y + b.y) / 2 + off.dy };
-    const p1 = borderPoint(a, ctrl.x, ctrl.y);
-    const p2 = borderPoint(b, ctrl.x, ctrl.y);
-    const d = `M${p1.x},${p1.y} Q${ctrl.x},${ctrl.y} ${p2.x},${p2.y}`;
+    const p1 = borderPoint(a, b.x, b.y);
+    const p2 = borderPoint(b, a.x, a.y);
+    const x1 = p1.x + off.dx;
+    const y1 = p1.y + off.dy;
+    const x2 = p2.x + off.dx;
+    const y2 = p2.y + off.dy;
     e.g.querySelectorAll("path, polygon, line").forEach((el) => el.remove());
-    const path = document.createElementNS(SVGNS, "path");
-    path.setAttribute("d", d);
-    path.setAttribute("fill", "none");
-    path.setAttribute("stroke", "#555");
-    path.setAttribute("stroke-width", "1");
-    path.setAttribute("marker-end", `url(#${ARROW_ID})`);
-    e.g.appendChild(path);
-    const hit = document.createElementNS(SVGNS, "path");
-    hit.setAttribute("d", d);
-    hit.setAttribute("fill", "none");
+    const line = document.createElementNS(SVGNS, "line");
+    line.setAttribute("x1", String(x1));
+    line.setAttribute("y1", String(y1));
+    line.setAttribute("x2", String(x2));
+    line.setAttribute("y2", String(y2));
+    line.setAttribute("stroke", "#555");
+    line.setAttribute("stroke-width", "1");
+    line.setAttribute("marker-end", `url(#${ARROW_ID})`);
+    e.g.appendChild(line);
+    const hit = document.createElementNS(SVGNS, "line");
+    hit.setAttribute("x1", String(x1));
+    hit.setAttribute("y1", String(y1));
+    hit.setAttribute("x2", String(x2));
+    hit.setAttribute("y2", String(y2));
     hit.setAttribute("stroke", "transparent");
     hit.setAttribute("stroke-width", "12");
     hit.style.cursor = "grab";
@@ -141,7 +148,7 @@ export function enableFlowEditing(svg: SVGSVGElement, opts: FlowEditOptions): ()
   };
 
   // give an untouched (Graphviz-routed) edge a transparent hit overlay so it can
-  // be grabbed; first drag converts it to a curve
+  // be grabbed; first drag converts it to a straight line
   const addHitOverlay = (e: Edge) => {
     if (e.g.querySelector("path[data-hit]")) return;
     const vis = e.g.querySelector("path");
@@ -159,7 +166,7 @@ export function enableFlowEditing(svg: SVGSVGElement, opts: FlowEditOptions): ()
   const isCustom = (e: Edge) =>
     !!edgeOffsets[e.key] || !!nodeOffsets[e.from] || !!nodeOffsets[e.to];
 
-  edges.forEach((e) => (isCustom(e) ? drawCurvedEdge(e) : addHitOverlay(e)));
+  edges.forEach((e) => (isCustom(e) ? drawStraightEdge(e) : addHitOverlay(e)));
 
   const unitScale = () => {
     const rect = svg.getBoundingClientRect();
@@ -207,9 +214,9 @@ export function enableFlowEditing(svg: SVGSVGElement, opts: FlowEditOptions): ()
       const override: NodeOffsets = { [id]: { dx, dy } };
       edges
         .filter((e) => e.from === id || e.to === id)
-        .forEach((e) => drawCurvedEdge(e, override));
+        .forEach((e) => drawStraightEdge(e, override));
     } else {
-      drawCurvedEdge(drag.e, undefined, { dx, dy });
+      drawStraightEdge(drag.e, undefined, { dx, dy });
     }
   };
   const onUp = (ev: PointerEvent) => {

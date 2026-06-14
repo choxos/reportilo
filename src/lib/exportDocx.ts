@@ -84,6 +84,10 @@ export async function flowchartDocx(
 ): Promise<void> {
   const { Document, Packer, Paragraph, HeadingLevel, ImageRun } = await import("docx");
   const data = new Uint8Array(await png.arrayBuffer());
+  // pass the SVG as UTF-8 bytes, not a string: docx base64-encodes string data
+  // with btoa(), which throws "string contains invalid characters" on any
+  // non-Latin1 glyph in a label
+  const svgData = new TextEncoder().encode(svg);
   const { width, height } = await pngSize(png);
   const W = 600;
   const H = Math.round((height / width) * W);
@@ -96,7 +100,7 @@ export async function flowchartDocx(
             children: [
               new ImageRun({
                 type: "svg",
-                data: svg,
+                data: svgData,
                 fallback: { type: "png", data },
                 transformation: { width: W, height: H },
               }),
