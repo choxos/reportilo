@@ -68,10 +68,10 @@ cannot exceed <em>identified - duplicates - automation - other</em>, and CONSORT
 
 
 <dt id="arg-complete">complete<a class="anchor" aria-label="anchor" href="#arg-complete"></a></dt>
-<dd><p>If <code>TRUE</code>, also flag stages where the count is <em>less</em> than the
-base minus its fully specified removals (records unaccounted for), not only
-stages where it exceeds the bound. Use this for a final, fully filled
-diagram. Default <code>FALSE</code> (bounds only), which suits a draft.</p></dd>
+<dd><p>If <code>TRUE</code>, also flag conservation stages where the count is
+<em>less</em> than it should be (records unaccounted for), not only stages where it
+exceeds the bound. Use this for a final, fully filled diagram. Default
+<code>FALSE</code> (bounds only), which suits a draft.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -83,10 +83,11 @@ consistent).</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>By default only bounds are checked (not strict equality), so a partially
 filled draft is not flagged. Set <code>complete = TRUE</code> for a finished diagram to
-additionally require <em>exact</em> accounting at every stage whose removals or
-exclusions are fully specified: there the inflowing count must equal base
-minus removals, not merely fall within it. This catches records that are
-silently unaccounted for in an otherwise complete diagram.</p>
+additionally require <em>exact</em> accounting at every conservation stage: a stage
+whose removals/exclusions are fully specified (the inflowing count must equal
+base minus removals) or a split-only stage (the parts must sum to the whole,
+e.g. CONSORT randomized = intervention arm + control arm). This catches
+records that are silently unaccounted for in an otherwise complete diagram.</p>
     </div>
 
     <div class="section level2">

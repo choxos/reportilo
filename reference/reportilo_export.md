@@ -10,7 +10,7 @@ to Word, Excel, an image, or CSV. The output format is taken from
 ## Usage
 
 ``` r
-reportilo_export(x, file, format = NULL, ..., strict = FALSE)
+reportilo_export(x, file, format = NULL, ..., strict = FALSE, complete = FALSE)
 ```
 
 ## Arguments
@@ -39,8 +39,17 @@ reportilo_export(x, file, format = NULL, ..., strict = FALSE)
 
   For flow diagrams: if `TRUE`, refuse to export when
   [`flowchart_consistency()`](https://choxos.github.io/reportilo/reference/flowchart_consistency.md)
-  reports impossible counts (otherwise a warning is issued and the file
-  is still written). Default `FALSE`.
+  reports issues (otherwise a warning is issued and the file is still
+  written). Default `FALSE`.
+
+- complete:
+
+  For flow diagrams: passed to
+  [`flowchart_consistency()`](https://choxos.github.io/reportilo/reference/flowchart_consistency.md).
+  If `TRUE`, also treat under-accounted conservation stages as issues
+  (use for a final, fully filled diagram). Combine with `strict = TRUE`
+  to block export of a final diagram that does not balance exactly.
+  Default `FALSE`.
 
 ## Value
 

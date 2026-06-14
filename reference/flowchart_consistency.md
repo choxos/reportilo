@@ -20,10 +20,10 @@ flowchart_consistency(x, complete = FALSE)
 
 - complete:
 
-  If `TRUE`, also flag stages where the count is *less* than the base
-  minus its fully specified removals (records unaccounted for), not only
-  stages where it exceeds the bound. Use this for a final, fully filled
-  diagram. Default `FALSE` (bounds only), which suits a draft.
+  If `TRUE`, also flag conservation stages where the count is *less*
+  than it should be (records unaccounted for), not only stages where it
+  exceeds the bound. Use this for a final, fully filled diagram. Default
+  `FALSE` (bounds only), which suits a draft.
 
 ## Value
 
@@ -34,11 +34,12 @@ consistent).
 
 By default only bounds are checked (not strict equality), so a partially
 filled draft is not flagged. Set `complete = TRUE` for a finished
-diagram to additionally require *exact* accounting at every stage whose
-removals or exclusions are fully specified: there the inflowing count
-must equal base minus removals, not merely fall within it. This catches
-records that are silently unaccounted for in an otherwise complete
-diagram.
+diagram to additionally require *exact* accounting at every conservation
+stage: a stage whose removals/exclusions are fully specified (the
+inflowing count must equal base minus removals) or a split-only stage
+(the parts must sum to the whole, e.g. CONSORT randomized = intervention
+arm + control arm). This catches records that are silently unaccounted
+for in an otherwise complete diagram.
 
 ## Examples
 
