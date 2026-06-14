@@ -25,29 +25,34 @@ flowchart_dot <- function(x, background = "white") {
   edges <- x$edges
   counts <- x$counts
 
-  subst <- function(tmpl) {
-    for (f in names(counts)) {
-      val <- counts[[f]]
-      if (is.null(val) || is.na(val) || !nzchar(val)) val <- "0"
-      tmpl <- gsub(paste0("{", f, "}"), val, tmpl, fixed = TRUE)
-    }
-    tmpl
-  }
-  # Escape user text before embedding it in a DOT label: backslash first (so the
-  # escapes added next are not doubled), then quotes, then real line breaks to
-  # Graphviz's "\n", tabs to spaces, then drop any remaining control characters.
-  # Stops a free-text reason field from breaking the DOT or injecting attributes.
-  esc <- function(s) {
+  # Escape a user-supplied value before it goes into a DOT label: backslash first
+  # (so the escapes added next are not doubled), then quotes, then real line
+  # breaks to Graphviz's "\n", tabs to spaces, then drop control characters. This
+  # is applied to the substituted values only, never to the authored template, so
+  # the template's own "\n" line breaks survive while a free-text reason field
+  # cannot break the DOT or inject attributes.
+  esc_val <- function(s) {
     s <- gsub("\\", "\\\\", s, fixed = TRUE)
     s <- gsub('"', '\\"', s, fixed = TRUE)
     s <- gsub("\r\n|\r|\n", "\\\\n", s)
     s <- gsub("\t", " ", s, fixed = TRUE)
     gsub("[[:cntrl:]]", "", s)
   }
+  subst <- function(tmpl) {
+    for (f in names(counts)) {
+      val <- counts[[f]]
+      if (is.null(val) || is.na(val) || !nzchar(val)) val <- "0"
+      frag <- esc_val(as.character(val))
+      # double backslashes so gsub does not reinterpret the replacement string
+      rep <- gsub("\\", "\\\\", frag, fixed = TRUE)
+      tmpl <- gsub(paste0("{", f, "}"), rep, tmpl, fixed = TRUE)
+    }
+    tmpl
+  }
 
   node_lines <- character(0)
   for (i in seq_len(nrow(nodes))) {
-    lbl <- esc(subst(nodes$label_template[i]))
+    lbl <- subst(nodes$label_template[i])
     fill <- nodes$fill[i]
     if (is.na(fill) || !nzchar(fill)) fill <- "#ffffff"
     style <- if (nodes$role[i] == "exclusion_box") "\"filled,rounded,dashed\"" else "\"filled,rounded\""
