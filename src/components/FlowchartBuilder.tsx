@@ -32,6 +32,7 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
 
   const [counts, setCounts] = useState<Record<string, string>>({});
   const [transparent, setTransparent] = useState(false);
+  const [complete, setComplete] = useState(false);
   const [allowAnyway, setAllowAnyway] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const loadInput = useRef<HTMLInputElement>(null);
@@ -75,8 +76,8 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
 
   const issues = useMemo(() => {
     const labels = Object.fromEntries(fields.map((f) => [f.count_field, f.label]));
-    return flowchartConsistency(templateId, counts, labels);
-  }, [templateId, counts, fields]);
+    return flowchartConsistency(templateId, counts, labels, complete);
+  }, [templateId, counts, fields, complete]);
   // block final exports while the counts are inconsistent, unless the user opts
   // into a draft export; save/load stays available regardless
   const blockExport = issues.length > 0 && !allowAnyway;
@@ -149,6 +150,15 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
             onChange={(e) => setTransparent(e.target.checked)}
           />
           Transparent background
+        </label>
+
+        <label className="flex items-center gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={complete}
+            onChange={(e) => setComplete(e.target.checked)}
+          />
+          Final diagram (require exact accounting)
         </label>
 
         {issues.length > 0 && (

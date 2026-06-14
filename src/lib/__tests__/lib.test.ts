@@ -96,6 +96,39 @@ describe("flowchart consistency (webapp)", () => {
   it("does not flag a partially filled diagram", () => {
     expect(flowchartConsistency("prisma_2020", { identified_db: "100" }, {})).toEqual([]);
   });
+
+  it("complete mode flags under-accounting that bounds mode allows", () => {
+    // 210 - 50 = 160 should flow to screened, but only 150 do (10 unaccounted)
+    const counts = {
+      identified_db: "210", duplicates: "50", auto_removed: "0", other_removed: "0",
+      screened: "150", excluded: "100", sought: "50", not_retrieved: "10",
+      assessed: "40", studies_included: "30",
+    };
+    expect(flowchartConsistency("prisma_2020", counts, {})).toEqual([]);
+    const comp = flowchartConsistency("prisma_2020", counts, {}, true);
+    expect(comp.some((m) => /unaccounted/.test(m))).toBe(true);
+  });
+
+  it("complete mode enforces CONSORT split-only conservation", () => {
+    // allocation arms (90) sum short of randomized (100); received boxes balanced
+    const counts = {
+      assessed: "100", excluded_total: "0", randomized: "100",
+      alloc_int: "40", alloc_ctrl: "50",
+      alloc_int_received: "40", alloc_int_not: "0",
+      alloc_ctrl_received: "50", alloc_ctrl_not: "0",
+    };
+    expect(flowchartConsistency("consort_2010", counts, {})).toEqual([]);
+    expect(flowchartConsistency("consort_2010", counts, {}, true).some((m) => /unaccounted/.test(m))).toBe(true);
+  });
+
+  it("complete mode passes a fully balanced diagram", () => {
+    const counts = {
+      identified_db: "200", duplicates: "50", auto_removed: "0", other_removed: "0",
+      screened: "150", excluded: "100", sought: "50", not_retrieved: "10",
+      assessed: "40", studies_included: "30",
+    };
+    expect(flowchartConsistency("prisma_2020", counts, {}, true)).toEqual([]);
+  });
 });
 
 describe("save/load validators", () => {
