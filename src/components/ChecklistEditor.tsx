@@ -194,7 +194,7 @@ export default function ChecklistEditor({ data }: { data: Dataset }) {
           <tbody>
             {items.map((i) => (
               <tr key={i.item_uid} className="border-t border-slate-100 align-top dark:border-slate-700">
-                <td className="px-3 py-2 text-slate-600 break-words hidden md:table-cell dark:text-slate-400">{i.section}</td>
+                <td className="px-3 py-2 text-slate-600 hidden md:table-cell dark:text-slate-400">{i.section}</td>
                 <td className="px-3 py-2 font-medium">{i.item_no}</td>
                 <td className="px-3 py-2 break-words">{i.item_text}</td>
                 <td className="px-3 py-2">
