@@ -43,9 +43,14 @@ flowchart_dot <- function(x, background = "white") {
       val <- counts[[f]]
       if (is.null(val) || is.na(val) || !nzchar(val)) val <- "0"
       frag <- esc_val(as.character(val))
-      # double backslashes so gsub does not reinterpret the replacement string
-      rep <- gsub("\\", "\\\\", frag, fixed = TRUE)
-      tmpl <- gsub(paste0("{", f, "}"), rep, tmpl, fixed = TRUE)
+      # reason lists are entered as "A (n = 1); B (n = 2)"; put each reason on its
+      # own line instead of one long line, dropping empties (counts have no ";")
+      parts <- trimws(strsplit(frag, ";[[:space:]]*")[[1]])
+      parts <- parts[nzchar(parts)]
+      if (length(parts) > 1) frag <- paste(parts, collapse = "\\n")
+      # fixed = TRUE takes the replacement literally, so inject the already
+      # escaped fragment as-is (no backslash doubling)
+      tmpl <- gsub(paste0("{", f, "}"), frag, tmpl, fixed = TRUE)
     }
     tmpl
   }
