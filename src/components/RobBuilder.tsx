@@ -190,7 +190,12 @@ export default function RobBuilder({ data }: { data: Dataset }) {
           </table>
         </div>
 
-        <div className="border border-slate-200 rounded-md bg-white p-4 overflow-auto dark:border-slate-700">
+        <div
+          className={
+            "border border-slate-200 rounded-md p-4 overflow-auto dark:border-slate-700 " +
+            (transparent ? "bg-checkerboard" : "bg-white")
+          }
+        >
           <div dangerouslySetInnerHTML={{ __html: sanitizeSvg(svg) }} />
         </div>
       </div>

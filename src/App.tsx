@@ -29,8 +29,8 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-ink text-white">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-          <img src={`${import.meta.env.BASE_URL}logo.png`} alt="" className="h-9 w-9" />
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
+          <img src={`${import.meta.env.BASE_URL}logo.png`} alt="" className="h-9 w-auto" />
           <div className="flex-1">
             <h1 className="text-lg font-semibold leading-tight">reportilo</h1>
             <p className="text-xs text-slate-300">
@@ -55,7 +55,7 @@ export default function App() {
           </a>
           <ThemeToggle />
         </div>
-        <nav className="max-w-6xl mx-auto px-4 flex gap-1">
+        <nav className="max-w-7xl mx-auto px-4 flex gap-1">
           {TABS.map((t) => (
             <button
               key={t.id}
@@ -73,7 +73,7 @@ export default function App() {
         </nav>
       </header>
 
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-6">
         {error && (
           <div className="rounded-md bg-red-50 text-red-700 p-4 text-sm dark:bg-red-950 dark:text-red-300">
             Could not load data: {error}

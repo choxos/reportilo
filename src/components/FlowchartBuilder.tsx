@@ -111,7 +111,7 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
   };
 
   return (
-    <div className="grid md:grid-cols-[360px_1fr] gap-6">
+    <div className="grid md:grid-cols-[320px_1fr] items-start gap-6">
       <aside className="space-y-3">
         <label className="block text-sm font-medium">Template</label>
         <select
@@ -191,7 +191,7 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
         )}
       </aside>
 
-      <div className="border border-slate-200 rounded-md bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
+      <div className="border border-slate-200 rounded-md bg-white p-4 self-start dark:border-slate-700 dark:bg-slate-800">
         <h3 className="text-sm font-semibold text-ink mb-2 dark:text-slate-100">{templateName}</h3>
         {issues.length > 0 && (
           <div className="rounded bg-amber-50 border border-amber-200 text-amber-800 p-2 text-xs mb-3 dark:bg-amber-950 dark:border-amber-800 dark:text-amber-200">
@@ -208,7 +208,10 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
           </div>
         )}
         {svg ? (
-          <div className="flow-preview" dangerouslySetInnerHTML={{ __html: sanitizeSvg(svg) }} />
+          <div
+            className={"flow-preview rounded" + (transparent ? " bg-checkerboard" : "")}
+            dangerouslySetInnerHTML={{ __html: sanitizeSvg(svg) }}
+          />
         ) : (
           <p className="text-sm text-slate-500 dark:text-slate-400">Rendering…</p>
         )}
