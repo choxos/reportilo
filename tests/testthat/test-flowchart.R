@@ -121,6 +121,17 @@ test_that("flowchart_dot preserves authored template line breaks", {
   expect_false(grepl("\\\\n", dot, fixed = TRUE)) # not doubled
 })
 
+test_that("flowchart_dot puts each exclusion reason on its own line", {
+  fc <- set_counts(new_flowchart("consort_2010"),
+    excluded = "A (n = 1); B (n = 2); C (n = 3)")
+  dot <- flowchart_dot(fc)
+  ln <- grep("A (n = 1)", strsplit(dot, "\n", fixed = TRUE)[[1]], value = TRUE, fixed = TRUE)
+  expect_length(ln, 1)
+  expect_true(grepl("A (n = 1)\\nB (n = 2)\\nC (n = 3)", ln, fixed = TRUE)) # one per line
+  expect_false(grepl("; ", ln, fixed = TRUE)) # no long single-line list
+  expect_false(grepl("\\\\n", ln, fixed = TRUE)) # single backslash, not doubled
+})
+
 test_that("complete mode passes a fully balanced diagram", {
   fc <- set_counts(new_flowchart("prisma_2020"),
     identified_db = 200, duplicates = 50, auto_removed = 0, other_removed = 0,
