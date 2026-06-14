@@ -59,8 +59,8 @@ reportilo_categories <- function() {
 reportilo_coverage <- function() {
   g <- get_data("guidelines")
   ps <- get_data("parse_status")
-  verified_ids <- ps$guideline_id[isTRUE_vec(ps$verified)]
-  review_ids <- ps$guideline_id[isTRUE_vec(ps$needs_review)]
+  verified_ids <- ps$guideline_id[is_true_vec(ps$verified)]
+  review_ids <- ps$guideline_id[is_true_vec(ps$needs_review)]
   cats <- levels(g$category)
   rows <- lapply(cats, function(cat) {
     sub <- g[!is.na(g$category) & g$category == cat, , drop = FALSE]
@@ -85,7 +85,7 @@ reportilo_coverage <- function() {
 }
 
 # small helper: TRUE for TRUE values, FALSE for FALSE/NA (vectorized)
-isTRUE_vec <- function(x) !is.na(x) & x
+is_true_vec <- function(x) !is.na(x) & x
 
 #' Search the reporting guideline catalog
 #'

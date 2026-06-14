@@ -163,7 +163,7 @@ rob_decorate <- function(judgments) {
 #' @param ... Ignored.
 #' @rdname reportilo_rob
 #' @export
-as.data.frame.reportilo_rob <- function(x, row.names = NULL, optional = FALSE, ...) {
+as.data.frame.reportilo_rob <- function(x, row.names = NULL, optional = FALSE, ...) { # nolint: object_name_linter.
   rob_wide(x)
 }
 

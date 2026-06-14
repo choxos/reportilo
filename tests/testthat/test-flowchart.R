@@ -153,6 +153,68 @@ test_that("complete mode does not flag stages without specified removals", {
   expect_length(flowchart_consistency(fc, complete = TRUE), 0)
 })
 
+test_that("complete mode enforces split-only and per-arm conservation (CONSORT)", {
+  # allocation arms must sum to randomized; received boxes balanced so only the
+  # randomized->arms split is short (90 < 100)
+  consort <- set_counts(new_flowchart("consort_2010"),
+    assessed = 100, excluded_total = 0, randomized = 100,
+    alloc_int = 40, alloc_ctrl = 50,
+    alloc_int_received = 40, alloc_int_not = 0,
+    alloc_ctrl_received = 50, alloc_ctrl_not = 0
+  )
+  expect_length(flowchart_consistency(consort), 0) # within bounds (90 <= 100)
+  comp <- flowchart_consistency(consort, complete = TRUE)
+  expect_true(any(grepl("unaccounted", comp)))
+
+  # per-arm received split: allocated = received + not received
+  arm <- set_counts(new_flowchart("consort_2010"),
+    assessed = 80, excluded_total = 0, randomized = 80,
+    alloc_int = 40, alloc_ctrl = 40,
+    alloc_int_received = 30, alloc_int_not = 0, # 30 + 0 < 40 -> unaccounted
+    alloc_ctrl_received = 40, alloc_ctrl_not = 0
+  )
+  expect_length(flowchart_consistency(arm), 0)
+  expect_true(any(grepl("unaccounted", flowchart_consistency(arm, complete = TRUE))))
+
+  # a balanced final CONSORT diagram passes complete mode
+  ok <- set_counts(new_flowchart("consort_2010"),
+    assessed = 100, excluded_total = 0, randomized = 100,
+    alloc_int = 50, alloc_ctrl = 50,
+    alloc_int_received = 50, alloc_int_not = 0,
+    alloc_ctrl_received = 50, alloc_ctrl_not = 0
+  )
+  expect_length(flowchart_consistency(ok, complete = TRUE), 0)
+})
+
+test_that("complete mode enforces cohort analysis conservation", {
+  # of the exposed cohort, analyzed = entered - lost - excluded; 30 < 50-5-5=40
+  cohort <- set_counts(new_flowchart("cohort_study"),
+    assessed = 100, excluded_total = 0, exposed = 50, unexposed = 50,
+    exp_lost = 5, exp_excluded = 5, exp_analyzed = 30,
+    unexp_lost = 0, unexp_excluded = 0, unexp_analyzed = 50
+  )
+  expect_length(flowchart_consistency(cohort), 0)
+  expect_true(any(grepl("unaccounted", flowchart_consistency(cohort, complete = TRUE))))
+})
+
+test_that("complete mode flows through reportilo_export", {
+  fc <- set_counts(new_flowchart("prisma_2020"),
+    identified_db = 210, duplicates = 50, auto_removed = 0, other_removed = 0,
+    screened = 150, excluded = 100, sought = 50, not_retrieved = 10,
+    assessed = 40, studies_included = 30
+  )
+  f <- tempfile(fileext = ".csv")
+  # bounds-only: a strict export still writes (no impossible counts)
+  expect_silent(reportilo_export(fc, f, strict = TRUE))
+  # complete + strict: blocked because 10 records are unaccounted
+  expect_error(
+    reportilo_export(fc, f, strict = TRUE, complete = TRUE),
+    "inconsistent"
+  )
+  # complete + non-strict: warns but writes a draft
+  expect_warning(reportilo_export(fc, f, strict = FALSE, complete = TRUE), "inconsistent")
+})
+
 test_that("strict export blocks impossible flow diagrams", {
   skip_if_not_installed("DiagrammeRsvg")
   bad <- set_counts(new_flowchart("prisma_2020"), identified_db = 1, screened = 999)
