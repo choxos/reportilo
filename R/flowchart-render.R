@@ -33,7 +33,17 @@ flowchart_dot <- function(x, background = "white") {
     }
     tmpl
   }
-  esc <- function(s) gsub('"', '\\"', s, fixed = TRUE)
+  # Escape user text before embedding it in a DOT label: backslash first (so the
+  # escapes added next are not doubled), then quotes, then real line breaks to
+  # Graphviz's "\n", tabs to spaces, then drop any remaining control characters.
+  # Stops a free-text reason field from breaking the DOT or injecting attributes.
+  esc <- function(s) {
+    s <- gsub("\\", "\\\\", s, fixed = TRUE)
+    s <- gsub('"', '\\"', s, fixed = TRUE)
+    s <- gsub("\r\n|\r|\n", "\\\\n", s)
+    s <- gsub("\t", " ", s, fixed = TRUE)
+    gsub("[[:cntrl:]]", "", s)
+  }
 
   node_lines <- character(0)
   for (i in seq_len(nrow(nodes))) {
