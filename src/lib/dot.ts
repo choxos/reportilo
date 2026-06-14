@@ -14,7 +14,10 @@ export function flowchartDot(
   const subst = (tmpl: string): string => {
     let s = tmpl;
     for (const [k, v] of Object.entries(counts)) {
-      const val = v === undefined || v === null || v === "" ? "0" : escVal(String(v));
+      let val = v === undefined || v === null || v === "" ? "0" : escVal(String(v));
+      // reason lists are entered as "A (n = 1); B (n = 2)"; put each reason on
+      // its own line instead of one long line (counts have no "; ", unaffected)
+      val = val.replace(/;\s*/g, "\\n");
       s = s.split(`{${k}}`).join(val);
     }
     return s;

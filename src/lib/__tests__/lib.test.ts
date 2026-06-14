@@ -68,6 +68,15 @@ describe("flowchartDot", () => {
     expect(line).toContain("Top\\n(n = 5)"); // single backslash-n kept
     expect(line).not.toContain("Top\\\\n"); // not doubled into a literal
   });
+  it("breaks a reason list onto one line per reason", () => {
+    const n: FlowNode[] = [
+      { template_id: "t", node_id: "a", stage: "S", stage_order: 1, node_order: 1, role: "exclusion_box", label_template: "Excluded:\\n{r}", side: "right", fill: "#fff" },
+    ];
+    const dot = flowchartDot(n, [], { r: "A (n = 1); B (n = 2); C (n = 3)" }, "white");
+    const line = dot.split("\n").find((l) => l.includes('"a" [label='))!;
+    expect(line).toContain("A (n = 1)\\nB (n = 2)\\nC (n = 3)"); // one per line
+    expect(line).not.toContain("; "); // no long single-line list
+  });
 });
 
 describe("rob svg builders", () => {

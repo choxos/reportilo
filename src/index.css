@@ -8,11 +8,12 @@
   }
 }
 
-/* Graphviz preview: let the SVG scale to its container. */
+/* Graphviz preview: stretch the SVG to the full container width and let it take
+   its natural height (no max-height cap, so multi-line diagrams like CONSORT and
+   STARD render at full size instead of being shrunk to fit the viewport). */
 .flow-preview svg {
   width: 100%;
   height: auto;
-  max-height: 80vh;
 }
 
 /* Checkerboard behind a preview whose background is set to transparent, so the
