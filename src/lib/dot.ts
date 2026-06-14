@@ -19,7 +19,18 @@ export function flowchartDot(
     }
     return s;
   };
-  const esc = (s: string) => s.replace(/"/g, '\\"');
+  // Escape user text before embedding it in a DOT label: backslash first (so the
+  // escapes added next are not doubled), then quotes, then real line breaks to
+  // Graphviz's "\n", tabs to spaces, then drop any remaining control characters.
+  // Prevents a free-text reason field from breaking the DOT or injecting attrs.
+  const esc = (s: string) =>
+    s
+      .replace(/\\/g, "\\\\")
+      .replace(/"/g, '\\"')
+      .replace(/\r\n?|\n/g, "\\n")
+      .replace(/\t/g, " ")
+      // eslint-disable-next-line no-control-regex
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "");
 
   const nodeLines = visible.map((n) => {
     const lbl = esc(subst(n.label_template));

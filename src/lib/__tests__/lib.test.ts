@@ -47,6 +47,18 @@ describe("flowchartDot", () => {
     expect(dot).toContain("digraph reportilo");
     expect(dot).not.toContain("title"); // stage_title nodes are not rendered
   });
+  it("escapes quotes, backslashes and newlines in user labels", () => {
+    const evil: FlowNode[] = [
+      { template_id: "t", node_id: "a", stage: "S", stage_order: 1, node_order: 1, role: "count_box", label_template: 'reason {x}', side: "main", fill: "#fff" },
+    ];
+    const dot = flowchartDot(evil, [], { x: 'a"] color=red [b\nc\\d' }, "white");
+    // the node line stays a single, well-formed DOT line: no raw quote/newline
+    const line = dot.split("\n").find((l) => l.includes('"a" [label='))!;
+    expect(line).toContain('\\"'); // quote escaped
+    expect(line).toContain("\\n"); // newline turned into a literal \n
+    expect(line).toContain("\\\\d"); // backslash escaped
+    expect(line.trim().endsWith("];")).toBe(true); // not broken open
+  });
 });
 
 describe("rob svg builders", () => {
