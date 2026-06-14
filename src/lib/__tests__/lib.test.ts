@@ -59,6 +59,15 @@ describe("flowchartDot", () => {
     expect(line).toContain("\\\\d"); // backslash escaped
     expect(line.trim().endsWith("];")).toBe(true); // not broken open
   });
+  it("preserves authored template line breaks (does not double the backslash)", () => {
+    const tmpl: FlowNode[] = [
+      { template_id: "t", node_id: "a", stage: "S", stage_order: 1, node_order: 1, role: "count_box", label_template: "Top\\n(n = {x})", side: "main", fill: "#fff" },
+    ];
+    const dot = flowchartDot(tmpl, [], { x: "5" }, "white");
+    const line = dot.split("\n").find((l) => l.includes('"a" [label='))!;
+    expect(line).toContain("Top\\n(n = 5)"); // single backslash-n kept
+    expect(line).not.toContain("Top\\\\n"); // not doubled into a literal
+  });
 });
 
 describe("rob svg builders", () => {

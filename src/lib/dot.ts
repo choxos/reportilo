@@ -14,16 +14,17 @@ export function flowchartDot(
   const subst = (tmpl: string): string => {
     let s = tmpl;
     for (const [k, v] of Object.entries(counts)) {
-      const val = v === undefined || v === null || v === "" ? "0" : v;
+      const val = v === undefined || v === null || v === "" ? "0" : escVal(String(v));
       s = s.split(`{${k}}`).join(val);
     }
     return s;
   };
-  // Escape user text before embedding it in a DOT label: backslash first (so the
-  // escapes added next are not doubled), then quotes, then real line breaks to
-  // Graphviz's "\n", tabs to spaces, then drop any remaining control characters.
-  // Prevents a free-text reason field from breaking the DOT or injecting attrs.
-  const esc = (s: string) =>
+  // Escape a user-supplied value before it goes into a DOT label: backslash first
+  // (so the escapes added next are not doubled), then quotes, then real line
+  // breaks to Graphviz's "\n", tabs to spaces, then drop control characters.
+  // Applied to substituted values only, never to the authored template, so the
+  // template's own "\n" line breaks survive.
+  const escVal = (s: string) =>
     s
       .replace(/\\/g, "\\\\")
       .replace(/"/g, '\\"')
@@ -33,7 +34,7 @@ export function flowchartDot(
       .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "");
 
   const nodeLines = visible.map((n) => {
-    const lbl = esc(subst(n.label_template));
+    const lbl = subst(n.label_template);
     const fill = n.fill && n.fill !== "" ? n.fill : "#ffffff";
     const style =
       n.role === "exclusion_box"
