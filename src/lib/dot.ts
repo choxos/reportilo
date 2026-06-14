@@ -16,8 +16,12 @@ export function flowchartDot(
     for (const [k, v] of Object.entries(counts)) {
       let val = v === undefined || v === null || v === "" ? "0" : escVal(String(v));
       // reason lists are entered as "A (n = 1); B (n = 2)"; put each reason on
-      // its own line instead of one long line (counts have no "; ", unaffected)
-      val = val.replace(/;\s*/g, "\\n");
+      // its own line instead of one long line, dropping empty entries (counts
+      // have no "; ", so they pass through unchanged)
+      val = val
+        .split(/;\s*/)
+        .filter((p) => p.trim() !== "")
+        .join("\\n");
       s = s.split(`{${k}}`).join(val);
     }
     return s;

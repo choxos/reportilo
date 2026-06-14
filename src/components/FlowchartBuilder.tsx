@@ -9,6 +9,7 @@ import { saveText, toCsv, saveJson, readJsonFile } from "../lib/download";
 import { sanitizeSvg } from "../lib/sanitize";
 import { flowchartConsistency } from "../lib/consistency";
 import { validateFlowchartFile } from "../lib/loadValidate";
+import { enableFlowEditing, type NodeOffsets } from "../lib/flowEdit";
 
 export default function FlowchartBuilder({ data }: { data: Dataset }) {
   const templates = data.flowcharts.templates;
@@ -34,8 +35,10 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
   const [transparent, setTransparent] = useState(false);
   const [complete, setComplete] = useState(false);
   const [allowAnyway, setAllowAnyway] = useState(false);
+  const [offsets, setOffsets] = useState<NodeOffsets>({});
   const [error, setError] = useState<string | null>(null);
   const loadInput = useRef<HTMLInputElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
   // counts staged by a cross-template load, applied once the new fields are in
   const pending = useRef<Record<string, string> | null>(null);
   useEffect(() => {
@@ -46,6 +49,7 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
       pending.current = null;
     }
     setCounts(init);
+    setOffsets({}); // a new template starts from the default layout
   }, [templateId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const background = transparent ? "transparent" : "white";
@@ -64,6 +68,17 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
       live = false;
     };
   }, [dot]);
+
+  // make the rendered diagram draggable: each box can be moved and the arrows
+  // touching it follow; offsets persist across count edits and reset per template
+  useEffect(() => {
+    const el = previewRef.current?.querySelector("svg") as SVGSVGElement | null;
+    if (!el) return;
+    return enableFlowEditing(el, offsets, setOffsets);
+  }, [svg, offsets]);
+
+  // export the live (possibly hand-arranged) SVG, falling back to the rendered one
+  const currentSvg = () => previewRef.current?.querySelector("svg")?.outerHTML ?? svg;
 
   const templateName =
     templates.find((t) => t.template_id === templateId)?.name ?? templateId;
@@ -130,15 +145,22 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
           {fields.map((f) => (
             <div key={f.count_field}>
               <label className="block text-xs font-medium text-slate-600 dark:text-slate-300">{f.label}</label>
-              <input
-                type={f.is_reasons ? "text" : "number"}
-                min={f.is_reasons ? undefined : 0}
-                className="w-full rounded border border-slate-300 dark:border-slate-600 px-2 py-1 text-sm dark:bg-slate-900 dark:text-slate-100"
-                value={counts[f.count_field] ?? ""}
-                onChange={(e) =>
-                  setCounts((c) => ({ ...c, [f.count_field]: e.target.value }))
-                }
-              />
+              {f.is_reasons ? (
+                <ReasonList
+                  value={counts[f.count_field] ?? ""}
+                  onChange={(v) => setCounts((c) => ({ ...c, [f.count_field]: v }))}
+                />
+              ) : (
+                <input
+                  type="number"
+                  min={0}
+                  className="w-full rounded border border-slate-300 dark:border-slate-600 px-2 py-1 text-sm dark:bg-slate-900 dark:text-slate-100"
+                  value={counts[f.count_field] ?? ""}
+                  onChange={(e) =>
+                    setCounts((c) => ({ ...c, [f.count_field]: e.target.value }))
+                  }
+                />
+              )}
             </div>
           ))}
         </div>
@@ -173,9 +195,9 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
         )}
 
         <div className="grid grid-cols-2 gap-2 pt-2">
-          <button className="rounded bg-ink text-white px-3 py-2 text-sm font-medium hover:bg-ink/90 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(() => downloadPng(svg, `${templateId}.png`, 2, transparent))}>PNG</button>
-          <button className="rounded bg-teal text-white px-3 py-2 text-sm font-medium hover:bg-teal/90 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(() => downloadSvg(svg, `${templateId}.svg`))}>SVG</button>
-          <button className="rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(async () => { const png = await svgToPng(svg, 2, transparent); await flowchartDocx(templateName, png, `${templateId}.docx`); })}>Word</button>
+          <button className="rounded bg-ink text-white px-3 py-2 text-sm font-medium hover:bg-ink/90 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(() => downloadPng(currentSvg(), `${templateId}.png`, 2, transparent))}>PNG</button>
+          <button className="rounded bg-teal text-white px-3 py-2 text-sm font-medium hover:bg-teal/90 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(() => downloadSvg(currentSvg(), `${templateId}.svg`))}>SVG</button>
+          <button className="rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(async () => { const png = await svgToPng(currentSvg(), 2, transparent); await flowchartDocx(templateName, png, `${templateId}.docx`); })}>Word</button>
           <button className="rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50" disabled={busy || blockExport} onClick={runExport(() => flowchartXlsx(countsRows(), `${templateId}.xlsx`))}>Excel</button>
           <button className="col-span-2 rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50" disabled={blockExport} onClick={runExport(() => saveText(toCsv(countsRows()), `${templateId}.csv`, "text/csv;charset=utf-8"))}>CSV (counts)</button>
         </div>
@@ -192,7 +214,21 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
       </aside>
 
       <div className="border border-slate-200 rounded-md bg-white p-4 self-start dark:border-slate-700 dark:bg-slate-800">
-        <h3 className="text-sm font-semibold text-ink mb-2 dark:text-slate-100">{templateName}</h3>
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-sm font-semibold text-ink dark:text-slate-100">{templateName}</h3>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-slate-400 dark:text-slate-500">Drag a box to rearrange</span>
+            {Object.keys(offsets).length > 0 && (
+              <button
+                type="button"
+                className="text-xs text-teal hover:underline"
+                onClick={() => setOffsets({})}
+              >
+                Reset layout
+              </button>
+            )}
+          </div>
+        </div>
         {issues.length > 0 && (
           <div className="rounded bg-amber-50 border border-amber-200 text-amber-800 p-2 text-xs mb-3 dark:bg-amber-950 dark:border-amber-800 dark:text-amber-200">
             <strong>Check these counts:</strong>
@@ -209,6 +245,7 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
         )}
         {svg ? (
           <div
+            ref={previewRef}
             className={"flow-preview rounded" + (transparent ? " bg-checkerboard" : "")}
             dangerouslySetInnerHTML={{ __html: sanitizeSvg(svg) }}
           />
@@ -216,6 +253,39 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
           <p className="text-sm text-slate-500 dark:text-slate-400">Rendering…</p>
         )}
       </div>
+    </div>
+  );
+}
+
+// One input per exclusion reason, with add/remove. The rows are stored as a
+// single "A (n = 1); B (n = 2)" string (the count value), which the renderer
+// then splits onto one line per reason.
+function ReasonList({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const rows = value.trim() ? value.split(/;\s*/) : [];
+  const commit = (next: string[]) => onChange(next.join("; "));
+  return (
+    <div className="space-y-1">
+      {rows.map((r, i) => (
+        <div key={i} className="flex gap-1">
+          <input
+            className="flex-1 rounded border border-slate-300 dark:border-slate-600 px-2 py-1 text-sm dark:bg-slate-900 dark:text-slate-100"
+            placeholder="Reason (n = 0)"
+            value={r}
+            onChange={(e) => commit(rows.map((x, j) => (j === i ? e.target.value : x)))}
+          />
+          <button
+            type="button"
+            className="px-2 text-slate-400 hover:text-red-600"
+            title="Remove reason"
+            onClick={() => commit(rows.filter((_, j) => j !== i))}
+          >
+            ✕
+          </button>
+        </div>
+      ))}
+      <button type="button" className="text-xs text-teal hover:underline" onClick={() => commit([...rows, ""])}>
+        + Add reason
+      </button>
     </div>
   );
 }
