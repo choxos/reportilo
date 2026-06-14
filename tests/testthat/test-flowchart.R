@@ -113,6 +113,14 @@ test_that("flowchart_dot escapes special characters in user labels", {
   expect_true(all(grepl(";\\s*$", node_lines)))
 })
 
+test_that("flowchart_dot preserves authored template line breaks", {
+  # templates encode line breaks as the literal Graphviz token \n; escaping the
+  # substituted values must not double that backslash into a visible \\n
+  dot <- flowchart_dot(new_flowchart("prisma_2020"))
+  expect_true(grepl("\\n", dot, fixed = TRUE)) # single backslash-n kept
+  expect_false(grepl("\\\\n", dot, fixed = TRUE)) # not doubled
+})
+
 test_that("complete mode passes a fully balanced diagram", {
   fc <- set_counts(new_flowchart("prisma_2020"),
     identified_db = 200, duplicates = 50, auto_removed = 0, other_removed = 0,
