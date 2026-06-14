@@ -9,7 +9,9 @@ import { saveText, toCsv, saveJson, readJsonFile } from "../lib/download";
 import { sanitizeSvg } from "../lib/sanitize";
 import { flowchartConsistency } from "../lib/consistency";
 import { validateFlowchartFile } from "../lib/loadValidate";
-import { enableFlowEditing, type NodeOffsets } from "../lib/flowEdit";
+import { enableFlowEditing, type NodeOffsets, type EdgeOffsets } from "../lib/flowEdit";
+
+const DPI_OPTIONS = [150, 300, 600];
 
 export default function FlowchartBuilder({ data }: { data: Dataset }) {
   const templates = data.flowcharts.templates;
@@ -36,7 +38,14 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
   const [complete, setComplete] = useState(false);
   const [allowAnyway, setAllowAnyway] = useState(false);
   const [offsets, setOffsets] = useState<NodeOffsets>({});
+  const [edgeOffsets, setEdgeOffsets] = useState<EdgeOffsets>({});
+  const [dpi, setDpi] = useState(300);
   const [error, setError] = useState<string | null>(null);
+  const edited = Object.keys(offsets).length > 0 || Object.keys(edgeOffsets).length > 0;
+  const resetLayout = () => {
+    setOffsets({});
+    setEdgeOffsets({});
+  };
   const loadInput = useRef<HTMLInputElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   // counts staged by a cross-template load, applied once the new fields are in
@@ -50,6 +59,7 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
     }
     setCounts(init);
     setOffsets({}); // a new template starts from the default layout
+    setEdgeOffsets({});
   }, [templateId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const background = transparent ? "transparent" : "white";
@@ -69,13 +79,18 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
     };
   }, [dot]);
 
-  // make the rendered diagram draggable: each box can be moved and the arrows
-  // touching it follow; offsets persist across count edits and reset per template
+  // make the rendered diagram editable: drag a box to move it (its arrows follow)
+  // or drag an arrow to bend it; offsets persist across count edits, reset per template
   useEffect(() => {
     const el = previewRef.current?.querySelector("svg") as SVGSVGElement | null;
     if (!el) return;
-    return enableFlowEditing(el, offsets, setOffsets);
-  }, [svg, offsets]);
+    return enableFlowEditing(el, {
+      nodeOffsets: offsets,
+      edgeOffsets,
+      onNodes: setOffsets,
+      onEdges: setEdgeOffsets,
+    });
+  }, [svg, offsets, edgeOffsets]);
 
   // export the live (possibly hand-arranged) SVG, falling back to the rendered one
   const currentSvg = () => previewRef.current?.querySelector("svg")?.outerHTML ?? svg;
@@ -194,10 +209,25 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
           </label>
         )}
 
+        <label className="flex items-center gap-2 text-sm">
+          <span className="text-slate-600 dark:text-slate-300">Image DPI</span>
+          <select
+            className="rounded border border-slate-300 dark:border-slate-600 px-2 py-1 text-sm bg-white dark:bg-slate-800 dark:text-slate-100"
+            value={dpi}
+            onChange={(e) => setDpi(Number(e.target.value))}
+          >
+            {DPI_OPTIONS.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
+        </label>
+
         <div className="grid grid-cols-2 gap-2 pt-2">
-          <button className="rounded bg-ink text-white px-3 py-2 text-sm font-medium hover:bg-ink/90 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(() => downloadPng(currentSvg(), `${templateId}.png`, 2, transparent))}>PNG</button>
+          <button className="rounded bg-ink text-white px-3 py-2 text-sm font-medium hover:bg-ink/90 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(() => downloadPng(currentSvg(), `${templateId}.png`, dpi / 96, transparent))}>PNG</button>
           <button className="rounded bg-teal text-white px-3 py-2 text-sm font-medium hover:bg-teal/90 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(() => downloadSvg(currentSvg(), `${templateId}.svg`))}>SVG</button>
-          <button className="rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(async () => { const png = await svgToPng(currentSvg(), 2, transparent); await flowchartDocx(templateName, png, `${templateId}.docx`); })}>Word</button>
+          <button className="rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50" disabled={!svg || busy || blockExport} onClick={runExport(async () => { const s = currentSvg(); const png = await svgToPng(s, dpi / 96, transparent); await flowchartDocx(templateName, s, png, `${templateId}.docx`); })}>Word</button>
           <button className="rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50" disabled={busy || blockExport} onClick={runExport(() => flowchartXlsx(countsRows(), `${templateId}.xlsx`))}>Excel</button>
           <button className="col-span-2 rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50" disabled={blockExport} onClick={runExport(() => saveText(toCsv(countsRows()), `${templateId}.csv`, "text/csv;charset=utf-8"))}>CSV (counts)</button>
         </div>
@@ -217,13 +247,9 @@ export default function FlowchartBuilder({ data }: { data: Dataset }) {
         <div className="flex items-center justify-between mb-2">
           <h3 className="text-sm font-semibold text-ink dark:text-slate-100">{templateName}</h3>
           <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-400 dark:text-slate-500">Drag a box to rearrange</span>
-            {Object.keys(offsets).length > 0 && (
-              <button
-                type="button"
-                className="text-xs text-teal hover:underline"
-                onClick={() => setOffsets({})}
-              >
+            <span className="text-xs text-slate-400 dark:text-slate-500">Drag a box or arrow to rearrange</span>
+            {edited && (
+              <button type="button" className="text-xs text-teal hover:underline" onClick={resetLayout}>
                 Reset layout
               </button>
             )}

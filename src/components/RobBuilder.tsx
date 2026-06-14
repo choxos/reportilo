@@ -18,6 +18,7 @@ export default function RobBuilder({ data }: { data: Dataset }) {
   const [toolId, setToolId] = useState(tools[0]?.tool_id ?? "");
   const [ptype, setPtype] = useState<"traffic_light" | "summary">("traffic_light");
   const [transparent, setTransparent] = useState(false);
+  const [dpi, setDpi] = useState(300);
   const [error, setError] = useState<string | null>(null);
   const loadInput = useRef<HTMLInputElement>(null);
 
@@ -89,8 +90,8 @@ export default function RobBuilder({ data }: { data: Dataset }) {
   };
 
   const exportWord = runExport(async () => {
-    const png = await svgToPng(svg, 2, transparent);
-    await flowchartDocx(tool.name, png, `${toolId}_rob.docx`);
+    const png = await svgToPng(svg, dpi / 96, transparent);
+    await flowchartDocx(tool.name, svg, png, `${toolId}_rob.docx`);
   });
   const exportExcel = runExport(() =>
     robXlsx(
@@ -130,8 +131,23 @@ export default function RobBuilder({ data }: { data: Dataset }) {
           Transparent background
         </label>
 
+        <label className="flex items-center gap-2 text-sm">
+          <span className="text-slate-600 dark:text-slate-300">Image DPI</span>
+          <select
+            className="rounded border border-slate-300 dark:border-slate-600 px-2 py-1 text-sm bg-white dark:bg-slate-800 dark:text-slate-100"
+            value={dpi}
+            onChange={(e) => setDpi(Number(e.target.value))}
+          >
+            {[150, 300, 600].map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
+        </label>
+
         <div className="grid grid-cols-2 gap-2 pt-1">
-          <button className="rounded bg-ink text-white px-3 py-2 text-sm font-medium hover:bg-ink/90" onClick={runExport(() => downloadPng(svg, `${toolId}_rob.png`, 2, transparent))}>PNG</button>
+          <button className="rounded bg-ink text-white px-3 py-2 text-sm font-medium hover:bg-ink/90" onClick={runExport(() => downloadPng(svg, `${toolId}_rob.png`, dpi / 96, transparent))}>PNG</button>
           <button className="rounded bg-teal text-white px-3 py-2 text-sm font-medium hover:bg-teal/90" onClick={runExport(() => downloadSvg(svg, `${toolId}_rob.svg`))}>SVG</button>
           <button className="rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700" onClick={exportWord}>Word</button>
           <button className="rounded border border-slate-300 dark:border-slate-600 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700" onClick={exportExcel}>Excel</button>

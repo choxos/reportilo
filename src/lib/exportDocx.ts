@@ -73,13 +73,17 @@ export async function checklistDocx(
   saveBlob(await Packer.toBlob(doc), filename);
 }
 
+// Embed the diagram in Word as a scalable vector (SVG) image, with a PNG
+// fallback for older Word versions. A vector image stays crisp at any size and
+// can be ungrouped into editable shapes in Word, unlike a flat raster.
 export async function flowchartDocx(
   name: string,
+  svg: string,
   png: Blob,
   filename: string,
 ): Promise<void> {
   const { Document, Packer, Paragraph, HeadingLevel, ImageRun } = await import("docx");
-  const data = await png.arrayBuffer();
+  const data = new Uint8Array(await png.arrayBuffer());
   const { width, height } = await pngSize(png);
   const W = 600;
   const H = Math.round((height / width) * W);
@@ -90,7 +94,12 @@ export async function flowchartDocx(
           new Paragraph({ text: name, heading: HeadingLevel.HEADING_1 }),
           new Paragraph({
             children: [
-              new ImageRun({ type: "png", data, transformation: { width: W, height: H } }),
+              new ImageRun({
+                type: "svg",
+                data: svg,
+                fallback: { type: "png", data },
+                transformation: { width: W, height: H },
+              }),
             ],
           }),
         ],
