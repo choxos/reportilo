@@ -20,6 +20,14 @@ First development release.
   `strict = TRUE` it blocks export of a final diagram that does not
   balance exactly. The Shiny app exposes this as a “Final diagram”
   toggle.
+- Checklist exports now carry their provenance: Word files gain a
+  verification line, Excel files gain a “Provenance” sheet, and
+  exporting an auto-extracted (not hand-verified) checklist in any
+  format warns that each item should be verified against the original
+  guideline.
+- Bundled data rights are documented in `inst/COPYRIGHTS` (referenced
+  from the `Copyright` field), and `cran-comments.md` records the
+  provenance and licensing basis for submission.
 
 Subsequent pull requests add the EQUATOR guideline catalog and checklist
 data, the checklist and flow diagram API, the Word / Excel / image

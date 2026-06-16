@@ -85,6 +85,11 @@ for per-guideline detail.
 
 ## License
 
-GPL-3. The reporting guidelines themselves are the work of their
-respective authors and are subject to their own terms; `reportilo` links
-to each source.
+The `reportilo` code and the data templates authored for it are released
+under GPL-3. The reporting guidelines themselves are the work of their
+respective authors and are subject to their own terms; `reportilo`
+redistributes a normalized, machine-readable representation so you can
+fill them in, does not claim copyright over the guideline text, and
+links to each source. Full provenance and rights detail for every
+bundled dataset is in
+[`inst/COPYRIGHTS`](https://choxos.github.io/reportilo/inst/COPYRIGHTS).

@@ -85,9 +85,18 @@ Word and Excel export need the suggested packages `officer` +
 ## Examples
 
 ``` r
+# CSV export is fast and needs no extra packages.
 chk <- get_checklist("strobe")
-reportilo_export(chk, tempfile(fileext = ".docx"))
+reportilo_export(chk, tempfile(fileext = ".csv"))
 
 fc <- set_counts(new_flowchart("prisma_2020"), identified_db = 1200)
 reportilo_export(fc, tempfile(fileext = ".csv"))
+
+# Word export needs the 'officer' and 'flextable' packages.
+# \donttest{
+if (requireNamespace("officer", quietly = TRUE) &&
+  requireNamespace("flextable", quietly = TRUE)) {
+  reportilo_export(chk, tempfile(fileext = ".docx"))
+}
+# }
 ```
