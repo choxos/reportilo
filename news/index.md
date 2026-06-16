@@ -28,6 +28,11 @@ First development release.
 - Bundled data rights are documented in `inst/COPYRIGHTS` (referenced
   from the `Copyright` field), and `cran-comments.md` records the
   provenance and licensing basis for submission.
+- The bundled Shiny app gains a `shinytest2` smoke test (launch, tab
+  switching, checklist fill, flow diagram consistency warning and
+  export, risk-of-bias preview), run in CI under headless Chrome and
+  skipped on CRAN. The navbar is named (`id = "main"`) so the active tab
+  is addressable.
 
 Subsequent pull requests add the EQUATOR guideline catalog and checklist
 data, the checklist and flow diagram API, the Word / Excel / image

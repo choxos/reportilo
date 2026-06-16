@@ -52,6 +52,7 @@
 <code><a href="../reference/reportilo_export.html">reportilo_export()</a></code> gains a matching <code>complete</code> argument for flow diagrams; combined with <code>strict = TRUE</code> it blocks export of a final diagram that does not balance exactly. The Shiny app exposes this as a “Final diagram” toggle.</li>
 <li>Checklist exports now carry their provenance: Word files gain a verification line, Excel files gain a “Provenance” sheet, and exporting an auto-extracted (not hand-verified) checklist in any format warns that each item should be verified against the original guideline.</li>
 <li>Bundled data rights are documented in <code>inst/COPYRIGHTS</code> (referenced from the <code>Copyright</code> field), and <code>cran-comments.md</code> records the provenance and licensing basis for submission.</li>
+<li>The bundled Shiny app gains a <code>shinytest2</code> smoke test (launch, tab switching, checklist fill, flow diagram consistency warning and export, risk-of-bias preview), run in CI under headless Chrome and skipped on CRAN. The navbar is named (<code>id = "main"</code>) so the active tab is addressable.</li>
 </ul><p>Subsequent pull requests add the EQUATOR guideline catalog and checklist data, the checklist and flow diagram API, the Word / Excel / image export engine, the full Shiny application and a companion browser application.</p>
 </div>
   </main></div>
