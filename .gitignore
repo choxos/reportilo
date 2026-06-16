@@ -5,6 +5,12 @@ dist/
 .DS_Store
 *.tsbuildinfo
 
+# Playwright end-to-end test artifacts
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
 # leftovers from the package branches; not part of the app
 refs/
 data-raw/

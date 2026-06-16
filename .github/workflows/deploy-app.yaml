@@ -42,6 +42,12 @@ jobs:
       - run: npm audit --omit=dev --audit-level=high
       - run: npm run build
 
+      # End-to-end smoke against the production build served under
+      # /reportilo/app/ (the real GitHub Pages base path): tabs, checklist
+      # fill/export/save-load, flowchart export blocking, RoB, and mobile layout.
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+
       - run: touch dist/.nojekyll
 
       - name: Deploy to gh-pages/app
