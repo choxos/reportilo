@@ -19,6 +19,7 @@ Description: A toolkit for the health research reporting guidelines curated by
     companion browser application. Auto-extracted checklists should be verified
     against the original guideline before use.
 License: GPL-3
+Copyright: file inst/COPYRIGHTS
 URL: https://github.com/choxos/reportilo, https://choxos.github.io/reportilo/
 BugReports: https://github.com/choxos/reportilo/issues
 Encoding: UTF-8

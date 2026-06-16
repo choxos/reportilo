@@ -25,13 +25,38 @@ test_that("checklist exports to Word with a table", {
   expect_true(any(grepl("scientific background", s$text, ignore.case = TRUE)))
 })
 
-test_that("checklist exports to Excel", {
+test_that("checklist exports to Excel with a provenance sheet", {
   skip_if_not_installed("openxlsx")
   chk <- get_checklist("strobe")
   f <- tempfile(fileext = ".xlsx")
   reportilo_export(chk, f)
   back <- openxlsx::readWorkbook(f)
   expect_identical(nrow(back), 22L)
+  expect_true("Provenance" %in% openxlsx::getSheetNames(f))
+  prov <- openxlsx::readWorkbook(f, sheet = "Provenance")
+  expect_true("Guideline" %in% prov$Field)
+  expect_true("Verification" %in% prov$Field)
+})
+
+# A guideline that has a checklist but is not hand-verified, chosen from the data
+# so the test does not hard-code a possibly-changing id.
+an_unverified_checklist <- function() {
+  ps <- parse_status
+  ci <- get_data("checklist_items")
+  cand <- intersect(unique(ci$guideline_id), ps$guideline_id[!ps$verified])
+  cand[1]
+}
+
+test_that("exporting an unverified checklist warns on every path", {
+  id <- an_unverified_checklist()
+  skip_if(is.na(id) || !length(id))
+  chk <- suppressWarnings(get_checklist(id))
+  expect_warning(reportilo_export(chk, tempfile(fileext = ".csv")), "not hand-verified")
+})
+
+test_that("exporting a verified checklist does not warn", {
+  chk <- get_checklist("strobe")
+  expect_no_warning(reportilo_export(chk, tempfile(fileext = ".csv")))
 })
 
 test_that("flow diagram exports to PNG and SVG", {

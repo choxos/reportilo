@@ -36,12 +36,25 @@ checklist_flextable <- function(x) {
 export_checklist_docx <- function(x, file) {
   require_officer()
   title <- attr(x, "title") %||% attr(x, "guideline_id")
+  prov <- checklist_provenance(x)
   doc <- officer::read_docx()
   doc <- officer::body_add_par(doc, paste0(title, " reporting checklist"), style = "heading 1")
+  doc <- officer::body_add_par(doc, provenance_line(prov), style = "Normal")
   doc <- officer::body_add_par(doc, "", style = "Normal")
   doc <- flextable::body_add_flextable(doc, checklist_flextable(x))
   print(doc, target = file)
   invisible(file)
+}
+
+# A single-line provenance/verification statement for human-readable exports.
+provenance_line <- function(prov) {
+  conf <- if (is.na(prov$parse_confidence)) {
+    ""
+  } else {
+    sprintf(" (parse confidence %.0f%%)", 100 * prov$parse_confidence)
+  }
+  status <- if (prov$verified) "Verified" else "Auto-extracted, not verified"
+  paste0("Provenance: ", status, conf, ". ", prov$note)
 }
 
 export_flowchart_docx <- function(x, file, width = 1400, background = "white") {
