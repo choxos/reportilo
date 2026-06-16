@@ -36,12 +36,21 @@
 #'   of a final diagram that does not balance exactly. Default `FALSE`.
 #' @return The output `file` path, invisibly.
 #' @seealso [get_checklist()], [new_flowchart()]
-#' @examplesIf requireNamespace("officer", quietly = TRUE)
+#' @examples
+#' # CSV export is fast and needs no extra packages.
 #' chk <- get_checklist("strobe")
-#' reportilo_export(chk, tempfile(fileext = ".docx"))
+#' reportilo_export(chk, tempfile(fileext = ".csv"))
 #'
 #' fc <- set_counts(new_flowchart("prisma_2020"), identified_db = 1200)
 #' reportilo_export(fc, tempfile(fileext = ".csv"))
+#'
+#' # Word export needs the 'officer' and 'flextable' packages.
+#' \donttest{
+#' if (requireNamespace("officer", quietly = TRUE) &&
+#'   requireNamespace("flextable", quietly = TRUE)) {
+#'   reportilo_export(chk, tempfile(fileext = ".docx"))
+#' }
+#' }
 #' @export
 reportilo_export <- function(x, file, format = NULL, ..., strict = FALSE, complete = FALSE) {
   fmt <- tolower(format %||% tools::file_ext(file))
@@ -52,6 +61,7 @@ reportilo_export <- function(x, file, format = NULL, ..., strict = FALSE, comple
     )
   }
   if (inherits(x, "reportilo_checklist")) {
+    warn_if_unverified(x)
     switch(fmt,
       docx = export_checklist_docx(x, file),
       xlsx = export_checklist_xlsx(x, file),
@@ -104,4 +114,42 @@ reportilo_export <- function(x, file, format = NULL, ..., strict = FALSE, comple
   stop("`x` must be a reportilo_checklist, reportilo_flowchart or reportilo_rob.",
     call. = FALSE
   )
+}
+
+# Provenance of a checklist, in a form the writers can stamp onto exports.
+checklist_provenance <- function(x) {
+  verified <- isTRUE(attr(x, "verified"))
+  status <- attr(x, "status")
+  conf <- attr(x, "parse_confidence")
+  list(
+    guideline_id = attr(x, "guideline_id"),
+    title = attr(x, "title"),
+    verified = verified,
+    status = if (length(status) && !is.na(status)) status else "unknown",
+    parse_method = attr(x, "parse_method") %||% "unknown",
+    parse_confidence = if (is.numeric(conf) && !is.na(conf)) conf else NA_real_,
+    needs_review = isTRUE(attr(x, "needs_review")),
+    note = if (verified) {
+      "Hand-verified against the source guideline."
+    } else {
+      paste0(
+        "Automatically extracted from the source guideline and not hand-verified. ",
+        "Verify every item against the original guideline before use."
+      )
+    }
+  )
+}
+
+# Emit a visible warning on every export path for a checklist that has not been
+# hand-verified, so the caveat travels with the file and not only the UI.
+warn_if_unverified <- function(x) {
+  if (!isTRUE(attr(x, "verified"))) {
+    warning(
+      "Checklist '", attr(x, "guideline_id"),
+      "' is auto-extracted and not hand-verified; ",
+      "verify every item against the original guideline before use.",
+      call. = FALSE
+    )
+  }
+  invisible(x)
 }

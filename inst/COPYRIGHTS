@@ -1,0 +1,55 @@
+reportilo: copyright and data rights
+====================================
+
+The reportilo source code (everything under R/, inst/shiny-apps/, tests/,
+vignettes/ and the build scripts under data-raw/) is Copyright (c) 2026 Ahmad
+Sofi-Mahmudi and is released under GPL-3 (see the LICENSE file).
+
+reportilo also bundles data derived from third-party sources. The provenance and
+the rights position for each bundled dataset are described below.
+
+
+1. Guideline catalog metadata
+------------------------------
+Files: data/guidelines.rda, inst/extdata/guidelines.json
+Source: the EQUATOR Network reporting guideline library
+  (https://www.equator-network.org/).
+Content: factual bibliographic metadata such as titles, acronyms, study designs,
+  clinical areas, source URLs and identifiers (DOI, PubMed ID).
+Rights: individual facts are not subject to copyright. reportilo's selection,
+  normalization and arrangement of this metadata is released under GPL-3 with
+  the rest of the package. Each entry links back to its EQUATOR source.
+
+
+2. Reporting checklist item text
+--------------------------------
+Files: data/checklist_items.rda, inst/extdata/checklist_items.json
+Source: the individual reporting guideline documents, each authored and
+  copyrighted by its respective authors and publishers, and indexed by the
+  EQUATOR Network. Every item records its source URL and parse provenance (see
+  the parse_status dataset and reportilo_coverage()).
+Rights: the wording of each reporting checklist remains the intellectual
+  property of the respective guideline authors and publishers and is subject to
+  their own terms. reportilo does not claim copyright over the underlying
+  guideline text; it redistributes a normalized, machine-readable representation
+  so researchers can fill the checklist in, and it links to each original
+  source. Where a guideline's terms do not permit redistribution of its text,
+  reportilo links to the source instead of bundling the item text.
+
+
+3. Flow diagram and risk-of-bias templates
+-------------------------------------------
+Files: data/flowchart_*.rda, data/rob*.rda, inst/extdata/flowcharts.json,
+  inst/extdata/rob.json
+Content: structural templates (node and edge layouts, count fields, level
+  definitions) for PRISMA 2020, CONSORT, STARD, common observational designs and
+  common risk-of-bias tools. These templates were authored for reportilo and are
+  released under GPL-3. They implement the structure described by the respective
+  reporting guideline and risk-of-bias method authors, who retain rights to the
+  underlying methods.
+
+
+Removal requests
+----------------
+If you are a rightsholder and want bundled data changed or removed, contact
+ahmad.pub@gmail.com and the affected data will be updated or removed.

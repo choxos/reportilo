@@ -95,5 +95,10 @@ coverage by category, and `parse_status` for per-guideline detail.
 
 ## License
 
+The `reportilo` code and the data templates authored for it are released under
 GPL-3. The reporting guidelines themselves are the work of their respective
-authors and are subject to their own terms; `reportilo` links to each source.
+authors and are subject to their own terms; `reportilo` redistributes a
+normalized, machine-readable representation so you can fill them in, does not
+claim copyright over the guideline text, and links to each source. Full
+provenance and rights detail for every bundled dataset is in
+[`inst/COPYRIGHTS`](inst/COPYRIGHTS).
