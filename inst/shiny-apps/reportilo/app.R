@@ -407,6 +407,7 @@ robServer <- function(id) {
 # ================================== App ====================================
 ui <- page_navbar(
   title = "reportilo",
+  id = "main", # named so tests (and bookmarks) can address the active tab
   theme = theme,
   fillable = TRUE,
   nav_panel("Catalog", icon = icon("table-list"), catalogUI("catalog")),

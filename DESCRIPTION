@@ -30,6 +30,7 @@ Imports:
     utils
 Suggests:
     bslib,
+    chromote,
     DiagrammeR,
     DiagrammeRsvg,
     DT,
@@ -43,6 +44,7 @@ Suggests:
     rmarkdown,
     rsvg,
     shiny,
+    shinytest2,
     svglite,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
