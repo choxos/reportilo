@@ -1,6 +1,9 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://choxos.github.io/reportilo/404.html</loc></url>
+<url><loc>https://choxos.github.io/reportilo/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://choxos.github.io/reportilo/CONTRIBUTING.html</loc></url>
 <url><loc>https://choxos.github.io/reportilo/LICENSE-text.html</loc></url>
+<url><loc>https://choxos.github.io/reportilo/SECURITY.html</loc></url>
 <url><loc>https://choxos.github.io/reportilo/articles/checklists.html</loc></url>
 <url><loc>https://choxos.github.io/reportilo/articles/export.html</loc></url>
 <url><loc>https://choxos.github.io/reportilo/articles/flowcharts.html</loc></url>
