@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/choxos/reportilo/security/policy
+    about: Please report suspected vulnerabilities privately.
+  - name: Documentation site
+    url: https://choxos.github.io/reportilo/
+    about: Read the package documentation and examples.
+  - name: Browser app
+    url: https://choxos.github.io/reportilo/app/
+    about: Open the companion browser application.
